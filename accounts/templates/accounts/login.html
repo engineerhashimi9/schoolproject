@@ -1,0 +1,77 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    
+    <!-- Google Font for Persian text -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/misc/Farsi-Digits/font-face.css" rel="stylesheet" type="text/css" />
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="{% static 'accounts/login.css' %}">
+</head>
+<body>
+
+    <div class="login-wrapper">
+        
+        <!-- Header Section -->
+        <div class="header-section">
+            <div class="logo-wrapper">
+                <img class="school-icon" src="{% static 'accounts/logo.png' %}" alt="EduAdmin Logo">
+            </div>
+            <h1 class="main-title">لیسه عالی خصوصی اهل بیت رسوالله (ص)</h1>
+            <p class="subtitle">دسترسی به پورتال مدیریت</p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="login-card">
+            <form>
+                <div class="form-group">
+                    <label for="email">آدرس ایمیل</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="email" value="admin@school.edu" placeholder="example@domain.com">
+                        <i class="fa-regular fa-envelope icon-right"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="label-row">
+                        <label for="password">رمز عبور</label>
+                        <a href="#" class="forgot-pass">رمز عبور را فراموش کرده‌اید؟</a>
+                    </div>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" value="********" placeholder="••••••••">
+                        <i class="fa-solid fa-lock icon-right"></i>
+                        <i class="fa-regular fa-eye icon-left toggle-password"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">ورود به سیستم</button>
+            </form>
+
+            <div class="divider"></div>
+
+            <div class="footer-links">
+                <p>فقط برای پرسنل مجاز.</p>
+                <p>نیاز به حساب کاربری دارید؟ <a href="#">با مدیر سیستم تماس بگیرید</a></p>
+            </div>
+        </div>
+
+        <!-- Page Footer -->
+        <div class="page-footer">
+            <p>© ۲۰۲۶ سیستم‌های مدارس EduAdmin. تمامی حقوق محفوظ است.</p>
+            <div class="footer-inline-links">
+                <a href="#">سیاست حریم خصوصی</a>
+                <span>•</span>
+                <a href="#">شرایط استفاده</a>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

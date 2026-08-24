@@ -1,0 +1,316 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>داشبورد</title>
+
+    <!-- FontAwesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="{% static 'dashboard/dashboard.css' %}" />
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- ================= SIDEBAR ================= -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="logo-wrapper">
+
+              <img class="side-logo" src="{% static 'accounts/logo.png' %}" alt="">
+         
+          </div>
+          <div class="brand-text">
+            <h2>لیسه عالی خصوصی اهل بیت رسوالله (ص)</h2>
+            <span>پورتال مدیریت</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <ul>
+            <li class="active">
+              <a href="#"><i class="fa-solid fa-table-columns"></i> داشبورد</a>
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fa-solid fa-user-graduate"></i> دانش‌آموزان</a
+              >
+            </li>
+            <li>
+              <a href="#"><i class="fa-solid fa-users"></i> کارکنان</a>
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fa-solid fa-chalkboard-user"></i> کلاس‌ها</a
+              >
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fa-solid fa-calendar-check"></i> حضور و غیاب</a
+              >
+            </li>
+            <li>
+              <a href="#"><i class="fa-regular fa-file-lines"></i> امتحانات</a>
+            </li>
+            <li>
+              <a href="#"><i class="fa-solid fa-gear"></i> تنظیمات</a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="user-card">
+            <div class="user-info">
+              <i class="fa-solid fa-user-circle"></i>
+              <span>کاربر مدیر</span>
+            </div>
+            <span class="badge">مدیر</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ================= MAIN CONTENT ================= -->
+      <main class="main-content">
+        <!-- Top Header Bar -->
+        <header class="top-header">
+          <div class="left-actions">
+            <div class="search-wrapper">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" placeholder="جستجو در سوابق سیستم..." />
+            </div>
+            <a href="#" class="icon-btn"><i class="fa-regular fa-bell"></i></a>
+            <a href="#" class="icon-btn"
+              ><i class="fa-regular fa-circle-question"></i
+            ></a>
+          </div>
+          <button class="btn-logout">
+            خروج <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </button>
+        </header>
+
+        <!-- Dashboard Content Area -->
+        <div class="content-body">
+          <!-- Greeting & Action Bar -->
+          <div class="greeting-area">
+            <div>
+              <h1>خوش آمدید، مدیر</h1>
+              <span class="date">۱۴۰۲ آبان ۲</span>
+            </div>
+            <div class="action-buttons">
+              <button class="btn-outline">
+                <i class="fa-regular fa-file-lines"></i> چاپ گزارش روزانه
+              </button>
+              <button class="btn-primary">
+                <i class="fa-solid fa-plus"></i> افزودن دانش‌آموز جدید
+              </button>
+            </div>
+          </div>
+
+          <!-- Stat Cards Row -->
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="stat-icon red">
+                <i class="fa-regular fa-clock"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-label">امتحانات پیش رو</span>
+                <span class="stat-number">۱۲</span>
+              </div>
+              <div class="stat-footer">فردی: فیزیک (ساعت ۱۰ - ۱۲)</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon yellow">
+                <i class="fa-regular fa-calendar"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-label"
+                  >نرخ حضور و غیاب
+                  <span class="tag tag-today">امروز</span></span
+                >
+                <span class="stat-number">۹۴.۲٪</span>
+              </div>
+              <div class="stat-progress">
+                <div class="progress-bar" style="width: 94.2%"></div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon blue">
+                <i class="fa-solid fa-users"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-label">کل کارکنان</span>
+                <span class="stat-number">۸۴</span>
+              </div>
+              <div class="stat-footer">آموزشی: ۶۳، اداری: ۲۱</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon green">
+                <i class="fa-solid fa-user-graduate"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-label">کل دانش‌آموزان</span>
+                <span class="stat-number">۱،۲۴۰</span>
+              </div>
+              <div class="stat-footer">ثبت‌نام شده در ۴۸ کلاس</div>
+            </div>
+          </div>
+
+          <!-- Middle Grid -->
+          <div class="dashboard-grid">
+            <!-- Quick Access & Status -->
+            <div class="col-left">
+              <div class="card">
+                <div class="card-header">
+                  <h3>دسترسی سریع</h3>
+                </div>
+                <div class="quick-access-list">
+                  <a href="#" class="qa-item"
+                    ><i class="fa-solid fa-user-plus blue-icon"></i> افزودن
+                    دانش‌آموز جدید <span>ثبت‌نام و ویرایش</span></a
+                  >
+                  <a href="#" class="qa-item"
+                    ><i class="fa-solid fa-chart-simple green-icon"></i> مشاهده
+                    گزارش‌ها <span>داده‌های آموزشی و مالی</span></a
+                  >
+                  <a href="#" class="qa-item"
+                    ><i class="fa-regular fa-calendar-plus orange-icon"></i>
+                    زمان‌بندی امتحان <span>مدیریت زمان و سالن‌ها</span></a
+                  >
+                </div>
+              </div>
+
+              <div class="card status-card">
+                <div class="status-header">
+                  <span>وضعیت سیستم</span>
+                  <div class="status-badge"><span class="dot"></span> فعال</div>
+                </div>
+                <p class="status-desc">
+                  تمام بخش‌های دیجیتال همگام‌سازی شده‌اند. پشتیبان‌گیری خودکار
+                  بعدی در ۴ ساعت.
+                </p>
+              </div>
+
+              
+            </div>
+
+            <!-- Recent Activities -->
+            <div class="col-right">
+              <div class="card">
+                <div class="card-header border-bottom">
+                  <h3>فعالیت‌های اخیر</h3>
+                  <a href="#" class="view-all">مشاهده همه سوابق</a>
+                </div>
+                <div class="activity-feed">
+                  <div class="activity-item">
+                    <div class="act-icon blue-bg">
+                      <i class="fa-solid fa-user-plus"></i>
+                    </div>
+                    <div class="act-content">
+                      <p>
+                        <strong>دانش‌آموز جدید</strong> ثبـت‌نام کـاربر در پایه
+                        نهم-ج ثبت‌نام شد.
+                      </p>
+                      <span class="act-time"
+                        >۴ دقیقه پیش • توسط مسئول ثبت‌نام آقا</span
+                      >
+                    </div>
+                  </div>
+                  <div class="activity-item">
+                    <div class="act-icon green-bg">
+                      <i class="fa-regular fa-calendar-check"></i>
+                    </div>
+                    <div class="act-content">
+                      <p>
+                        <strong>گزارش حضور و غیاب ماهانه</strong> (مهر) با
+                        موفقیت ایجاد شد.
+                      </p>
+                      <span class="act-time"
+                        >۲۶ دقیقه پیش • توسط سیستم خودکار</span
+                      >
+                    </div>
+                  </div>
+                  <div class="activity-item">
+                    <div class="act-icon yellow-bg">
+                      <i class="fa-regular fa-bell"></i>
+                    </div>
+                    <div class="act-content">
+                      <p>
+                        <strong>هشدار برنامه:</strong> جلسه کارکنان ساعت ۱۵:۰۰
+                        امروز.
+                      </p>
+                      <span class="act-time"
+                        >۲ ساعت پیش • توسط دفتر مدیریت</span
+                      >
+                    </div>
+                  </div>
+                  <div class="activity-item">
+                    <div class="act-icon purple-bg">
+                      <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div class="act-content">
+                      <p>
+                        <strong>نتایج آزمون میان‌ترم</strong> زیست‌شناسی منتشر
+                        شد.
+                      </p>
+                      <span class="act-time"
+                        >۶ ساعت پیش • توسط استاد استراتژیک</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Row: Academic Calendar -->
+          <div class="calendar-row">
+            <div class="card">
+              <div class="card-header">
+                <h3>تقویم آموزشی</h3>
+              </div>
+              <div class="calendar-list">
+                <div class="cal-item">
+                  <div class="cal-date orange">
+                    <span>آبان</span>
+                    <strong>۰۶</strong>
+                  </div>
+                  <div class="cal-info">
+                    <h4>شروع تعطیلات میان‌ترم</h4>
+                    <p>تمامی پایه‌ها به جز پایه ۱۲</p>
+                  </div>
+                </div>
+                <div class="cal-item">
+                  <div class="cal-date blue">
+                    <span>آذر</span>
+                    <strong>۱۴</strong>
+                  </div>
+                  <div class="cal-info">
+                    <h4>روز ورزش سالانه</h4>
+                    <p>استادیوم مرکزی، ساعت ۰۸:۰۰</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+          <div class="footer-links">
+            <a href="#">سیاست حریم خصوصی</a>
+            <a href="#">پورتال پشتیبانی</a>
+          </div>
+          <span
+            >© ۲۰۲۶ سیستم‌های لیسه عالی خصوصی اهل بیت رسوالله (ص). تمامی حقوق
+            محفوظ است.</span
+          >
+          <span class="version">v2.4.12-Stable</span>
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>
