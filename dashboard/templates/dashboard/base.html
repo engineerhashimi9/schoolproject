@@ -1,0 +1,107 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>داشبورد</title>
+
+    <!-- FontAwesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}" />
+    
+    {% block style %}
+      
+    {% endblock style %}
+      
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- ================= SIDEBAR ================= -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="logo-wrapper">
+            <img
+              class="side-logo"
+              src="{% static 'accounts/logo.png' %}"
+              alt=""
+            />
+          </div>
+          <div class="brand-text">
+            <h2>لیسه عالی خصوصی اهل بیت رسوالله (ص)</h2>
+            <span>پورتال مدیریت</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <ul>
+            <li class="active">
+              <a href="#"><i class="fa-solid fa-table-columns"></i> داشبورد</a>
+            </li>
+            <li>
+              <a href="{% url 'dashboard:student-list' %}"
+                ><i class="fa-solid fa-user-graduate"></i> دانش‌آموزان</a
+              >
+            </li>
+            <li>
+              <a href="#"><i class="fa-solid fa-users"></i> کارکنان</a>
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fa-solid fa-chalkboard-user"></i> کلاس‌ها</a
+              >
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fa-solid fa-calendar-check"></i> حضور و غیاب</a
+              >
+            </li>
+            <li>
+              <a href="#"><i class="fa-regular fa-file-lines"></i> امتحانات</a>
+            </li>
+            <li>
+              <a href="#"><i class="fa-solid fa-gear"></i> تنظیمات</a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="user-card">
+            <div class="user-info">
+              <i class="fa-solid fa-user-circle"></i>
+              <span>کاربر مدیر</span>
+            </div>
+            <span class="badge">مدیر</span>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="top-header">
+          <div class="left-actions">
+            <div class="search-wrapper">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" placeholder="جستجو در سوابق سیستم..." />
+            </div>
+            <a href="#" class="icon-btn"><i class="fa-regular fa-bell"></i></a>
+            <a href="#" class="icon-btn"
+              ><i class="fa-regular fa-circle-question"></i
+            ></a>
+          </div>
+          <button class="btn-logout">
+            خروج <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </button>
+        </header>
+        
+        {% block content %}
+          
+        {% endblock content %}
+          
+      </main>
+    </div>
+  </body>
+</html>

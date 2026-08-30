@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+
+<html class="light" dir="rtl" lang="fa"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduAdmin | داشبورد مدیریت</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Font: Inter & Vazirmatn (for Persian) -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Vazirmatn:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            font-family: 'Vazirmatn', 'Inter', sans-serif;
+            background-color: #fbf8fa; /* background from config */
+        }
+        /* Custom scrollbar for data-heavy sections */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c5c6cd;
+            border-radius: 10px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid #e2e8f0;
+        }
+        /* Mirroring for icons that have directionality */
+        [dir="rtl"] .material-symbols-outlined[data-icon="trending_up"] {
+            transform: scaleX(-1);
+        }
+    </style>
+<!-- Tailwind Config Verbatim -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#35260c",
+                    "on-primary-fixed-variant": "#3c475a",
+                    "secondary-container": "#316bf3",
+                    "inverse-primary": "#bcc7de",
+                    "on-primary-container": "#8590a6",
+                    "on-secondary-fixed-variant": "#003ea8",
+                    "on-primary": "#ffffff",
+                    "on-primary-fixed": "#111c2d",
+                    "outline-variant": "#c5c6cd",
+                    "surface-container-high": "#eae7e9",
+                    "on-secondary": "#ffffff",
+                    "surface-container-highest": "#e4e2e3",
+                    "on-error": "#ffffff",
+                    "tertiary": "#1e1200",
+                    "inverse-surface": "#303032",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#dbe1ff",
+                    "background": "#fbf8fa",
+                    "on-tertiary-fixed": "#271902",
+                    "primary-fixed-dim": "#bcc7de",
+                    "primary": "#091426",
+                    "error-container": "#ffdad6",
+                    "surface-dim": "#dcd9db",
+                    "surface-tint": "#545f73",
+                    "surface-variant": "#e4e2e3",
+                    "on-surface-variant": "#45474c",
+                    "primary-container": "#1e293b",
+                    "surface-container-low": "#f5f3f4",
+                    "surface-bright": "#fbf8fa",
+                    "on-tertiary-container": "#a38c6a",
+                    "on-secondary-container": "#fefcff",
+                    "secondary-fixed-dim": "#b4c5ff",
+                    "on-tertiary-fixed-variant": "#564427",
+                    "surface": "#fbf8fa",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-fixed": "#00174b",
+                    "error": "#ba1a1a",
+                    "on-surface": "#1b1b1d",
+                    "inverse-on-surface": "#f3f0f2",
+                    "on-error-container": "#93000a",
+                    "on-background": "#1b1b1d",
+                    "tertiary-fixed": "#fadfb8",
+                    "outline": "#75777d",
+                    "surface-container": "#f0edef",
+                    "secondary": "#0051d5",
+                    "primary-fixed": "#d8e3fb",
+                    "tertiary-fixed-dim": "#ddc39d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "margin": "24px",
+                    "xl": "32px",
+                    "sm": "8px",
+                    "unit": "4px",
+                    "sidebar-width": "280px",
+                    "xs": "4px",
+                    "gutter": "24px",
+                    "lg": "24px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Vazirmatn", "Inter"],
+                    "label-md": ["Vazirmatn", "Inter"],
+                    "body-lg": ["Vazirmatn", "Inter"],
+                    "body-md": ["Vazirmatn", "Inter"],
+                    "body-sm": ["Vazirmatn", "Inter"],
+                    "headline-lg-mobile": ["Vazirmatn", "Inter"],
+                    "headline-xl": ["Vazirmatn", "Inter"],
+                    "headline-lg": ["Vazirmatn", "Inter"],
+                    "label-sm": ["Vazirmatn", "Inter"]
+            },
+            "fontSize": {
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "headline-xl": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- SideNavBar (Shared Component) - Mirrored for RTL -->
+<aside class="fixed h-full w-[280px] right-0 top-0 bg-primary dark:bg-primary border-l border-outline-variant flex flex-col px-4 py-md z-50">
+<div class="mb-xl px-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-on-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">school</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-on-primary font-bold">EduAdmin</h1>
+<p class="font-label-sm text-label-sm text-on-primary/70">پورتال مدیریت</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Dashboard (Active) -->
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary border-r-4 border-secondary-container bg-white/10 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">داشبورد</span>
+</a>
+<!-- Students -->
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/60 hover:text-on-primary hover:bg-white/5 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+<span class="font-label-md text-label-md">دانش‌آموزان</span>
+</a>
+<!-- Staff -->
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/60 hover:text-on-primary hover:bg-white/5 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span class="font-label-md text-label-md">کارکنان</span>
+</a>
+<!-- Classes -->
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/60 hover:text-on-primary hover:bg-white/5 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-label-md text-label-md">کلاس‌ها</span>
+</a>
+<!-- Attendance -->
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/60 hover:text-on-primary hover:bg-white/5 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="event_available">event_available</span>
+<span class="font-label-md text-label-md">حضور و غیاب</span>
+</a>
+<!-- Exams -->
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/60 hover:text-on-primary hover:bg-white/5 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="quiz">quiz</span>
+<span class="font-label-md text-label-md">امتحانات</span>
+</a>
+<!-- Settings -->
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary/60 hover:text-on-primary hover:bg-white/5 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">تنظیمات</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-white/10 pt-4 px-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold">
+                    مد
+                </div>
+<div>
+<p class="font-label-md text-label-md text-on-primary">کاربر مدیر</p>
+<p class="text-[10px] text-on-primary/50 uppercase tracking-widest">مدیر کل</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Wrapper - Adjusted for RTL sidebar -->
+<div class="mr-[280px] min-h-screen flex flex-col">
+<!-- TopNavBar (Shared Component) -->
+<header class="sticky top-0 z-40 bg-surface dark:bg-surface border-b border-outline-variant flex justify-between items-center h-16 px-margin transition-all duration-200 ease-in-out">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pr-10 pl-4 py-2 bg-surface-container-low border-none rounded-lg focus:ring-2 focus:ring-secondary transition-all font-body-sm text-body-sm" dir="rtl" placeholder="جستجو در سوابق سیستم..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md mr-margin">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-low transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<div class="h-8 w-px bg-outline-variant mx-sm"></div>
+<button class="px-4 py-2 bg-error text-on-error font-label-md text-label-md rounded-lg hover:opacity-90 active:scale-95 transition-all" onclick="handleLogout()">
+                    خروج
+                </button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 p-margin space-y-lg">
+<!-- Welcome Header -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">خوش آمدید، مدیر</h2>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'opsz' 20;">calendar_today</span>
+<span id="current-date">۲ آبان ۱۴۰۲</span>
+</p>
+</div>
+<div class="flex gap-sm">
+<button class="px-4 py-2.5 bg-secondary text-on-secondary rounded-lg font-label-md text-label-md flex items-center gap-2 hover:shadow-lg transition-all active:scale-95">
+<span class="material-symbols-outlined">add</span>
+                        افزودن دانش‌آموز جدید
+                    </button>
+<button class="px-4 py-2.5 border border-outline-variant text-primary rounded-lg font-label-md text-label-md flex items-center gap-2 hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined">print</span>
+                        چاپ گزارش روزانه
+                    </button>
+</div>
+</section>
+<!-- Metrics Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
+<!-- Total Students -->
+<div class="bg-white border border-outline-variant p-lg rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between mb-md">
+<div class="p-2 bg-secondary-fixed text-on-secondary-fixed rounded-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
+</div>
+<span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded-full flex items-center gap-1 uppercase">
+<span class="material-symbols-outlined text-[12px]" data-icon="trending_up">trending_up</span>
+                            ۱۲٪
+                        </span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">کل دانش‌آموزان</p>
+<h3 class="font-headline-lg text-headline-lg text-primary mt-1">۱,۲۴۰</h3>
+<p class="text-[11px] text-on-surface-variant/60 mt-2">ثبت‌نام شده در ۴۸ کلاس</p>
+</div>
+<!-- Total Staff -->
+<div class="bg-white border border-outline-variant p-lg rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between mb-md">
+<div class="p-2 bg-primary-fixed text-on-primary-fixed rounded-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">badge</span>
+</div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">کل کارکنان</p>
+<h3 class="font-headline-lg text-headline-lg text-primary mt-1">۸۴</h3>
+<p class="text-[11px] text-on-surface-variant/60 mt-2">۶۲ آموزشی، ۲۲ اداری</p>
+</div>
+<!-- Attendance Rate -->
+<div class="bg-white border border-outline-variant p-lg rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between mb-md">
+<div class="p-2 bg-tertiary-fixed text-on-tertiary-fixed rounded-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">event_available</span>
+</div>
+<span class="text-secondary font-bold text-xs uppercase">امروز</span>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">نرخ حضور و غیاب</p>
+<h3 class="font-headline-lg text-headline-lg text-primary mt-1">۹۴.۲٪</h3>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full mt-3">
+<div class="bg-secondary h-1.5 rounded-full" style="width: 94.2%"></div>
+</div>
+</div>
+<!-- Upcoming Exams -->
+<div class="bg-white border border-outline-variant p-lg rounded-xl shadow-sm hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between mb-md">
+<div class="p-2 bg-error-container text-on-error-container rounded-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">quiz</span>
+</div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">امتحانات پیش رو</p>
+<h3 class="font-headline-lg text-headline-lg text-primary mt-1">۱۲</h3>
+<p class="text-[11px] text-on-surface-variant/60 mt-2">بعدی: فیزیک (پایه ۱۱) - ساعت ۰۹:۰۰</p>
+</div>
+</section>
+<!-- Dashboard Layout Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
+<!-- Recent Activity Section -->
+<section class="lg:col-span-2 bg-white border border-outline-variant rounded-xl flex flex-col overflow-hidden">
+<div class="p-lg border-b border-outline-variant flex justify-between items-center bg-surface-container-low/30">
+<h3 class="font-headline-md text-headline-md text-primary">فعالیت‌های اخیر</h3>
+<button class="text-secondary font-label-md text-label-md hover:underline">مشاهده همه سوابق</button>
+</div>
+<div class="flex-1 overflow-y-auto max-h-[400px]">
+<!-- Activity List -->
+<div class="divide-y divide-outline-variant">
+<div class="p-md flex items-start gap-4 hover:bg-surface-container-low transition-colors group">
+<div class="w-10 h-10 rounded-full flex-shrink-0 bg-blue-50 text-blue-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">person_add</span>
+</div>
+<div class="flex-1">
+<p class="font-body-md text-body-md text-on-surface">دانش‌آموز جدید <span class="font-semibold">بنیامین کارتر</span> در پایه نهم-ج ثبت‌نام شد.</p>
+<p class="text-[12px] text-on-surface-variant mt-1">۲ دقیقه پیش • توسط مسئول ثبت‌نام آلفا</p>
+</div>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity text-on-surface-variant cursor-pointer">more_horiz</span>
+</div>
+<div class="p-md flex items-start gap-4 hover:bg-surface-container-low transition-colors group">
+<div class="w-10 h-10 rounded-full flex-shrink-0 bg-green-50 text-green-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">description</span>
+</div>
+<div class="flex-1">
+<p class="font-body-md text-body-md text-on-surface"><span class="font-semibold">گزارش حضور و غیاب ماهانه (مهر)</span> با موفقیت ایجاد شد.</p>
+<p class="text-[12px] text-on-surface-variant mt-1">۴۵ دقیقه پیش • توسط سیستم خودکار</p>
+</div>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity text-on-surface-variant cursor-pointer">more_horiz</span>
+</div>
+<div class="p-md flex items-start gap-4 hover:bg-surface-container-low transition-colors group">
+<div class="w-10 h-10 rounded-full flex-shrink-0 bg-amber-50 text-amber-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">notifications_active</span>
+</div>
+<div class="flex-1">
+<p class="font-body-md text-body-md text-on-surface">هشدار برنامه: <span class="font-semibold">جلسه کارکنان</span> ساعت ۱۵:۰۰ امروز.</p>
+<p class="text-[12px] text-on-surface-variant mt-1">۲ ساعت پیش • توسط دفتر مدیریت</p>
+</div>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity text-on-surface-variant cursor-pointer">more_horiz</span>
+</div>
+<div class="p-md flex items-start gap-4 hover:bg-surface-container-low transition-colors group">
+<div class="w-10 h-10 rounded-full flex-shrink-0 bg-purple-50 text-purple-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">assignment_turned_in</span>
+</div>
+<div class="flex-1">
+<p class="font-body-md text-body-md text-on-surface">نتایج آزمون <span class="font-semibold">میان‌ترم زیست‌شناسی</span> منتشر شد.</p>
+<p class="text-[12px] text-on-surface-variant mt-1">۵ ساعت پیش • توسط استاد استرلینگ</p>
+</div>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity text-on-surface-variant cursor-pointer">more_horiz</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Actions / Quick Links -->
+<section class="space-y-lg">
+<div class="bg-white border border-outline-variant rounded-xl p-lg">
+<h3 class="font-headline-md text-headline-md text-primary mb-lg">دسترسی سریع</h3>
+<div class="grid grid-cols-1 gap-sm">
+<button class="w-full flex items-center gap-3 p-3 rounded-lg border border-outline-variant hover:border-secondary hover:bg-secondary/5 transition-all group text-right">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center group-hover:bg-secondary group-hover:text-on-secondary transition-colors">
+<span class="material-symbols-outlined">person_add</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">افزودن دانش‌آموز جدید</p>
+<p class="text-[11px] text-on-surface-variant">ثبت‌نام و پذیرش</p>
+</div>
+</button>
+<button class="w-full flex items-center gap-3 p-3 rounded-lg border border-outline-variant hover:border-secondary hover:bg-secondary/5 transition-all group text-right">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center group-hover:bg-secondary group-hover:text-on-secondary transition-colors">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">مشاهده گزارش‌ها</p>
+<p class="text-[11px] text-on-surface-variant">داده‌های آموزشی و مالی</p>
+</div>
+</button>
+<button class="w-full flex items-center gap-3 p-3 rounded-lg border border-outline-variant hover:border-secondary hover:bg-secondary/5 transition-all group text-right">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center group-hover:bg-secondary group-hover:text-on-secondary transition-colors">
+<span class="material-symbols-outlined">event</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-primary">زمان‌بندی امتحان</p>
+<p class="text-[11px] text-on-surface-variant">مدیریت زمان و سالن‌ها</p>
+</div>
+</button>
+</div>
+</div>
+<!-- System Status Small Card -->
+<div class="bg-primary text-on-primary rounded-xl p-lg relative overflow-hidden">
+<div class="relative z-10">
+<h4 class="font-label-md text-label-md text-on-primary/60 uppercase tracking-widest mb-2">وضعیت سیستم</h4>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-green-400 animate-pulse"></div>
+<span class="font-headline-md text-headline-md">فعال</span>
+</div>
+<p class="text-[12px] text-on-primary/70 mt-4 leading-relaxed">
+                                تمام خوشه‌های دیتابیس همگام‌سازی شده‌اند. پشتیبان‌گیری خودکار بعدی در ۴ ساعت.
+                            </p>
+</div>
+<div class="absolute -bottom-6 -left-6 opacity-10">
+<span class="material-symbols-outlined text-8xl">verified_user</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Bento Grid Section: School Calendar & Capacity -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
+<div class="lg:col-span-2 glass-card rounded-xl p-lg flex flex-col gap-md">
+<h3 class="font-headline-md text-headline-md text-primary">تقویم آموزشی</h3>
+<div class="flex-1 space-y-3">
+<div class="flex items-center gap-4 p-3 bg-surface-container-low rounded-lg border-r-4 border-amber-500">
+<div class="text-center w-12">
+<p class="text-[10px] uppercase font-bold text-on-surface-variant">آبان</p>
+<p class="font-headline-md text-headline-md leading-none">۰۶</p>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">شروع تعطیلات میان‌ترم</p>
+<p class="text-[11px] text-on-surface-variant">تمام پایه‌ها به جز پایه ۱۲</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-3 bg-surface-container-low rounded-lg border-r-4 border-secondary">
+<div class="text-center w-12">
+<p class="text-[10px] uppercase font-bold text-on-surface-variant">آذر</p>
+<p class="font-headline-md text-headline-md leading-none">۱۴</p>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">روز ورزش سالانه</p>
+<p class="text-[11px] text-on-surface-variant">استادیوم مرکزی، ساعت ۰۸:۰۰</p>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-2 relative rounded-xl overflow-hidden min-h-[200px]">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover" data-alt="A futuristic, minimalist aerial view of a prestigious university campus with modern architecture, glass facades, and lush green lawns." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXxWGRMPJhhRXWwHM7Ny0QnRyrC_KL7zFuEBD0uNZrd77iJKhtZ7BOIIxy_eoHkedywP5JnC11iQHocU6dtUKtScXLMPcHF1pb__Oh0B2iZKoe7UXt0wEYtLX9hXlP969Ny6i8Bip9aWY4zwesV3SB3q2nYRvvHsWRFUr5cpyfgAkpivfiiCh2JzozGZzcJtENP0N6VlT-4adq_INA3M1uvtC9WH1MX6E_uc0HADILZCbx-WNNMZAQhHXr2wuuctqasA2Vce8naXk7"/>
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-primary via-transparent to-transparent z-10 opacity-80"></div>
+<div class="absolute bottom-0 right-0 p-lg z-20 text-on-primary">
+<p class="font-label-sm text-label-sm uppercase tracking-widest text-on-primary/60">ظرفیت پردیس</p>
+<h4 class="font-headline-lg text-headline-lg mb-2">توسعه بال شمالی</h4>
+<p class="font-body-sm text-body-sm text-on-primary/80 max-w-xs">ساخت بال جدید آزمایشگاهی ۸۵٪ تکمیل شده است. زمان بازگشایی: بهار ۱۴۰۳.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Overlay for Micro-interactions -->
+<footer class="p-4 border-t border-outline-variant flex justify-between items-center text-on-surface-variant font-label-sm text-label-sm bg-surface">
+<p>© ۲۰۲۳ سیستم‌های EduAdmin. تمامی حقوق محفوظ است.</p>
+<div class="flex gap-md">
+<a class="hover:text-secondary transition-colors" href="#">سیاست حریم خصوصی</a>
+<a class="hover:text-secondary transition-colors" href="#">پورتال پشتیبانی</a>
+<span class="text-outline">v2.4.12-Stable</span>
+</div>
+</footer>
+</div>
+<!-- Micro-interaction Scripts -->
+<script>
+        // Set real-time date (formatted for Persian for visual consistency)
+        function updateDate() {
+            const now = new Date();
+            const options = { month: 'long', day: 'numeric', year: 'numeric' };
+            // For a simple demo, we keep the localized string format or just hardcode for Farsi appearance
+            // document.getElementById('current-date').textContent = now.toLocaleDateString('fa-IR', options);
+        }
+        updateDate();
+
+        // Handle Logout Action
+        function handleLogout() {
+            document.body.style.transition = 'opacity 0.5s ease-in-out';
+            document.body.style.opacity = '0';
+            
+            setTimeout(() => {
+                alert('در حال خروج از سیستم EduAdmin. انتقال به پورتال ورود...');
+                location.reload(); 
+            }, 500);
+        }
+
+        // Active Navigation Logic
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('nav a').forEach(el => {
+                    el.classList.remove('text-on-primary', 'border-r-4', 'border-secondary-container', 'bg-white/10');
+                    el.classList.add('text-on-primary/60', 'hover:text-on-primary', 'hover:bg-white/5');
+                });
+                link.classList.remove('text-on-primary/60', 'hover:text-on-primary', 'hover:bg-white/5');
+                link.classList.add('text-on-primary', 'border-r-4', 'border-secondary-container', 'bg-white/10');
+            });
+        });
+    </script>
+</body></html>
