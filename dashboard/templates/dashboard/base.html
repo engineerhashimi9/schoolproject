@@ -7,17 +7,11 @@
     <title>داشبورد</title>
 
     <!-- FontAwesome -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}" />
 
     <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}" />
-    
-    {% block style %}
-      
-    {% endblock style %}
-      
+
+    {% block style %} {% endblock style %}
   </head>
   <body>
     <div class="app-container">
@@ -39,17 +33,26 @@
 
         <nav class="sidebar-nav">
           <ul>
-            <li class="active">
-              <a href="#"><i class="fa-solid fa-table-columns"></i> داشبورد</a>
+            <li
+              id="dasboard"
+              class="{% if request.resolver_match.url_name == 'admin-dashboard' %}active{% endif %}"
+            >
+              <a href="{% url 'dashboard:admin-dashboard' %}"
+                ><i class="fa-solid fa-table-columns"></i> داشبورد</a
+              >
             </li>
-            <li>
+            <li id="teachers">
+              <a href="#"><i class="fa-solid fa-users"></i> کارکنان</a>
+            </li>
+            <li
+              id="students"
+              class="{% if request.resolver_match.url_name == 'student-list' %}active{% endif %}"
+            >
               <a href="{% url 'dashboard:student-list' %}"
                 ><i class="fa-solid fa-user-graduate"></i> دانش‌آموزان</a
               >
             </li>
-            <li>
-              <a href="#"><i class="fa-solid fa-users"></i> کارکنان</a>
-            </li>
+
             <li>
               <a href="#"
                 ><i class="fa-solid fa-chalkboard-user"></i> کلاس‌ها</a
@@ -96,12 +99,11 @@
             خروج <i class="fa-solid fa-arrow-right-from-bracket"></i>
           </button>
         </header>
-        
-        {% block content %}
-          
-        {% endblock content %}
-          
+
+        {% block content %} {% endblock content %}
       </main>
     </div>
+    <script src="{% static 'dashboard/js/main.js' %}"></script>
+    {% block js %} {% endblock js %}
   </body>
 </html>

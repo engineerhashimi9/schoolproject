@@ -88,7 +88,7 @@ class Teacher(models.Model):
     tax = models.IntegerField()
 
     def __str__(self):
-        return
+        return f"{self.name}-{self.fname}-{self.last_name}"
 
 
 class Subject(models.Model):
@@ -134,6 +134,8 @@ class StudentClass(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE,related_name="studentclass")
     classs = models.ForeignKey(Classes, on_delete=models.CASCADE)
     academice_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
+    def __str__(self) -> str:
+        return f"{self.classs.grade}-{self.classs.section}"
 
 
 class Atendance(models.Model):
