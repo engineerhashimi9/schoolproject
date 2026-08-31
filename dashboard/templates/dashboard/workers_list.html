@@ -1,0 +1,120 @@
+{% extends 'dashboard/base.html' %} {% load static %} {% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/student.css' %}" />
+{% endblock style %} {% block content %}
+<main class="main-content">
+  <!-- Page Content Container -->
+  <div class="content-wrapper">
+    <!-- Title & Actions -->
+    <div class="page-header">
+      <h2>لیست کارمندان</h2>
+      <p>مدیریت و مشاهده اطلاعات تمامی کارمندان ثبت‌نام شده.</p>
+      <div class="page-actions">
+        <button class="btn-exit">
+          <i class="fa-solid fa-sign-out-alt"></i> خروجی اکسل
+        </button>
+        <button class="btn-primary">
+          <i class="fa-solid fa-plus"></i> افزودن کارمند جدید
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filters-left">
+        <button class="btn-filter"><i class="fa-solid fa-filter"></i></button>
+        <select class="filter-select">
+          <option>وضعیت</option>
+        </select>
+        <select class="filter-select">
+          <option>وظیفه</option>
+        </select>
+        <select class="filter-select">
+          <option>درجه تحصیلی</option>
+        </select>
+      </div>
+      <div class="search-box">
+        <input type="text" placeholder="جستجوی نام یا شماره کارمندی..." />
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>نام کارمند</th>
+            <th>نام پدر</th>
+            <th>شماره مسلسل</th>
+            <th>درجه تحصیلی</th>
+            <th>وضعیت</th>
+            <th>تلفون</th>
+            <th>عملیات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Row 1 -->
+
+          {% for worker in workers %}
+          <tr>
+            <td>
+              <div class="student-cell">
+                <img
+                  src="{% static 'dashboard/images/char.png' %}"
+                  alt="Student"
+                  class="student-avatar"
+                />
+                <div class="student-info">
+                  <span class="student-name">{{worker.name}}</span>
+                  <span class="join-date"
+                    >{{worker.registered_date}} تاریخ ثبت‌نام:</span
+                  >
+                </div>
+              </div>
+            </td>
+            <td>{{worker.fname}}</td>
+            <td>{{worker.id}}</td>
+
+            <td>{{worker.degree}}</td>
+            <td><span class="status-badge active">فعال</span></td>
+            <td>{{worker.phone}}</td>
+            <td>
+              <div class="action-icons">
+                <a
+                  href="{% url 'dashboard:worker-detail' pk=worker.id %}"
+                  class="btn-icon"
+                >
+                  <i class="fa-regular fa-eye"></i>
+                </a>
+                <button class="btn-icon">
+                  <i class="fa-solid fa-pen"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <div class="page-buttons">
+        <button class="page-btn">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <span class="dots">...</span>
+        <button class="page-btn">26</button>
+        <button class="page-btn">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+      </div>
+      
+    </div>
+  </div>
+</main>
+{% endblock content %}

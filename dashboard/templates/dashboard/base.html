@@ -41,8 +41,9 @@
                 ><i class="fa-solid fa-table-columns"></i> داشبورد</a
               >
             </li>
-            <li id="teachers">
-              <a href="#"><i class="fa-solid fa-users"></i> کارکنان</a>
+            <li id="teachers"
+            class="{% if request.resolver_match.url_name == 'worker-list' %}active{% endif %}">
+              <a href="{% url 'dashboard:worker-list' %}"><i class="fa-solid fa-users"></i> کارکنان</a>
             </li>
             <li
               id="students"

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import ListView,DetailView
-from .models import Student
+from .models import Student,Teacher
 # Create your views here.
 
 
@@ -28,3 +28,7 @@ class StudentDetailView(DetailView):
     template_name = "dashboard/student_detail.html"
     context_object_name="student"
     
+class TeacherListView(ListView):
+    model = Teacher
+    template_name = "dashboard/workers_list.html"
+    context_object_name="workers"
