@@ -8,7 +8,7 @@ class Language(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
-        return f"{self.id}-{self.name}"
+        return f"{self.name}"
 
 
 class Degree(models.Model):
@@ -16,7 +16,7 @@ class Degree(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self) -> str:
-        return f"{self.id}-{self.name}"
+        return f"{self.name}"
 
 
 class Job(models.Model):
@@ -24,7 +24,7 @@ class Job(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
-        return f"{self.id}-{self.name}"
+        return f"{self.name}"
 
 
 class Province(models.Model):
@@ -32,7 +32,7 @@ class Province(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
-        return f"{self.id}-{self.name}"
+        return f"{self.name}"
 
 
 class District(models.Model):
@@ -41,7 +41,7 @@ class District(models.Model):
     province = models.ForeignKey(Province, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.id}-{self.name}"
+        return f"{self.name}"
 
 
 class Student(models.Model):

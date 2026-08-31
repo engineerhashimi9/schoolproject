@@ -80,9 +80,12 @@
             <td>{{student.phone}}</td>
             <td>
               <div class="action-icons">
-                <button class="btn-icon">
+                <a
+                  href="{% url 'dashboard:student-detail' pk=student.id %}"
+                  class="btn-icon"
+                >
                   <i class="fa-regular fa-eye"></i>
-                </button>
+                </a>
                 <button class="btn-icon">
                   <i class="fa-solid fa-pen"></i>
                 </button>

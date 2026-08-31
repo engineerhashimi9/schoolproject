@@ -1,0 +1,160 @@
+{% extends 'dashboard/base.html' %} {% load static %} {% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/student_detail.css' %}" />
+{% endblock style %} {% block content %}
+<div class="container">
+  <!-- Page Header -->
+  <header class="page-header">
+    <h1 class="page-title">
+      پرونده دانش‌آموز <i class="fa-solid fa-arrow-left"></i>
+    </h1>
+    <div class="header-actions">
+      <button class="btn btn-primary">
+        <i class="fa-solid fa-pen"></i> ویرایش پرونده
+      </button>
+      <button class="btn btn-secondary">
+        <i class="fa-solid fa-print"></i> چاپ سوابق
+      </button>
+    </div>
+  </header>
+
+  <!-- Top Student Card -->
+  <div class="card profile-card">
+    <div class="profile-top">
+      <div class="profile-info">
+        <div class="status-badge">فعال</div>
+        <h2 class="student-name">{{student.name}} {{student.last_name}}</h2>
+        <p class="student-class">{{student.studentclass.first}}</p>
+      </div>
+      <div class="profile-photo">
+        <img src="https://i.pravatar.cc/150?img=11" alt="Student Photo" />
+      </div>
+    </div>
+
+    <div class="profile-details">
+      <div class="detail-item">
+        <div class="detail-text">
+          <span class="label">شماره شناسایی</span>
+          <span class="value">{{student.id}}</span>
+        </div>
+        <div class="icon-box"><i class="fa-regular fa-id-card"></i></div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-text">
+          <span class="label">تاریخ ثبت‌نام</span>
+          <span class="value">{{student.registered_date}}</span>
+        </div>
+        <div class="icon-box"><i class="fa-regular fa-calendar-days"></i></div>
+      </div>
+
+      <div class="detail-item">
+        <div class="detail-text">
+          <span class="label">تاریخ خرد</span>
+          <span class="value">{{student.detached_date}}</span>
+        </div>
+        <div class="icon-box"><i class="fa-regular fa-calendar"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Split Grid -->
+  <div class="content-grid">
+    <!-- Left Column (Current & Main Residence) -->
+    <div class="left-col">
+      <!-- Current Residence -->
+      <div class="card section-card">
+        <div class="section-header">
+          <h3>محل سکونت فعلی</h3>
+          <i class="fa-solid fa-location-dot text-blue"></i>
+        </div>
+        <div class="info-list">
+          <div class="info-row">
+            <span class="label">ولایت </span>
+            <span class="value">{{student.now_province}}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">ولسوالی</span>
+            <span class="value">{{student.now_district}}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">ناحیه/قریه</span>
+            <span class="value">{{student.now_zone}}-{{student.now_village}}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Residence (Birthplace) -->
+      <div class="card section-card">
+        <div class="section-header">
+          <h3>محل سکونت اصلی (زادگاه)</h3>
+          <i class="fa-solid fa-house text-blue"></i>
+        </div>
+        <div class="info-list">
+          <div class="info-row">
+            <span class="label">ولایت</span>
+            <span class="value">{{student.original_province}}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">ولسوالی</span>
+            <span class="value">{{student.original_district}}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">قریه / منطقه</span>
+            <span class="value">{{student.original_zone}}-{{student.original_village}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column (Identity Information) -->
+    <div class="right-col">
+      <div class="card section-card">
+        <div class="section-header">
+          <h3>اطلاعات هویتی</h3>
+          <i class="fa-solid fa-user text-blue"></i>
+        </div>
+
+        <div class="identity-grid">
+          <div class="identity-item">
+            <span class="label">نام و نام خانوادگی</span>
+            <span class="value">{{student.name}} {{student.last_name}}</span>
+          </div>
+          <div class="identity-item">
+            <span class="label">کد ملی / تذکره</span>
+            <span class="value">{{student.card_id}}</span>
+          </div>
+          <div class="identity-item">
+            <span class="label">نام پدر</span>
+            <span class="value">{{student.fname}}</span>
+          </div>
+          <div class="identity-item">
+            <span class="label">نام پدربزرگ</span>
+            <span class="value">{{student.gfname}}</span>
+          </div>
+          <div class="identity-item">
+            <span class="label">تاریخ تولد</span>
+            <span class="value">{{student.birth_date}}</span>
+          </div>
+          <div class="identity-item">
+            <span class="label">تابعیت</span>
+            <span class="value">{{student.nationality}}</span>
+          </div>
+          <div class="identity-item">
+            <span class="label">زبان مادری</span>
+            <span class="value">{{student.mother_language}}</span>
+          </div>
+          <div class="identity-item">
+            <span class="label">شغل پدر</span>
+            <span class="value">{{student.father_job}}</span>
+          </div>
+          <div class="identity-item full-width">
+            <span class="label">شماره تماس (ضروری)</span>
+            <span class="value">{{student.phone}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
