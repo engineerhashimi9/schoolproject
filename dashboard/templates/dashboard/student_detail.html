@@ -21,7 +21,7 @@
   <div class="card profile-card">
     <div class="profile-top">
       <div class="profile-info">
-        <div class="status-badge">فعال</div>
+         <td><span class="status-badge {{student.status.name|lower}}">{% if student.status.name == "active" %} فعال  {% else %} غیرفعال {% endif %}</span></td>
         <h2 class="student-name">{{student.name}} {{student.last_name}}</h2>
         <p class="student-class">{{student.studentclass.first}}</p>
       </div>

@@ -76,7 +76,7 @@
             <td>{{worker.id}}</td>
 
             <td>{{worker.degree}}</td>
-            <td><span class="status-badge active">فعال</span></td>
+             <td><span class="status-badge {{worker.status.name|lower}}">{% if worker.status.name == "active" %} فعال  {% else %} غیرفعال {% endif %}</span></td>
             <td>{{worker.phone}}</td>
             <td>
               <div class="action-icons">
@@ -88,6 +88,10 @@
                 </a>
                 <button class="btn-icon">
                   <i class="fa-solid fa-pen"></i>
+                </button>
+                
+                <button class="btn-icon">
+                  <i class="fa-solid fa-trash"></i>
                 </button>
               </div>
             </td>

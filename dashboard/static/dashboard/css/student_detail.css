@@ -24,16 +24,9 @@ html {
     scroll-behavior: smooth;
 }
 
-body {
-    background-color: var(--bg-main);
-    color: var(--text-dark);
-    line-height: 1.6;
-    padding: 20px;
-    min-height: 100vh;
-    overflow: visible;
-}
 
 .container {
+    padding: 30px;
     max-width: 1920px;
     max-height: calc(100vh - 80px);
     overflow-y: auto;

@@ -32,3 +32,7 @@ class TeacherListView(ListView):
     model = Teacher
     template_name = "dashboard/workers_list.html"
     context_object_name="workers"
+class TeacherDetailView(DetailView):
+    model = Teacher
+    template_name = "dashboard/worker_detail.html"
+    context_object_name="worker"
