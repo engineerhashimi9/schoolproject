@@ -18,3 +18,7 @@ def login_view(request):
             error="ایمیل یا رمز عبور اشتباه!"
             
     return render(request, "accounts/login.html",{"error":error})
+
+def custom_logout(request):
+    logout(request)
+    return redirect(reverse("accounts:login"))

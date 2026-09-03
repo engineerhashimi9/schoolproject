@@ -1,16 +1,5 @@
-// Get DOM elements
-
-const openBtn = document.getElementById("test");
-
-const modal = document.getElementById("msgBoxModal");
-
 const closeBtn = document.getElementById("closeBoxBtn");
-
-// Show the message box when clicking the trigger button
-openBtn.onclick = function () {
-  alert("buttone pressed");
-  modal.style.display = "flex";
-};
+const modal = document.getElementById("msgBoxModal");
 
 // Hide the message box when clicking the close button
 closeBtn.addEventListener("click", () => {
@@ -23,3 +12,11 @@ window.addEventListener("click", (event) => {
     modal.style.display = "none";
   }
 });
+function disevent(id) {
+  modal.innerHTML = `
+      <div class="message-content"><h3>اخطار</h3>
+      <p class="message">این دانش آموز غیر فعال شود؟</p>
+      <a href="http://localhost:8000/dashboard/student/${id}/disable" class="option-btn" >بله</a>
+      <button class="option-btn" id="closeBoxBtn">خیر</button></div>`;
+  modal.style.display = "flex";
+}

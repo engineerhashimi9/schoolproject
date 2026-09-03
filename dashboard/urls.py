@@ -9,6 +9,6 @@ urlpatterns = [
          name="student-detail"),
     path("worker/", views.TeacherListView.as_view(), name="worker-list"),
     path("worker/<int:pk>", views.TeacherDetailView.as_view(), name="worker-detail"),
-    path("logout", views.custom_logout, name="logout")
+    path("student/<int:id>/disable", views.delete_student, name="student-disable")
 
 ]

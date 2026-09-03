@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="fa" >
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ویرایش پرونده دانش‌آموز</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Vazirmatn", "IRANSans", "Segoe UI", Tahoma, sans-serif;
+        }
+
+        body {
+            background: #f4f6fa;
+            color: #333;
+            direction: rtl;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ---------- Header ---------- */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .header .right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111;
+        }
+
+        .header p {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 22px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: #2f6fed;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .btn-outline {
+            background: #fff;
+            color: #555;
+            border: 1px solid #d5dae3;
+        }
+
+        .header .left {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* ---------- Student summary card ---------- */
+        .summary {
+            background: #fff;
+            border: 1px solid #e6e9f0;
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .summary .info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .summary img {
+            width: 56px;
+            height: 56px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .summary .name {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .badge {
+            background: #ffe9d6;
+            color: #c46a1b;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-inline-start: 6px;
+        }
+
+        .summary .meta {
+            font-size: 12px;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .summary .meta .photo-link {
+            color: #2f6fed;
+            cursor: pointer;
+        }
+
+        .summary .cols {
+            display: flex;
+            gap: 28px;
+            font-size: 12px;
+            color: #777;
+        }
+
+        .summary .cols b {
+            display: block;
+            color: #333;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .status-ok {
+            color: #1a9c6b;
+            font-weight: 600;
+        }
+
+        /* ---------- Form grid ---------- */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e6e9f0;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .card h2 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card h2::before {
+            content: "";
+            width: 4px;
+            height: 16px;
+            background: #2f6fed;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .row.single {
+            grid-template-columns: 1fr;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        label .req {
+            color: #e5484d;
+        }
+
+        .hint {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid #d5dae3;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 13px;
+            background: #fff;
+            color: #333;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #2f6fed;
+            box-shadow: 0 0 0 3px rgba(47, 111, 237, .12);
+        }
+
+        input[disabled] {
+            background: #f2f4f8;
+            color: #888;
+        }
+
+        .ltr {
+            direction: ltr;
+            text-align: left;
+        }
+
+        /* radio group */
+        .radios {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .radios label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0;
+            font-size: 12px;
+            color: #444;
+            cursor: pointer;
+        }
+
+        .note {
+            font-size: 11px;
+            color: #999;
+            margin-top: 10px;
+        }
+
+        /* bottom bar */
+        .footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .footer .msg {
+            font-size: 12px;
+            color: #1a9c6b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        @media (max-width: 800px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <div class="header">
+            <div class="right">
+                <span style="font-size:20px;color:#666;cursor:pointer;">&larr;</span>
+                <div>
+                    <h1>ویرایش پرونده دانش‌آموز</h1>
+                    <p>فرم زیر را تکمیل کنید تا اطلاعات دانش‌آموز به‌روزرسانی شود</p>
+                </div>
+            </div>
+            <div class="left">
+                <button class="btn btn-outline">انصراف</button>
+                <button class="btn btn-primary">&#10003; ذخیره تغییرات</button>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary">
+            <div class="info">
+                <img src="https://i.pravatar.cc/100?img=12" alt="عکس دانش‌آموز">
+                <div>
+                    <div class="name">محمد رحیمی <span class="badge">فعال</span></div>
+                    <div class="meta">کلاس دهم - رشته ریاضی فیزیک <span class="photo-link">&#9998; بارگذاری عکس
+                            جدید</span></div>
+                    <div class="meta">حداکثر ۲ مگابایت (JPG, PNG)</div>
+                </div>
+            </div>
+            <div class="cols">
+                <div>شماره دانش‌آموزی<b class="ltr">STU-1402-8893</b></div>
+                <div>تاریخ ثبت‌نام<b class="ltr">1402/06/15</b></div>
+                <div>وضعیت تحصیلی<b class="status-ok">مشغول به تحصیل</b></div>
+            </div>
+        </div>
+
+        <div class="grid">
+
+            <!-- وضعیت پرونده و ثبت‌نام -->
+            <div class="card">
+                <h2>وضعیت پرونده و ثبت‌نام</h2>
+
+                <div class="row single">
+                    <div>
+                        <label>وضعیت تحصیلی <span class="req">*</span></label>
+                        <select>
+                            <option>فعال (مشغول به تحصیل)</option>
+                            <option>غیرفعال</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div>
+                        <label>تاریخ ثبت‌نام اولیه <span class="req">*</span></label>
+                        <input type="text" value="1402/06/15" class="ltr">
+                    </div>
+                    <div>
+                        <label>تاریخ فراغت / خروج (اختیاری)</label>
+                        <input type="text" placeholder="در حال تحصیل (ثبت نشده)" disabled>
+                        <div class="hint">در صورت خروج، تاریخ فراغت را وارد کنید</div>
+                    </div>
+                </div>
+
+                <div class="row single">
+                    <div>
+                        <label>پایه تحصیلی</label>
+                        <div class="radios">
+                            <label><input type="radio" name="paye" checked> دهم ریاضی (الف)</label>
+                            <label><input type="radio" name="paye"> دهم ریاضی (ب)</label>
+                            <label><input type="radio" name="paye"> دهم ریاضی (ج)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- اطلاعات هویتی و فردی -->
+            <div class="card">
+                <h2>اطلاعات هویتی و فردی</h2>
+                <div class="hint" style="margin:-8px 0 14px;">فیلدهای ستاره‌دار الزامی هستند</div>
+
+                <div class="row">
+                    <div>
+                        <label>کد دانش‌آموز (شماره یکتا) <span class="req">*</span></label>
+                        <input type="text" value="10482" class="ltr">
+                        <div class="hint">شماره سیستمی (غیرقابل تغییر)</div>
+                    </div>
+                    <div>
+                        <label>شماره شناسایی / تذکره / کد ملی <span class="req">*</span></label>
+                        <input type="text" class="ltr" placeholder="•44-1334567-7">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div>
+                        <label>نام دانش‌آموز <span class="req">*</span></label>
+                        <input type="text" value="محمد">
+                    </div>
+                    <div>
+                        <label>نام خانوادگی <span class="req">*</span></label>
+                        <input type="text" value="رحیمی">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div>
+                        <label>نام پدر <span class="req">*</span></label>
+                        <input type="text" value="علی">
+                    </div>
+                    <div>
+                        <label>نام پدرکلان <span class="req">*</span></label>
+                        <input type="text" value="حسین">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div>
+                        <label>تاریخ تولد (شمسی) <span class="req">*</span></label>
+                        <input type="text" value="1386/02/14" class="ltr">
+                    </div>
+                    <div>
+                        <label>تابعیت / ملیت <span class="req">*</span></label>
+                        <input type="text" value="افغانی">
+                    </div>
+                </div>
+
+                <div class="row single">
+                    <div>
+                        <label>شغل پدر</label>
+                        <input type="text" value="کارمند دولتی / خصوصی">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div>
+                        <label>شماره تماس ضروری (پدر / ولي) <span class="req">*</span></label>
+                        <input type="text" class="ltr" value="+93 44 456 7789">
+                    </div>
+                    <div>
+                        <label>زبان مادری <span class="req">*</span></label>
+                        <input type="text" value="فارسی (دری)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- محل سکونت فعلی -->
+            <div class="card">
+                <h2>محل سکونت فعلی</h2>
+
+                <div class="row">
+                    <div>
+                        <label>ولایت / استان فعلی <span class="req">*</span></label>
+                        <input type="text" value="تهران">
+                    </div>
+                    <div>
+                        <label>ولسوالی / شهرستان فعلی <span class="req">*</span></label>
+                        <input type="text" value="تهران مرکزی">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div>
+                        <label>ناحیه / منطقه شهرداری</label>
+                        <input type="text" value="2">
+                    </div>
+                    <div>
+                        <label>قریه / محله / کوچه</label>
+                        <input type="text" value="سعادت‌آباد، خیابان علامه">
+                    </div>
+                </div>
+            </div>
+
+            <!-- محل سکونت اصلی -->
+            <div class="card">
+                <h2>محل سکونت اصلی (زادگاه)</h2>
+
+                <div class="row">
+                    <div>
+                        <label>ولایت / استان اصلی <span class="req">*</span></label>
+                        <input type="text" value="اصفهان">
+                    </div>
+                    <div>
+                        <label>ولسوالی / شهرستان اصلی <span class="req">*</span></label>
+                        <input type="text" value="کاشان">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div>
+                        <label>ناحیه / حوزه اصلی</label>
+                        <input type="text" value="1">
+                    </div>
+                    <div>
+                        <label>قریه / روستا / محله اصلی</label>
+                        <input type="text" value="قمصر">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="actions">
+                <button class="btn btn-outline">انصراف / بازگشت</button>
+                <button class="btn btn-primary">&#10003; ذخیره تغییرات</button>
+            </div>
+            <div class="msg">&#10004; تمامی تغییرات پس از ذخیره، در سوابق تحصیلی دانش‌آموز خواهد شد.</div>
+        </div>
+
+    </div>
+</body>
+
+</html>

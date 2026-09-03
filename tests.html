@@ -1,33 +1,678 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ویرایش پرونده دانش‌آموز</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --bg-main: #f4f6f8;
+            --bg-card: #ffffff;
+            --primary-blue: #0066cc;
+            --primary-blue-light: #eef6ff;
+            --text-dark: #333333;
+            --text-light: #777777;
+            --border-color: #e2e8f0;
+            --green: #28a745;
+            --font: 'Vazirmatn', sans-serif;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            padding: 30px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .text-blue {
+            color: var(--primary-blue);
+            margin-left: 8px;
+        }
+
+        .text-green {
+            color: var(--green);
+        }
+
+        /* --- Header --- */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .header-titles h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-titles p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0052a3;
+        }
+
+        .btn-secondary {
+            background-color: #fff;
+            color: var(--text-dark);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #f1f5f9;
+        }
+
+        /* --- Cards --- */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .card-header h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .header-note {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* --- Top Banner --- */
+        .profile-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .banner-info {
+            display: flex;
+            gap: 30px;
+        }
+
+        .info-box {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-box .label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .info-box .value {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .banner-profile {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .profile-text {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .badge-active {
+            background: #fff8e1;
+            color: #a1887f;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .profile-text h2 {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+
+        .profile-text p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .profile-image-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .profile-image-wrapper img {
+            width: 110px;
+            height: 110px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 3px solid #f8fafc;
+            box-shadow: var(--shadow);
+        }
+
+        .image-actions {
+            text-align: center;
+        }
+
+        .btn-upload {
+            background: transparent;
+            border: none;
+            color: var(--primary-blue);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .file-hint {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            display: block;
+            margin-top: 4px;
+        }
+
+        /* --- Grid Layout --- */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            /* Main content is wider */
+            gap: 20px;
+            align-items: start;
+        }
+
+        .side-col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Forms --- */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .label-req::after {
+            content: " *";
+            color: var(--primary-blue);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            background: #fff;
+            color: var(--text-dark);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .form-control:disabled {
+            background-color: #f8f9fa;
+            color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        /* Input with icon */
+        .input-icon-wrapper {
+            position: relative;
+        }
+
+        .input-icon-wrapper input {
+            padding-left: 35px;
+            /* Space for icon */
+        }
+
+        .input-icon-wrapper i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        /* Text helper */
+        .help-text {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        /* Box info in sidebar */
+        .box-info {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .box-info .label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .box-info .value {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        /* --- Footer --- */
+        .footer-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+        }
+
+        .footer-note {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 992px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-banner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .page-header {
+                flex-direction: column-reverse;
+                gap: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+
+            .banner-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .banner-profile {
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+                width: 100%;
+            }
+
+            .footer-actions {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <button id="showDialog">Open Dialog</button>
 
-    <dialog id="myDialog">
-        <p>This is a modern native dialog box.</p>
-        <button id="closeDialog">Close</button>
-    </dialog>
+    <div class="container">
 
-    <script>
-        const dialog = document.getElementById('myDialog');
+        <!-- Page Header -->
+        <header class="page-header">
+            <div class="header-actions">
+                <button class="btn btn-primary"><i class="fa-solid fa-check"></i> ذخیره تغییرات</button>
+                <button class="btn btn-secondary">انصراف</button>
+            </div>
+            <div class="header-titles">
+                <h1>ویرایش پرونده دانش‌آموز <i class="fa-solid fa-arrow-left"></i></h1>
+                <p>فرم ویرایش و مشاهده اطلاعات هویتی، آدرس و وضعیت تحصیلی</p>
+            </div>
+        </header>
 
-        // Open as a modal message box
-        document.getElementById('showDialog').addEventListener('click', () => {
-            dialog.showModal();
-        });
+        <!-- Top Profile Banner -->
+        <div class="card profile-banner">
+            <div class="banner-info">
+                <div class="info-box">
+                    <span class="label">وضعیت تحصیلی</span>
+                    <span class="value text-green">مشغول به تحصیل</span>
+                </div>
+                <div class="info-box">
+                    <span class="label">تاریخ ثبت‌نام</span>
+                    <span class="value">۱۴۰۲/۰۶/۱۵</span>
+                </div>
+                <div class="info-box">
+                    <span class="label">شماره پرونده</span>
+                    <span class="value">STU-1402-8893</span>
+                </div>
+            </div>
 
-        // Close the message box
-        document.getElementById('closeDialog').addEventListener('click', () => {
-            dialog.close();
-        });
-    </script>
+            <div class="banner-profile">
+                <div class="profile-text">
+                    <div class="badge-active">فعال</div>
+                    <h2>محمد رضایی</h2>
+                    <p>کلاس دهم – رشته ریاضی فیزیک</p>
+                </div>
+
+                <div class="profile-image-wrapper">
+                    <img src="https://i.pravatar.cc/150?img=11" alt="Profile Photo">
+                    <div class="image-actions">
+                        <button class="btn-upload"><i class="fa-solid fa-camera"></i> بارگذاری عکس جدید</button>
+                        <span class="file-hint">حداکثر ۲ مگابایت (JPG, PNG)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Grid Layout -->
+        <div class="content-grid">
+
+            <!-- Right Column (Main Content) -->
+            <div class="main-col">
+
+                <!-- Identity Info Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-user text-blue"></i> اطلاعات هویتی و فردی</h3>
+                        <span class="header-note">فیلدهای ستاره‌دار الزامی هستند</span>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="label-req">شماره دانش‌آموز (شناسه یکتا)</label>
+                            <input type="text" class="form-control" value="10482" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-req">شماره شناسایی / تذکره / کد ملی</label>
+                            <input type="text" class="form-control" value="044-123456-7">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-req">نام دانش‌آموز</label>
+                            <input type="text" class="form-control" value="محمد">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-req">نام خانوادگی</label>
+                            <input type="text" class="form-control" value="رضایی">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-req">نام پدر</label>
+                            <input type="text" class="form-control" value="علی">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-req">نام پدربزرگ / جد</label>
+                            <input type="text" class="form-control" value="حسین">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-req">تاریخ تولد (شمسی)</label>
+                            <div class="input-icon-wrapper">
+                                <input type="text" class="form-control" value="۱۳۸۵/۰۴/۱۴">
+                                <i class="fa-regular fa-calendar"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-req">تابعیت / ملیت</label>
+                            <input type="text" class="form-control" value="ایرانی">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-req">زبان مادری (دری)</label>
+                            <input type="text" class="form-control" value="فارسی (دری)">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-req">شغل پدر</label>
+                            <input type="text" class="form-control" value="کارمند دولتی / خصوصی">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label class="label-req">شماره تماس ضروری (پدر / ولی)</label>
+                            <div class="input-icon-wrapper">
+                                <input type="text" class="form-control" value="۰۹۱۲ ۳۴۵ ۶۷۸۹">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Residence Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-location-dot text-blue"></i> محل سکونت فعلی</h3>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="label-req">ولایت / استان فعلی</label>
+                            <input type="text" class="form-control" value="تهران">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-req">ولسوالی / شهرستان فعلی</label>
+                            <input type="text" class="form-control" value="تهران مرکزی">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-req">ناحیه / منطقه شهرداری</label>
+                            <input type="text" class="form-control" value="۲">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-req">قریه / محله / کوچه</label>
+                            <input type="text" class="form-control" value="سعادت‌آباد، خیابان عالمه">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Residence Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-house text-blue"></i> محل سکونت اصلی (زادگاه)</h3>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="label-req">ولایت / استان اصلی</label>
+                            <input type="text" class="form-control" value="اصفهان">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-req">ولسوالی / شهرستان اصلی</label>
+                            <input type="text" class="form-control" value="کاشان">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-req">ناحیه / حوزه اصلی</label>
+                            <input type="text" class="form-control" value="۱">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-req">قریه / روستا / محله اصلی</label>
+                            <input type="text" class="form-control" value="قمصر">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Left Column (Sidebar) -->
+            <div class="side-col">
+
+                <!-- Enrollment Status Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-id-card text-blue"></i> وضعیت پرونده و ثبت‌نام</h3>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label-req">وضعیت تحصیلی</label>
+                        <select class="form-control">
+                            <option>فعال (مشغول به تحصیل)</option>
+                            <option>تعلیق</option>
+                            <option>فارغ التحصیل</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label-req">تاریخ ثبت‌نام اولیه</label>
+                        <div class="input-icon-wrapper">
+                            <input type="text" class="form-control" value="۱۴۰۲/۰۶/۱۵">
+                            <i class="fa-regular fa-calendar"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label-req">تاریخ فراغت / خروج (اختیاری)</label>
+                        <div class="input-icon-wrapper">
+                            <input type="text" class="form-control" value="در حال تحصیل (ثبت نشده)">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                        </div>
+                        <p class="help-text">تنها در صورت فراغت یا انصراف پر شود.</p>
+                    </div>
+
+                    <div class="box-info">
+                        <div>
+                            <span class="label">پایه و رشته:</span>
+                            <span class="value">دهم ریاضی (الف)</span>
+                        </div>
+                        <div>
+                            <span class="label">استاد راهنما:</span>
+                            <span class="value">استاد رضایی</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer Actions -->
+        <footer class="footer-actions">
+            <div class="buttons">
+                <button class="btn btn-primary"><i class="fa-solid fa-check"></i> ذخیره تغییرات</button>
+                <button class="btn btn-secondary">انصراف و بازگشت</button>
+            </div>
+            <p class="footer-note"><i class="fa-solid fa-circle-check text-green"></i> تمامی تغییرات پس از ذخیره‌سازی
+                فوراً در سوابق تحصیلی اعمال خواهند شد.</p>
+        </footer>
+
+    </div>
+
 </body>
 
 </html>
