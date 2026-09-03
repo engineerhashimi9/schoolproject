@@ -13,6 +13,40 @@
     --font: 'Vazirmatn', sans-serif;
 }
 
+/* Dark backdrop that covers the whole screen */
+.message-box {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+/* The actual white alert box */
+.message-box .message-content {
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 400px;
+    width: 80%;
+}
+
+/* Style the button inside the box */
+/* #closeBoxBtn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+} */
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -141,14 +175,26 @@ html {
 .profile-top {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: left;
     border-bottom: 1px solid #f0f0f0;
     padding-bottom: 20px;
     margin-bottom: 20px;
+
+}
+
+.profile-photo img {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 3px solid #f8fafc;
+    box-shadow: var(--shadow);
 }
 
 .profile-info {
     display: flex;
+    margin-right: 20px;
+    flex: auto;
     flex-direction: column;
     gap: 8px;
 }
@@ -165,24 +211,17 @@ html {
 }
 
 .student-name {
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: 3rem;
+    font-weight: 800;
     color: var(--text-dark);
 }
 
 .student-class {
     color: var(--text-light);
-    font-size: 1rem;
+    font-size: 1.2rem;
 }
 
-.profile-photo img {
-    width: 120px;
-    height: 120px;
-    border-radius: 12px;
-    object-fit: cover;
-    border: 3px solid #f8fafc;
-    box-shadow: var(--shadow);
-}
+
 
 /* Details Row */
 .profile-details {
@@ -233,12 +272,21 @@ html {
 /* --- Bottom Split Grid --- */
 .content-grid {
     display: grid;
-    grid-template-columns: 350px 1fr;
+    grid-template-columns: 800px 1fr;
+    gap: 20px;
+
+}
+
+.right-col {
+    display: flex;
+    flex: 3;
+    flex-direction: column;
     gap: 20px;
 }
 
 .left-col {
     display: flex;
+    flex: 1;
     flex-direction: column;
     gap: 20px;
 }
@@ -330,12 +378,12 @@ html {
     .page-header {
         flex-direction: column-reverse;
         gap: 15px;
-        align-items: flex-start;
+        align-items: right;
     }
 
     .profile-top {
         flex-direction: column-reverse;
-        align-items: flex-start;
+        align-items: right;
     }
 
     .profile-photo {
@@ -355,4 +403,7 @@ html {
     .content-grid {
         grid-template-columns: 1fr;
     }
+}
+.test {
+    color: red;
 }

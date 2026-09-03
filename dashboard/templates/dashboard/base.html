@@ -96,9 +96,9 @@
               ><i class="fa-regular fa-circle-question"></i
             ></a>
           </div>
-          <button class="btn-logout">
+          <a href="{% url 'dashboard:logout' %}" class="btn-logout">
             خروج <i class="fa-solid fa-arrow-right-from-bracket"></i>
-          </button>
+        </a>
         </header>
 
         {% block content %} {% endblock content %}

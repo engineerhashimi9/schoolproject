@@ -1,5 +1,41 @@
 {% extends 'dashboard/base.html' %} {% load static %} {% block style %}
 <link rel="stylesheet" href="{% static 'dashboard/css/student.css' %}" />
+
+<style>
+  /* Dark backdrop that covers the whole screen */
+.message-box {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+  justify-content: center;
+  align-items: center;
+}
+
+/* The actual white alert box */
+.message-content {
+  background-color: #ffffff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  max-width: 400px;
+  width: 80%;
+}
+
+/* Style the button inside the box */
+#closeBoxBtn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+</style>
 {% endblock style %} {% block content %}
 <main class="main-content">
   <!-- Page Content Container -->
@@ -9,10 +45,10 @@
       <h2>لیست دانش‌آموزان</h2>
       <p>مدیریت و مشاهده اطلاعات تمامی دانش‌آموزان ثبت‌نام شده.</p>
       <div class="page-actions">
-        <button class="btn-exit">
+        <button class="btn-exit" id="deleteBtn">
           <i class="fa-solid fa-sign-out-alt"></i> خروجی اکسل
         </button>
-        <button class="btn-primary">
+        <button class="btn-primary" id="test">
           <i class="fa-solid fa-plus"></i> افزودن دانش‌آموز جدید
         </button>
       </div>
@@ -56,7 +92,7 @@
           <!-- Row 1 -->
 
           {% for student in students %}
-          <tr>
+          <tr id="student-{{ student.id }}">
             <td>
               <div class="student-cell">
                 <img
@@ -76,7 +112,12 @@
             <td>{{student.id}}</td>
 
             <td>{{student.studentclass.first}}</td>
-            <td><span class="status-badge {{student.status.name|lower}}">{% if student.status.name == "active" %} فعال  {% else %} غیرفعال {% endif %}</span></td>
+            <td>
+              <span class="status-badge {{student.status.name|lower}}"
+                >{% if student.status.name == "active" %} فعال {% else %}
+                غیرفعال {% endif %}</span
+              >
+            </td>
             <td>{{student.phone}}</td>
             <td>
               <div class="action-icons">
@@ -89,7 +130,7 @@
                 <button class="btn-icon">
                   <i class="fa-solid fa-pen"></i>
                 </button>
-                  <button class="btn-icon">
+                <button class="btn-icon">
                   <i class="fa-solid fa-trash"></i>
                 </button>
               </div>
@@ -119,5 +160,14 @@
       <span class="showing-text">نمایش ۱ تا ۱۰ از ۲۵۶ دانش‌آموز</span>
     </div>
   </div>
+  <div id="msgBoxModal" class="message-box">
+  <!-- The actual message window -->
+  <div class="message-content">
+    <h3>Notification</h3>
+    <p>This is a completely custom JavaScript message box!</p>
+    <button id="closeBoxBtn">Close</button>
+  </div>
+</div>
 </main>
+
 {% endblock content %}

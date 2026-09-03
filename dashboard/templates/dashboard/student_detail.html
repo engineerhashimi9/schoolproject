@@ -19,15 +19,17 @@
 
   <!-- Top Student Card -->
   <div class="card profile-card">
+    
     <div class="profile-top">
+      <div class="profile-photo">
+        <img src="https://i.pravatar.cc/150?img=11" alt="Student Photo" />
+      </div>
       <div class="profile-info">
          <td><span class="status-badge {{student.status.name|lower}}">{% if student.status.name == "active" %} فعال  {% else %} غیرفعال {% endif %}</span></td>
         <h2 class="student-name">{{student.name}} {{student.last_name}}</h2>
         <p class="student-class">{{student.studentclass.first}}</p>
       </div>
-      <div class="profile-photo">
-        <img src="https://i.pravatar.cc/150?img=11" alt="Student Photo" />
-      </div>
+      
     </div>
 
     <div class="profile-details">
@@ -60,51 +62,11 @@
   <!-- Bottom Split Grid -->
   <div class="content-grid">
     <!-- Left Column (Current & Main Residence) -->
-    <div class="left-col">
-      <!-- Current Residence -->
-      <div class="card section-card">
-        <div class="section-header">
-          <h3>محل سکونت فعلی</h3>
-          <i class="fa-solid fa-location-dot text-blue"></i>
-        </div>
-        <div class="info-list">
-          <div class="info-row">
-            <span class="label">ولایت </span>
-            <span class="value">{{student.now_province}}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">ولسوالی</span>
-            <span class="value">{{student.now_district}}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">ناحیه/قریه</span>
-            <span class="value">{{student.now_zone}}-{{student.now_village}}</span>
-          </div>
-        </div>
-      </div>
 
-      <!-- Main Residence (Birthplace) -->
-      <div class="card section-card">
-        <div class="section-header">
-          <h3>محل سکونت اصلی (زادگاه)</h3>
-          <i class="fa-solid fa-house text-blue"></i>
-        </div>
-        <div class="info-list">
-          <div class="info-row">
-            <span class="label">ولایت</span>
-            <span class="value">{{student.original_province}}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">ولسوالی</span>
-            <span class="value">{{student.original_district}}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">قریه / منطقه</span>
-            <span class="value">{{student.original_zone}}-{{student.original_village}}</span>
-          </div>
-        </div>
-      </div>
-    </div>
+
+
+
+
 
     <!-- Right Column (Identity Information) -->
     <div class="right-col">
@@ -154,7 +116,54 @@
         </div>
       </div>
     </div>
+        
+    <div class="left-col">
+      <!-- Current Residence -->
+      <div class="card section-card">
+        <div class="section-header">
+          <h3>محل سکونت فعلی</h3>
+          <i class="fa-solid fa-location-dot text-blue"></i>
+        </div>
+        <div class="info-list">
+          <div class="info-row">
+            <span class="label">ولایت </span>
+            <span class="value">{{student.now_province}}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">ولسوالی</span>
+            <span class="value">{{student.now_district}}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">ناحیه/قریه</span>
+            <span class="value">{{student.now_zone}}-{{student.now_village}}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Residence (Birthplace) -->
+      <div class="card section-card">
+        <div class="section-header">
+          <h3>محل سکونت اصلی (زادگاه)</h3>
+          <i class="fa-solid fa-house text-blue"></i>
+        </div>
+        <div class="info-list">
+          <div class="info-row">
+            <span class="label">ولایت</span>
+            <span class="value">{{student.original_province}}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">ولسوالی</span>
+            <span class="value">{{student.original_district}}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">قریه / منطقه</span>
+            <span class="value">{{student.original_zone}}-{{student.original_village}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+  
 </div>
 
 {% endblock content %}
