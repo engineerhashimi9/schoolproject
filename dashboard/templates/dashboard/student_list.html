@@ -132,9 +132,12 @@
                 >
                   <i class="fa-regular fa-eye"></i>
                 </a>
-                <button class="btn-icon">
+                <a
+                  href="{% url 'dashboard:student-edite' id=student.id %}"
+                  class="btn-icon"
+                >
                   <i class="fa-solid fa-pen"></i>
-                </button>
+                </a>
                 <button
                   class="btn-icon"
                   id="disable"
@@ -171,7 +174,6 @@
   </div>
   <div id="msgBoxModal" class="message-box">
     <!-- The actual message window -->
-    
   </div>
 </main>
 

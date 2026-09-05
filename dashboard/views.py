@@ -25,7 +25,7 @@ def dashboard_view(request):
 
 
 @is_admin
-def delete_student(request, id) :
+def delete_student(request, id):
     target = get_object_or_404(Student, id=id)
     print(target.status)
     target.status_id = 2
@@ -33,6 +33,15 @@ def delete_student(request, id) :
     print(target.status)
 
     return redirect(reverse("dashboard:student-list"))
+
+
+@is_admin
+def edite_student(request, id):
+    if request.method == "POST":
+        pass
+    else:
+        student = get_object_or_404(Student, id=id)
+        return render(request, "dashboard/student_edite.html", {"student": student})
 
 
 class StudentListView(ListView, LoginRequiredMixin):
