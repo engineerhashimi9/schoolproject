@@ -2,231 +2,342 @@
 <link rel="stylesheet" href="{% static 'dashboard/css/student_edite.css' %}" />
 
 {% endblock style %} {% block content %}
+
 <div class="container">
-  <!-- Header -->
-  <div class="header">
-    <div class="right">
-      <span style="font-size: 20px; color: #666; cursor: pointer">&larr;</span>
-      <div>
-        <h1>ویرایش پرونده دانش‌آموز</h1>
-        <p>فرم زیر را تکمیل کنید تا اطلاعات دانش‌آموز به‌روزرسانی شود</p>
+  <form action="{% url 'dashboard:student-edite' student.id %}" method="post">
+    {% csrf_token %}
+    <!-- Header -->
+    <div class="header">
+      <div class="right">
+        <span style="font-size: 20px; color: #666; cursor: pointer"
+          >&larr;</span
+        >
+        <div>
+          <h1>ویرایش پرونده دانش‌آموز</h1>
+          <p>فرم زیر را تکمیل کنید تا اطلاعات دانش‌آموز به‌روزرسانی شود</p>
+        </div>
+      </div>
+      <div class="left">
+        <a class="btn btn-outline" href="{% url 'dashboard:student-list' %}">
+          انصراف
+        </a>
+        <input type="submit" value="&#10003; ذخیره تغییرات" class="btn btn-primary" />
       </div>
     </div>
-    <div class="left">
-      <button class="btn btn-outline">انصراف</button>
-      <button class="btn btn-primary">&#10003; ذخیره تغییرات</button>
-    </div>
-  </div>
 
-  <!-- Summary -->
-  <div class="summary">
-    <div class="info">
-      <img src="https://i.pravatar.cc/100?img=12" alt="عکس دانش‌آموز" />
-      <div>
-        <div class="name">
-          {{student.name}}<span
-            class="status-badge {{student.status.name|lower}}"
-            >{% if student.status.name == "active" %} فعال {% else %} غیرفعال {%
-            endif %}</span
-          >
-        </div>
-        <div class="meta">
-          {{student.studentclass.first}}
-          <span class="photo-link">&#9998; بارگذاری عکس جدید</span>
-        </div>
-        <div class="meta">حداکثر ۲ مگابایت (JPG, PNG)</div>
-      </div>
-    </div>
-    <div class="cols">
-      <div>شماره دانش‌آموزی<b class="ltr">{{student.id}}</b></div>
-      <div>تاریخ ثبت‌نام<b class="ltr">{{student.registered_date}}</b></div>
-      <div>
-        وضعیت تحصیلی
-        <b class="status-ok">
-          {% if student.status.name == "active" %} مشغول به تحصیل {% else %}
-          غیرفعال {% endif %}
-        </b>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid">
-    <!-- اطلاعات هویتی و فردی -->
-    <div class="card">
-      <h2>اطلاعات هویتی و فردی</h2>
-      <div class="hint" style="margin: -8px 0 14px">
-        فیلدهای ستاره‌دار الزامی هستند
-      </div>
-
-      <div class="row">
+    <!-- Summary -->
+    <div class="summary">
+      <div class="info">
+        <img src="https://i.pravatar.cc/100?img=12" alt="عکس دانش‌آموز" />
         <div>
-          <label>کد دانش‌آموز (شماره یکتا) <span class="req">*</span></label>
-          <input type="text" value="{{student.id}}" class="ltr" />
-          <div class="hint">شماره سیستمی (غیرقابل تغییر)</div>
-        </div>
-        <div>
-          <label
-        > تذکره نمبر <span class="req">*</span></label
-          >
-          <input type="text" class="ltr" value="{{student.card_id}}" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label>نام دانش‌آموز <span class="req">*</span></label>
-          <input type="text" value="{{student.name}}" />
-        </div>
-        <div>
-          <label>نام خانوادگی <span class="req">*</span></label>
-          <input type="text" value="{{student.last_name}}" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label>نام پدر <span class="req">*</span></label>
-          <input type="text" value="{{student.fname}}" />
-        </div>
-        <div>
-          <label>نام پدرکلان <span class="req">*</span></label>
-          <input type="text" value="{{student.gfname}}" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label>تاریخ تولد (شمسی) <span class="req">*</span></label>
-          <input type="text" value="{{student.birth_date}}" class="ltr" />
-        </div>
-        <div>
-          <label>تابعیت / ملیت <span class="req">*</span></label>
-          <input type="text" value="{{student.nationality}}" />
-        </div>
-      </div>
-
-      <div class="row single">
-        <div>
-          <label>شغل پدر</label>
-          <input type="text" value="{{student.father_job}}" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label>شماره تماس ضروری (پدر / ولي) <span class="req">*</span></label>
-          <input type="text" class="ltr" value="{{student.phone}}" />
-        </div>
-        <div>
-          <label>زبان مادری <span class="req">*</span></label>
-          <input type="text" value="{{student.mother_language}}" />
-        </div>
-      </div>
-    </div>
-    <!-- وضعیت پرونده و ثبت‌نام -->
-    <div class="card">
-      <h2>وضعیت پرونده و ثبت‌نام</h2>
-
-      <div class="row single">
-        <div>
-          <label>وضعیت تحصیلی <span class="req">*</span></label>
-          <select>
-            <option {% if student.status.name == "active" %}selected{% endif %}>فعال (مشغول به تحصیل)</option>
-            <option {% if student.status.name == "inactive" %}selected{% endif %}>غیرفعال</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label>تاریخ ثبت‌نام اولیه <span class="req">*</span></label>
-          <input type="text" value="{{student.registered_date}}" class="ltr" />
-        </div>
-        <div>
-          <label>تاریخ فراغت / خروج (اختیاری)</label>
-          <input type="text" value="{{student.graduation_date}}" placeholder="در حال تحصیل (ثبت نشده)" disabled />
-          <div class="hint">در صورت خروج، تاریخ فراغت را وارد کنید</div>
-        </div>
-      </div>
-
-      <div class="row single">
-        <div>
-          <label>پایه تحصیلی</label>
-          <div class="radios">
-            <label
-              ><input type="radio" name="paye" {% if student.grade == "a" %}checked{% endif %} /> دهم ریاضی (الف)</label
+          <div class="name">
+            {{student.name}}<span
+              class="status-badge {{student.status.name|lower}}"
+              >{% if student.status.name == "active" %} فعال {% else %} غیرفعال
+              {% endif %}</span
             >
-            <label><input type="radio" name="paye" {% if student.grade == "b" %}checked{% endif %} /> دهم ریاضی (ب)</label>
-            <label><input type="radio" name="paye" {% if student.grade == "c" %}checked{% endif %} /> دهم ریاضی (ج)</label>
+          </div>
+          <div class="meta">
+            {{student.studentclass.first}}
+            <span class="photo-link">&#9998; بارگذاری عکس جدید</span>
+          </div>
+          <div class="meta">حداکثر ۲ مگابایت (JPG, PNG)</div>
+        </div>
+      </div>
+      <div class="cols">
+        <div>شماره دانش‌آموزی<b class="ltr">{{student.id}}</b></div>
+        <div>تاریخ ثبت‌نام<b class="ltr">{{student.registered_date}}</b></div>
+        <div>
+          وضعیت تحصیلی
+          <b class="status-ok">
+            {% if student.status.name == "active" %} مشغول به تحصیل {% else %}
+            غیرفعال {% endif %}
+          </b>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- اطلاعات هویتی و فردی -->
+      <div class="card">
+        <h2>اطلاعات هویتی و فردی</h2>
+        <div class="hint" style="margin: -8px 0 14px">
+          فیلدهای ستاره‌دار الزامی هستند
+        </div>
+
+        <div class="row">
+          <div>
+            <label>کد دانش‌آموز (شماره یکتا) <span class="req">*</span></label>
+            <input type="text" name="id" value="{{student.id}}" class="ltr" />
+            <div class="hint">شماره سیستمی (غیرقابل تغییر)</div>
+          </div>
+          <div>
+            <label> تذکره نمبر <span class="req">*</span></label>
+            <input
+              type="text"
+              name="card_id"
+              class="ltr"
+              value="{{student.card_id}}"
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>نام دانش‌آموز <span class="req">*</span></label>
+            <input type="text" name="name" value="{{student.name}}" />
+          </div>
+          <div>
+            <label>نام خانوادگی <span class="req">*</span></label>
+            <input type="text"  value="{{student.last_name}}" disabled />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>نام پدر <span class="req">*</span></label>
+            <input type="text" name="fname" value="{{student.fname}}" />
+          </div>
+          <div>
+            <label>نام پدرکلان <span class="req">*</span></label>
+            <input type="text" name="gfname" value="{{student.gfname}}" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>تاریخ تولد (شمسی) <span class="req">*</span></label>
+            <input
+              type="text"
+              name="birth_date"
+              value="{{student.birth_date|date:'Y/m/d'}}"
+              class="ltr"
+            />
+          </div>
+          <div>
+            <label>تابعیت / ملیت <span class="req">*</span></label>
+            <input
+              type="text"
+              name="nationality"
+              value="{{student.nationality}}"
+            />
+          </div>
+        </div>
+
+        <div class="row single">
+          <div>
+            <label>شغل پدر</label>
+            <input
+              type="text"
+              name="father_job"
+              value="{{student.father_job}}"
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label
+              >شماره تماس ضروری (پدر / ولي) <span class="req">*</span></label
+            >
+            <input
+              type="text"
+              name="phone"
+              class="ltr"
+              value="{{student.phone}}"
+            />
+          </div>
+          <div>
+            <label>زبان مادری <span class="req">*</span></label>
+            <input
+              type="text"
+              name="mother_language"
+              value="{{student.mother_language}}"
+            />
+          </div>
+        </div>
+      </div>
+      <!-- وضعیت پرونده و ثبت‌نام -->
+      <div class="card">
+        <h2>وضعیت پرونده و ثبت‌نام</h2>
+
+        <div class="row single">
+          <div>
+            <label>وضعیت تحصیلی <span class="req">*</span></label>
+            <select name="status">
+              <option
+                value="active"
+                {%
+                if
+                student.status.name=="active"
+                %}selected{%
+                endif
+                %}
+              >
+                فعال (مشغول به تحصیل)
+              </option>
+
+              <option
+                value="inactive"
+                {%
+                if
+                student.status.name=="inactive"
+                %}selected{%
+                endif
+                %}
+              >
+                غیرفعال
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>تاریخ ثبت‌نام اولیه <span class="req">*</span></label>
+            <input
+              type="text"
+              name="registered_date"
+              value="{{student.registered_date|date:'Y/m/d'}}"
+              class="ltr"
+            />
+          </div>
+          <div>
+            <label>تاریخ فراغت / خروج (اختیاری)</label>
+            <input
+              type="text"
+              name="detached_date"
+              value="{{student.detached_date|date:'Y/m/d'}}"
+              placeholder="در حال تحصیل (ثبت نشده)"
+              disabled
+            />
+            <div class="hint">در صورت خروج، تاریخ فراغت را وارد کنید</div>
+          </div>
+        </div>
+
+        <div class="row single">
+          <div>
+            <label>صنف</label>
+        
+            <select name="status">
+              
+              {% for class in classes %}
+                  <option
+                value="{{class}}"
+                {%
+                if
+                student.studentclass.first==class
+                %}selected{%
+                endif
+                %}
+              >
+                {{class}}
+              </option>
+              {% endfor %}
+                
+            
+
+              
+            </select>
+
+          </div>
+        </div>
+      </div>
+      <!-- محل سکونت فعلی -->
+      <div class="card">
+        <h2>محل سکونت فعلی</h2>
+
+        <div class="row">
+          <div>
+            <label>ولایت <span class="req">*</span></label>
+            <input
+              type="text"
+              name="now_province"
+              value="{{student.now_province}}"
+            />
+          </div>
+          <div>
+            <label>ولسوالی <span class="req">*</span></label>
+            <input
+              type="text"
+              name="now_district"
+              value="{{student.now_district}}"
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>ناحیه / منطقه شهرداری</label>
+            <input type="text" name="now_zone" value="{{student.now_zone}}" />
+          </div>
+          <div>
+            <label>قریه </label>
+            <input
+              type="text"
+              name="now_village"
+              value="{{student.now_village}}"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- محل سکونت اصلی -->
+      <div class="card">
+        <h2>محل سکونت اصلی (زادگاه)</h2>
+
+        <div class="row">
+          <div>
+            <label>ولایت <span class="req">*</span></label>
+            <input
+              type="text"
+              name="original_province"
+              value="{{student.original_province}}"
+            />
+          </div>
+          <div>
+            <label>ولسوالی <span class="req">*</span></label>
+            <input
+              type="text"
+              name="original_district"
+              value="{{student.original_district}}"
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>ناحیه </label>
+            <input
+              type="text"
+              name="original_zone"
+              value="{{student.original_zone}}"
+            />
+          </div>
+          <div>
+            <label>قریه </label>
+            <input
+              type="text"
+              name="original_village"
+              value="{{student.original_village}}"
+            />
           </div>
         </div>
       </div>
     </div>
-    <!-- محل سکونت فعلی -->
-    <div class="card">
-      <h2>محل سکونت فعلی</h2>
 
-      <div class="row">
-        <div>
-          <label>ولایت  <span class="req">*</span></label>
-          <input type="text" value="{{student.current_province}}" />
-        </div>
-        <div>
-          <label>ولسوالی / شهرستان فعلی <span class="req">*</span></label>
-          <input type="text" value="{{student.current_district}}" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label>ناحیه / منطقه شهرداری</label>
-          <input type="text" value="{{student.current_area}}" />
-        </div>
-        <div>
-          <label>قریه / محله / کوچه</label>
-          <input type="text" value="{{student.current_street}}" />
-        </div>
-      </div>
-    </div>
-
-    <!-- محل سکونت اصلی -->
-    <div class="card">
-      <h2>محل سکونت اصلی (زادگاه)</h2>
-
-      <div class="row">
-        <div>
-          <label>ولایت / استان اصلی <span class="req">*</span></label>
-          <input type="text" value="{{student.permanent_province}}" />
-        </div>
-        <div>
-          <label>ولسوالی / شهرستان اصلی <span class="req">*</span></label>
-          <input type="text" value="{{student.permanent_district}}" />
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label>ناحیه / حوزه اصلی</label>
-          <input type="text" value="{{student.permanent_area}}" />
-        </div>
-        <div>
-          <label>قریه / روستا / محله اصلی</label>
-          <input type="text" value="{{student.permanent_street}}" />
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- Footer -->
   <div class="footer">
     <div class="actions">
-      <button class="btn btn-outline">انصراف / بازگشت</button>
-      <button class="btn btn-primary">&#10003; ذخیره تغییرات</button>
+      <button href="{% url 'dashboard:student-list' %}" class="btn btn-outline">انصراف / بازگشت</button>
+      <input type="submit" value="&#10003; ذخیره تغییرات" class="btn btn-primary" />
     </div>
     <div class="msg">
       &#10004; تمامی تغییرات پس از ذخیره، در سوابق تحصیلی دانش‌آموز خواهد شد.
     </div>
   </div>
+    </form>
 </div>
 
 {% endblock content %}

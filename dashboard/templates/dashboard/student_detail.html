@@ -8,9 +8,9 @@
       پرونده دانش‌آموز <i class="fa-solid fa-arrow-left"></i>
     </h1>
     <div class="header-actions">
-      <button class="btn btn-primary">
+      <a href="{% url 'dashboard:student-edite' student.id %}" class="btn btn-primary">
         <i class="fa-solid fa-pen"></i> ویرایش پرونده
-      </button>
+      </a>
       <button class="btn btn-secondary">
         <i class="fa-solid fa-print"></i> چاپ سوابق
       </button>
@@ -19,17 +19,21 @@
 
   <!-- Top Student Card -->
   <div class="card profile-card">
-    
     <div class="profile-top">
       <div class="profile-photo">
         <img src="https://i.pravatar.cc/150?img=11" alt="Student Photo" />
       </div>
       <div class="profile-info">
-         <td><span class="status-badge {{student.status.name|lower}}">{% if student.status.name == "active" %} فعال  {% else %} غیرفعال {% endif %}</span></td>
+        <td>
+          <span class="status-badge {{student.status.name|lower}}"
+            >{% if student.status.name == "active" %} فعال {% else %} غیرفعال 
+            {% comment %}  {% endcomment %}
+            {%endif %}</span
+          >
+        </td>
         <h2 class="student-name">{{student.name}} {{student.last_name}}</h2>
         <p class="student-class">{{student.studentclass.first}}</p>
       </div>
-      
     </div>
 
     <div class="profile-details">
@@ -62,11 +66,6 @@
   <!-- Bottom Split Grid -->
   <div class="content-grid">
     <!-- Left Column (Current & Main Residence) -->
-
-
-
-
-
 
     <!-- Right Column (Identity Information) -->
     <div class="right-col">
@@ -116,7 +115,7 @@
         </div>
       </div>
     </div>
-        
+
     <div class="left-col">
       <!-- Current Residence -->
       <div class="card section-card">
@@ -135,7 +134,9 @@
           </div>
           <div class="info-row">
             <span class="label">ناحیه/قریه</span>
-            <span class="value">{{student.now_zone}}-{{student.now_village}}</span>
+            <span class="value"
+              >{{student.now_zone}}-{{student.now_village}}</span
+            >
           </div>
         </div>
       </div>
@@ -157,13 +158,14 @@
           </div>
           <div class="info-row">
             <span class="label">قریه / منطقه</span>
-            <span class="value">{{student.original_zone}}-{{student.original_village}}</span>
+            <span class="value"
+              >{{student.original_zone}}-{{student.original_village}}</span
+            >
           </div>
         </div>
       </div>
     </div>
   </div>
-  
 </div>
 
 {% endblock content %}

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import ListView, DetailView
-from .models import Student, Teacher
+from .models import Student, Teacher, Classes
 from django.contrib.auth import logout
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -27,21 +27,20 @@ def dashboard_view(request):
 @is_admin
 def delete_student(request, id):
     target = get_object_or_404(Student, id=id)
-    print(target.status)
     target.status_id = 2
     target.save()
-    print(target.status)
-
     return redirect(reverse("dashboard:student-list"))
 
 
 @is_admin
 def edite_student(request, id):
     if request.method == "POST":
-        pass
+        print(request.POST)
+        return redirect(reverse("dashboard:student-detail", kwargs={"pk": id}))
     else:
         student = get_object_or_404(Student, id=id)
-        return render(request, "dashboard/student_edite.html", {"student": student})
+        classes = Classes.objects.all()
+        return render(request, "dashboard/student_edite.html", {"student": student, "classes": classes})
 
 
 class StudentListView(ListView, LoginRequiredMixin):
