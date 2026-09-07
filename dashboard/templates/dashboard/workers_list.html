@@ -1,7 +1,7 @@
 {% extends 'dashboard/base.html' %} {% load static %} {% block style %}
 <link rel="stylesheet" href="{% static 'dashboard/css/student.css' %}" />
 {% endblock style %} {% block content %}
-<main class="main-content">
+<main class="contentainer">
   <!-- Page Content Container -->
   <div class="content-wrapper">
     <!-- Title & Actions -->
@@ -86,13 +86,13 @@
                 >
                   <i class="fa-regular fa-eye"></i>
                 </a>
-                <button class="btn-icon">
+                <a href="{% url 'dashboard:worker-edite' id=worker.id %}" class="btn-icon">
                   <i class="fa-solid fa-pen"></i>
-                </button>
+                </a>
                 
-                <button class="btn-icon">
+                <a href="#"  class="btn-icon">
                   <i class="fa-solid fa-trash"></i>
-                </button>
+                </a>
               </div>
             </td>
           </tr>

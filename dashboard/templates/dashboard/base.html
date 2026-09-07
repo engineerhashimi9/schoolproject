@@ -14,7 +14,7 @@
     {% block style %} {% endblock style %}
   </head>
   <body>
-    <div class="app-container">
+    <div class="container">
       <!-- ================= SIDEBAR ================= -->
       <aside class="sidebar">
         <div class="sidebar-header">
@@ -43,7 +43,7 @@
             </li>
             <li id="teachers"
             class="{% if request.resolver_match.url_name == 'worker-list' %}active{% endif %}">
-              <a href="{% url 'dashboard:worker-list' %}"><i class="fa-solid fa-users"></i> کارکنان</a>
+              <a href="{% url 'dashboard:worker-list' %}"><i class="fa-solid fa-users"></i> کارمندان و اساتید</a>
             </li>
             <li
               id="students"
@@ -55,8 +55,8 @@
             </li>
 
             <li>
-              <a href="#"
-                ><i class="fa-solid fa-chalkboard-user"></i> کلاس‌ها</a
+              <a href="{% url 'dashboard:class-list' %}"
+                ><i class="fa-solid fa-chalkboard-user"></i> صنف ها</a
               >
             </li>
             <li>

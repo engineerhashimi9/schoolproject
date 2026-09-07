@@ -1,0 +1,167 @@
+{% extends 'dashboard/base.html' %} {% load static %} {% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/worker_edite.css' %}" />
+{% endblock style %} {% block content %}
+<div class="container">
+  <div class="header">
+    <h1><span class="arrow">←</span> ویرایش پرونده استاد</h1>
+    <p>فرم ویرایش اطلاعات هویتی، شغلی، تحصیلی و وضعیت پرسنلی</p>
+  </div>
+
+  <!-- Profile card -->
+  <div class="card">
+    <div class="hero">
+      <div class="avatar">م<span class="cam">📷</span></div>
+      <div>
+        <h2 style="font-size: 20px; font-weight: 800">
+          محمد رضایی <span class="pill-green">فعال</span>
+        </h2>
+        <p style="color: var(--muted); font-size: 13.5px">
+          دکتری مهندسی نرم‌افزار — استادیار گروه کامپیوتر
+        </p>
+        <div class="upload" style="margin-top: 12px; max-width: 340px">
+          بارگذاری عکس جدید <b>(حداکثر ۲ مگابایت)</b>
+        </div>
+      </div>
+      <div class="meta">
+        <div>
+          <small>کد پرسنلی استاد</small><strong dir="ltr">EMP - 10482</strong>
+        </div>
+        <div>
+          <small>تاریخ استخدام</small><strong dir="ltr">۱۳۹۵/۰۶/۰۱</strong>
+        </div>
+        <div class="tenure">
+          <strong>۱۲ سال</strong><small>سابقه تدریس</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <section class="card">
+      <div class="card-title">
+        <span class="icon gold">✓</span> وضعیت و تاریخ استخدام
+      </div>
+      <div class="field">
+        <label>وضعیت کاری فعلی <span class="req">*</span></label>
+        <div class="select-wrap">
+          <select class="input">
+            <option>فعال (مشغول به تدریس)</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>تاریخ استخدام / ثبت‌نام <span class="req">*</span></label>
+        <input class="input" value="۱۳۹۵/۰۶/۰۱" readonly />
+      </div>
+      <div class="field">
+        <label>تاریخ فراغت / خروج (اختیاری)</label>
+        <input class="input disabled" value="در حال خدمت (ثبت نشده)" readonly />
+        <p class="hint">تنها در صورت قطع همکاری یا بازنشستگی پر شود.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-title">
+        <span class="icon blue">👤</span> اطلاعات هویتی و فردی
+      </div>
+      <div class="field">
+        <label>کد پرسنلی (غیرقابل تغییر)</label>
+        <input
+          class="input disabled"
+          value="10482"
+          readonly
+          style="text-align: right"
+          dir="ltr"
+        />
+      </div>
+      <div class="field">
+        <label>شماره تماس همراه <span class="req">*</span></label>
+        <input
+          class="input"
+          value="09123456789"
+          dir="ltr"
+          style="text-align: right"
+        />
+      </div>
+      <div class="field">
+        <label>نام استاد <span class="req">*</span></label
+        ><input class="input" value="محمد" />
+      </div>
+      <div class="field">
+        <label>نام خانوادگی <span class="req">*</span></label
+        ><input class="input" value="رضایی" />
+      </div>
+      <div class="field">
+        <label>نام پدر <span class="req">*</span></label
+        ><input class="input" value="علی" />
+      </div>
+      <div class="field">
+        <label>سال فراغ‌التحصیلی <span class="req">*</span></label>
+        <input class="input" value="1389" dir="ltr" style="text-align: right" />
+      </div>
+    </section>
+  </div>
+
+  <div class="grid-2">
+    <section class="card">
+      <div class="card-title">
+        <span class="icon green">$</span> اطلاعات مالی و حقوقی
+      </div>
+      <div class="field">
+        <label>حقوق پایه ماهانه (ریال) <span class="req">*</span></label>
+        <input class="input money" value="150,000,000" />
+        <p class="hint">معادل: ۱۵۰٬۰۰۰٬۰۰۰ ریال</p>
+      </div>
+      <div class="field">
+        <label>کسورات مالیات ماهانه (ریال) <span class="req">*</span></label>
+        <input class="input money error" value="15,000,000" />
+        <p class="hint discount">معادل: ۱۰٪ مالیات مصوب</p>
+      </div>
+      <div class="salary-box">دریافتی خالص ماهانه: ۱۲۵٬۰۰۰٬۰۰۰ ریال</div>
+    </section>
+
+    <section class="card">
+      <div class="card-title">
+        <span class="icon violet">🎓</span> اطلاعات شغلی و تخصصی
+      </div>
+      <div class="field">
+        <label>رشته تحصیلی / حوزه تخصصی <span class="req">*</span></label>
+        <input class="input" value="مهندسی نرم‌افزار" />
+      </div>
+      <div class="field">
+        <label>مدرک تحصیلی (مقطع) <span class="req">*</span></label>
+        <div class="select-wrap">
+          <select class="input">
+            <option>دکتری تخصصی (Ph.D)</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>عنوان شغلی و رتبه <span class="req">*</span></label>
+        <input class="input" value="استادیار" />
+      </div>
+      <div class="field">
+        <label>سابقه خدمت به سال <span class="req">*</span></label>
+        <div class="input-wrap">
+          <input
+            class="input"
+            value="12"
+            dir="ltr"
+            style="text-align: right; padding-inline-end: 44px"
+          /><span class="suffix">سال</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="action-bar">
+    <button class="btn primary">✓ ذخیره تغییرات</button>
+    <button class="btn ghost">انصراف و بازگشت</button>
+    <span class="action-note"
+      ><span class="note-dot">✓</span> تمامی تغییرات پس از ذخیره‌سازی فوراً در
+      پرونده پرسنلی، سامانه آموزشی و سیستم حقوق اعمال خواهند شد.</span
+    >
+  </div>
+</div>
+
+{% endblock content %}

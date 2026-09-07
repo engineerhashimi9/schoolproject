@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate,login
 from django.urls import reverse
 from django.shortcuts import redirect
 from django.contrib.auth import get_user_model
+from django.contrib.auth import logout
 useradmin=get_user_model()
 # Create your views here.
 def login_view(request):
