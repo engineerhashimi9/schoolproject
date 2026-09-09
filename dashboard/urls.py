@@ -8,6 +8,7 @@ urlpatterns = [
 
     # student urls
     path("student/", views.StudentListView.as_view(), name="student-list"),
+    path("student/create", views.student_create, name="student-register"),
     path("student/<int:pk>", views.StudentDetailView.as_view(),
          name="student-detail"),
     path("student/<int:id>/disable", views.delete_student, name="student-disable"),
@@ -20,5 +21,8 @@ urlpatterns = [
 
     # classes urls
     path("class/", views.ClassesListView.as_view(), name="class-list"),
+    
+    # register urls
+    # path("register/province", views.register_pro, name="register-province"),
 
 ]

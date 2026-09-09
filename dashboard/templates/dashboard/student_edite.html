@@ -4,24 +4,39 @@
 {% endblock style %} {% block content %}
 
 <div class="container">
+  {% if student.id %}
   <form action="{% url 'dashboard:student-edite' student.id %}" method="post">
-    {% csrf_token %}
+    {% else %}
+    <form action="{% url 'dashboard:student-register' %}" method="post"></form>
+    {% endif %} {% csrf_token %}
     <!-- Header -->
     <div class="header">
       <div class="right">
         <span style="font-size: 20px; color: #666; cursor: pointer"
           >&larr;</span
         >
+
+        {% if student %}
         <div>
           <h1>ویرایش پرونده دانش‌آموز</h1>
           <p>فرم زیر را تکمیل کنید تا اطلاعات دانش‌آموز به‌روزرسانی شود</p>
         </div>
+        {% else %}
+        <div>
+          <h1>ثبت‌نام دانش‌آموز جدید</h1>
+          <p>فرم زیر را تکمیل کنید تا دانش‌آموز جدید ثبت شود</p>
+        </div>
+        {% endif %}
       </div>
       <div class="left">
         <a class="btn btn-outline" href="{% url 'dashboard:student-list' %}">
           انصراف
         </a>
-        <input type="submit" value="&#10003; ذخیره تغییرات" class="btn btn-primary" />
+        <input
+          type="submit"
+          value="&#10003; ذخیره تغییرات"
+          class="btn btn-primary"
+        />
       </div>
     </div>
 
@@ -68,7 +83,7 @@
         <div class="row">
           <div>
             <label>کد دانش‌آموز (شماره یکتا) <span class="req">*</span></label>
-            <input type="text" name="id" value="{{student.id}}" class="ltr" />
+            <input type="text" name="id" value="{{student.id}}" class="ltr" required />
             <div class="hint">شماره سیستمی (غیرقابل تغییر)</div>
           </div>
           <div>
@@ -78,6 +93,7 @@
               name="card_id"
               class="ltr"
               value="{{student.card_id}}"
+              required
             />
           </div>
         </div>
@@ -85,22 +101,22 @@
         <div class="row">
           <div>
             <label>نام دانش‌آموز <span class="req">*</span></label>
-            <input type="text" name="name" value="{{student.name}}" />
+            <input type="text" name="name" value="{{student.name}}" required />
           </div>
           <div>
             <label>نام خانوادگی <span class="req">*</span></label>
-            <input type="text"  value="{{student.last_name}}" disabled />
+            <input type="text" value="{{student.last_name}}" disabled />
           </div>
         </div>
 
         <div class="row">
           <div>
             <label>نام پدر <span class="req">*</span></label>
-            <input type="text" name="fname" value="{{student.fname}}" />
+            <input type="text" name="fname" value="{{student.fname}}" required />
           </div>
           <div>
             <label>نام پدرکلان <span class="req">*</span></label>
-            <input type="text" name="gfname" value="{{student.gfname}}" />
+            <input type="text" name="gfname" value="{{student.gfname}}" required />
           </div>
         </div>
 
@@ -110,8 +126,9 @@
             <input
               type="text"
               name="birth_date"
-              value="{{student.birth_date|date:'Y/m/d'}}"
+              value="{{student.birth_date|date:'Y-m-d'}}"
               class="ltr"
+              required
             />
           </div>
           <div>
@@ -120,6 +137,7 @@
               type="text"
               name="nationality"
               value="{{student.nationality}}"
+              required
             />
           </div>
         </div>
@@ -131,6 +149,7 @@
               type="text"
               name="father_job"
               value="{{student.father_job}}"
+              required
             />
           </div>
         </div>
@@ -145,15 +164,48 @@
               name="phone"
               class="ltr"
               value="{{student.phone}}"
+              required
             />
           </div>
           <div>
             <label>زبان مادری <span class="req">*</span></label>
-            <input
-              type="text"
-              name="mother_language"
-              value="{{student.mother_language}}"
-            />
+            <select name="mother_languages">
+              
+              <option
+                value="1"
+                {%
+                if
+                student.mother_language.id=="1"
+                %}selected{%
+                endif
+                %}
+              >
+                دری
+              </option>
+              <option
+                value="2"
+                {%
+                if
+                student.mother_language.id=="2"
+                %}selected{%
+                endif
+                %}
+              >
+                پشتو
+              </option>
+              <option
+                value="3"
+                {%
+                if
+                student.mother_language.id=="3"
+                %}selected{%
+                endif
+                %}
+              >
+                ازبکی
+              </option>
+              {% endfor %}
+            </select>
           </div>
         </div>
       </div>
@@ -198,7 +250,7 @@
             <input
               type="text"
               name="registered_date"
-              value="{{student.registered_date|date:'Y/m/d'}}"
+              value="{{student.registered_date|date:'Y-m-d'}}"
               class="ltr"
             />
           </div>
@@ -207,7 +259,7 @@
             <input
               type="text"
               name="detached_date"
-              value="{{student.detached_date|date:'Y/m/d'}}"
+              value="{{student.detached_date|date:'Y-m-d'}}"
               placeholder="در حال تحصیل (ثبت نشده)"
               disabled
             />
@@ -218,15 +270,15 @@
         <div class="row single">
           <div>
             <label>صنف</label>
-        
-            <select name="status">
-              
+
+            <select name="class" id="class">
               {% for class in classes %}
-                  <option
+              <option
                 value="{{class}}"
                 {%
                 if
-                student.studentclass.first==class
+                student.studentclass.first=="class"
+                
                 %}selected{%
                 endif
                 %}
@@ -234,12 +286,7 @@
                 {{class}}
               </option>
               {% endfor %}
-                
-            
-
-              
             </select>
-
           </div>
         </div>
       </div>
@@ -250,19 +297,17 @@
         <div class="row">
           <div>
             <label>ولایت <span class="req">*</span></label>
-            <input
-              type="text"
-              name="now_province"
-              value="{{student.now_province}}"
-            />
+            <select name="now_province" id="now-province" value={{student.now_province.name}}>
+
+            </select>
           </div>
           <div>
             <label>ولسوالی <span class="req">*</span></label>
-            <input
-              type="text"
-              name="now_district"
-              value="{{student.now_district}}"
-            />
+            <select name="now_district" id="now-district">
+              {% for district in districts %}
+
+              {% endfor %}
+            </select>
           </div>
         </div>
 
@@ -289,19 +334,13 @@
         <div class="row">
           <div>
             <label>ولایت <span class="req">*</span></label>
-            <input
-              type="text"
-              name="original_province"
-              value="{{student.original_province}}"
-            />
+            <select name="original_province" id="original-province" value={{student.original_province.name}}>
+            </select>
           </div>
           <div>
             <label>ولسوالی <span class="req">*</span></label>
-            <input
-              type="text"
-              name="original_district"
-              value="{{student.original_district}}"
-            />
+        <select name="original_district" id="original-district" value={{student.original_district.name}}>
+            </select>
           </div>
         </div>
 
@@ -326,18 +365,28 @@
       </div>
     </div>
 
-
-  <!-- Footer -->
-  <div class="footer">
-    <div class="actions">
-      <button href="{% url 'dashboard:student-list' %}" class="btn btn-outline">انصراف / بازگشت</button>
-      <input type="submit" value="&#10003; ذخیره تغییرات" class="btn btn-primary" />
+    <!-- Footer -->
+    <div class="footer">
+      <div class="actions">
+        <button
+          href="{% url 'dashboard:student-list' %}"
+          class="btn btn-outline"
+        >
+          انصراف / بازگشت
+        </button>
+        <input
+          type="submit"
+          value="&#10003; ذخیره تغییرات"
+          class="btn btn-primary"
+        />
+      </div>
+      <div class="msg">
+        &#10004; تمامی تغییرات پس از ذخیره، در سوابق تحصیلی دانش‌آموز خواهد شد.
+      </div>
     </div>
-    <div class="msg">
-      &#10004; تمامی تغییرات پس از ذخیره، در سوابق تحصیلی دانش‌آموز خواهد شد.
-    </div>
-  </div>
-    </form>
+  </form>
 </div>
 
-{% endblock content %}
+{% endblock content %} {% block js %}
+<script src="{% static 'dashboard/js/student_edite.js' %}"></script>
+{% endblock js %}

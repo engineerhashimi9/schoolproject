@@ -11,7 +11,6 @@ class Status(models.Model):
         return f"{self.name}"
 
 
-
 class Language(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
@@ -50,7 +49,7 @@ class District(models.Model):
     province = models.ForeignKey(Province, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return f"{self.name}"
+        return f"{self.province.name}-{self.name}"
 
 
 class Student(models.Model):
@@ -76,9 +75,11 @@ class Student(models.Model):
     now_zone = models.IntegerField()
     now_village = models.CharField(max_length=50)
     registered_date = models.DateField(auto_now=False, auto_now_add=False)
-    detached_date = models.DateField(auto_now=False, auto_now_add=False,null=True,blank=True)
+    detached_date = models.DateField(
+        auto_now=False, auto_now_add=False, null=True, blank=True)
     phone = models.CharField(max_length=13)
-    status = models.ForeignKey(Status, on_delete=models.CASCADE,null=True,blank=True)
+    status = models.ForeignKey(
+        Status, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self) -> str:
         return f"{self.name}-{self.fname}"
@@ -95,11 +96,13 @@ class Teacher(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     years_of_service = models.IntegerField()
     registered_date = models.DateField(auto_now=False, auto_now_add=False)
-    detached_date = models.DateField(auto_now=False, auto_now_add=False,null=True,blank=True)
+    detached_date = models.DateField(
+        auto_now=False, auto_now_add=False, null=True, blank=True)
     graduation_year = models.IntegerField()
     salary = models.IntegerField()
     tax = models.IntegerField()
-    status = models.ForeignKey(Status, on_delete=models.CASCADE,null=True,blank=True)
+    status = models.ForeignKey(
+        Status, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return f"{self.name} {self.last_name}"

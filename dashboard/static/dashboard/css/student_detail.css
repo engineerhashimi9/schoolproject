@@ -60,7 +60,6 @@ html {
 
 
 .container {
-    padding: 30px;
     max-width: 1920px;
     max-height: calc(100vh - 80px);
     overflow-y: auto;
