@@ -1,0 +1,51 @@
+.venv
+.pytest_cache
+__pycache__
+test
+test2
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+ENV/
+
+# Django files & Local databases
+db.sqlite3
+db.sqlite3-journal
+local_settings.py
+
+# Sensitive configurations & secrets
+.env
+.flaskenv
+
+# Media uploads (User-uploaded files)
+media/
+
+# Static files (Only if you run collectstatic locally)
+static/
+staticfiles/
+
+# Testing & Coverage
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db
