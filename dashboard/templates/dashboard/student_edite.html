@@ -175,7 +175,7 @@
                 value="1"
                 {%
                 if
-                student.mother_language.id=="1"
+                student.mother_language.id == "1"
                 %}selected{%
                 endif
                 %}
@@ -186,7 +186,7 @@
                 value="2"
                 {%
                 if
-                student.mother_language.id=="2"
+                student.mother_language.id == "2"
                 %}selected{%
                 endif
                 %}
@@ -197,14 +197,14 @@
                 value="3"
                 {%
                 if
-                student.mother_language.id=="3"
+                student.mother_language.id == "3"
                 %}selected{%
                 endif
                 %}
               >
                 ازبکی
               </option>
-              {% endfor %}
+            
             </select>
           </div>
         </div>
@@ -219,12 +219,7 @@
             <select name="status">
               <option
                 value="active"
-                {%
-                if
-                student.status.name=="active"
-                %}selected{%
-                endif
-                %}
+                {% if student.status.name == "active" %}selected{% endif %}
               >
                 فعال (مشغول به تحصیل)
               </option>
@@ -233,11 +228,10 @@
                 value="inactive"
                 {%
                 if
-                student.status.name=="inactive"
+                student.status.name == "inactive"
                 %}selected{%
                 endif
-                %}
-              >
+                %}>
                 غیرفعال
               </option>
             </select>
@@ -277,7 +271,7 @@
                 value="{{class}}"
                 {%
                 if
-                student.studentclass.first=="class"
+                student.studentclass.first == "class"
                 
                 %}selected{%
                 endif
@@ -297,16 +291,14 @@
         <div class="row">
           <div>
             <label>ولایت <span class="req">*</span></label>
-            <select name="now_province" id="now-province" value={{student.now_province.name}}>
+            <select name="now_province" id="now-province" value={{student.now_province.id}}>
 
             </select>
           </div>
           <div>
             <label>ولسوالی <span class="req">*</span></label>
             <select name="now_district" id="now-district">
-              {% for district in districts %}
-
-              {% endfor %}
+         
             </select>
           </div>
         </div>
@@ -334,12 +326,12 @@
         <div class="row">
           <div>
             <label>ولایت <span class="req">*</span></label>
-            <select name="original_province" id="original-province" value={{student.original_province.name}}>
+            <select name="original_province" id="original-province" value={{student.original_province.id}}>
             </select>
           </div>
           <div>
             <label>ولسوالی <span class="req">*</span></label>
-        <select name="original_district" id="original-district" value={{student.original_district.name}}>
+        <select name="original_district" id="original-district" value={{student.original_district.id}}>
             </select>
           </div>
         </div>

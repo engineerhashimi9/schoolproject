@@ -1,4 +1,4 @@
-provinces = [
+const provinces = [
   { id: 1, name: "بدخشان" },
   { id: 2, name: "بادغیس" },
   { id: 3, name: "بغلان" },
@@ -34,7 +34,7 @@ provinces = [
   { id: 33, name: "هرات" },
   { id: 34, name: "ارزگان" },
 ];
-all_districts = [
+const all_districts = [
   { id: 1, name: "ارغنج‌خواه", province_id: 1 },
   { id: 2, name: "ارگو", province_id: 1 },
   { id: 3, name: "اشکاشم", province_id: 1 },
@@ -452,3 +452,30 @@ all_districts = [
   { id: 382, name: "کجران", province_id: 34 },
   { id: 383, name: "گیزاب", province_id: 34 },
 ];
+function get_html(data,id) {
+  s = "";
+  for (let i = 0; i < provinces.length; i++) {
+    if (i==id) {
+      s += ` <option value="${data[i].name}" selected >${data[i].name}</option>`;
+    } else {
+      s += ` <option value="${data[i].name}"  >${data[i].name}</option>`;
+    }
+    
+  }
+  return s;
+}
+const ori_p = document.getElementById("original-province");
+const now_p = document.getElementById("now-province");
+const ori_d = document.getElementById("original-district");
+const now_d = document.getElementById("now-district");
+
+now_p.innerHTML =get_html(provinces,Number(now_p.value)) ;
+now_p.value="{{student.now_province.id}}";
+ori_p.innerHTML =get_html(provinces,Number(ori_p.value));
+ori_p.value="{{student.now_province.id}}";
+
+
+ori_d.onclick=function(){
+  alert("button clicked")
+  ori_d.innerHTML=get_html(all_districts.filter(district => district.province_id == ori_p.value));
+}
