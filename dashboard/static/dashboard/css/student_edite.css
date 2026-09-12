@@ -9,7 +9,7 @@ html {
 
 .container {
     max-width: 1920px;
-    padding: 20px;
+    
     scrollbar-color: #7aa9dd #eef2f7;
     scrollbar-width: thin;
     overflow-y: auto;

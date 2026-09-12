@@ -452,30 +452,71 @@ const all_districts = [
   { id: 382, name: "کجران", province_id: 34 },
   { id: 383, name: "گیزاب", province_id: 34 },
 ];
-function get_html(data,id) {
-  s = "";
-  for (let i = 0; i < provinces.length; i++) {
-    if (i==id) {
-      s += ` <option value="${data[i].name}" selected >${data[i].name}</option>`;
+function get_html(data, selectedId = null) {
+  let s = "";
+
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].id == selectedId) {
+      s += `<option value="${data[i].id}" selected>${data[i].name}</option>`;
     } else {
-      s += ` <option value="${data[i].name}"  >${data[i].name}</option>`;
+      s += `<option value="${data[i].id}">${data[i].name}</option>`;
     }
-    
   }
+
   return s;
 }
+
 const ori_p = document.getElementById("original-province");
 const now_p = document.getElementById("now-province");
 const ori_d = document.getElementById("original-district");
 const now_d = document.getElementById("now-district");
 
-now_p.innerHTML =get_html(provinces,Number(now_p.value)) ;
-now_p.value="{{student.now_province.id}}";
-ori_p.innerHTML =get_html(provinces,Number(ori_p.value));
-ori_p.value="{{student.now_province.id}}";
+// =========================
+// CURRENT PROVINCE
+// =========================
 
+now_p.innerHTML = get_html(provinces, "{{ student.now_province.id }}");
 
-ori_d.onclick=function(){
-  alert("button clicked")
-  ori_d.innerHTML=get_html(all_districts.filter(district => district.province_id == ori_p.value));
-}
+// =========================
+// ORIGINAL PROVINCE
+// =========================
+
+ori_p.innerHTML = get_html(provinces, "{{ student.original_province.id }}");
+
+// =========================
+// LOAD CURRENT DISTRICTS
+// =========================
+
+now_d.innerHTML = get_html(
+  all_districts.filter((district) => district.province_id == now_p.value),
+  "{{ student.now_district.id }}",
+);
+
+// =========================
+// LOAD ORIGINAL DISTRICTS
+// =========================
+
+ori_d.innerHTML = get_html(
+  all_districts.filter((district) => district.province_id == ori_p.value),
+  "{{ student.original_district.id }}",
+);
+
+// =========================
+// WHEN CURRENT PROVINCE CHANGES
+// =========================
+
+now_p.addEventListener("change", function () {
+  now_d.innerHTML = get_html(
+    all_districts.filter((district) => district.province_id == this.value),
+  );
+});
+
+// =========================
+// WHEN ORIGINAL PROVINCE CHANGES
+// =========================
+
+ori_p.addEventListener("change", function () {
+  ori_d.innerHTML = get_html(
+    all_districts.filter((district) => district.province_id == this.value),
+  );
+});

@@ -29,54 +29,6 @@ body {
     width: 100%;
 }
 
-/* --- Sidebar (Right) --- */
-.sidebar {
-    width: 250px;
-    background-color: var(--sidebar-bg);
-    display: flex;
-    flex-direction: column;
-    color: var(--sidebar-text);
-    flex-shrink: 0;
-}
-
-.sidebar-brand {
-    padding: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-}
-
-.brand-text h3 {
-    color: #fff;
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin-bottom: 4px;
-}
-
-.brand-text span {
-    font-size: 0.75rem;
-    color: #6b7280;
-}
-
-.brand-logo {
-    width: 40px;
-    height: 40px;
-    background: var(--primary-blue);
-    border-radius: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-    font-size: 1.2rem;
-}
-
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 0 16px;
-}
 
 .nav-item {
     text-decoration: none;
