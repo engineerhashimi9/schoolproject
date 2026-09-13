@@ -4,10 +4,10 @@
 {% endblock style %} {% block content %}
 
 <div class="container">
-  {% if student.id %}
+  {% if student %}
   <form action="{% url 'dashboard:student-edite' student.id %}" method="post">
     {% else %}
-    <form action="{% url 'dashboard:student-register' %}" method="post"></form>
+    <form action="{% url 'dashboard:student-register' %}" method="post">
     {% endif %} {% csrf_token %}
     <!-- Header -->
     <div class="header">
@@ -83,7 +83,7 @@
         <div class="row">
           <div>
             <label>کد دانش‌آموز (شماره یکتا) <span class="req">*</span></label>
-            <input type="text" name="id" value="{{student.id}}" class="ltr" required />
+            <input type="text" name="id" value="{{student.id}}" class="ltr"   />
             <div class="hint">شماره سیستمی (غیرقابل تغییر)</div>
           </div>
           <div>
@@ -93,7 +93,7 @@
               name="card_id"
               class="ltr"
               value="{{student.card_id}}"
-              required
+               
             />
           </div>
         </div>
@@ -101,7 +101,7 @@
         <div class="row">
           <div>
             <label>نام دانش‌آموز <span class="req">*</span></label>
-            <input type="text" name="name" value="{{student.name}}" required />
+            <input type="text" name="name" value="{{student.name}}"   />
           </div>
           <div>
             <label>نام خانوادگی <span class="req">*</span></label>
@@ -112,11 +112,11 @@
         <div class="row">
           <div>
             <label>نام پدر <span class="req">*</span></label>
-            <input type="text" name="fname" value="{{student.fname}}" required />
+            <input type="text" name="fname" value="{{student.fname}}"   />
           </div>
           <div>
             <label>نام پدرکلان <span class="req">*</span></label>
-            <input type="text" name="gfname" value="{{student.gfname}}" required />
+            <input type="text" name="gfname" value="{{student.gfname}}"   />
           </div>
         </div>
 
@@ -128,7 +128,7 @@
               name="birth_date"
               value="{{student.birth_date|date:'Y-m-d'}}"
               class="ltr"
-              required
+               
             />
           </div>
           <div>
@@ -137,7 +137,7 @@
               type="text"
               name="nationality"
               value="{{student.nationality}}"
-              required
+               
             />
           </div>
         </div>
@@ -149,7 +149,7 @@
               type="text"
               name="father_job"
               value="{{student.father_job}}"
-              required
+               
             />
           </div>
         </div>
@@ -164,12 +164,12 @@
               name="phone"
               class="ltr"
               value="{{student.phone}}"
-              required
+               
             />
           </div>
           <div>
             <label>زبان مادری <span class="req">*</span></label>
-            <select name="mother_languages">
+            <select name="mother_language">
               
               <option
                 value="1"
@@ -218,14 +218,14 @@
             <label>وضعیت تحصیلی <span class="req">*</span></label>
             <select name="status">
               <option
-                value="active"
+                value="1"
                 {% if student.status.name == "active" %}selected{% endif %}
               >
                 فعال (مشغول به تحصیل)
               </option>
 
               <option
-                value="inactive"
+                value="2"
                 {%
                 if
                 student.status.name == "inactive"
@@ -265,7 +265,7 @@
           <div>
             <label>صنف</label>
 
-            <select name="class" id="class">
+            <select name="class_section" id="class">
               {% for class in classes %}
               <option
                 value="{{class}}"
@@ -281,6 +281,19 @@
               </option>
               {% endfor %}
             </select>
+          </div>
+        </div>
+
+        
+        <div class="row single">
+          <div>
+            <label>سال تعلیمی</label>
+
+            <input
+              type="number"
+              name="academice_year"
+              value="1405"
+              >
           </div>
         </div>
       </div>
@@ -306,7 +319,7 @@
         <div class="row">
           <div>
             <label>ناحیه / منطقه شهرداری</label>
-            <input type="text" name="now_zone" value="{{student.now_zone}}" />
+            <input type="number" name="now_zone" value="{{student.now_zone}}" />
           </div>
           <div>
             <label>قریه </label>
@@ -340,7 +353,7 @@
           <div>
             <label>ناحیه </label>
             <input
-              type="text"
+              type="number"
               name="original_zone"
               value="{{student.original_zone}}"
             />

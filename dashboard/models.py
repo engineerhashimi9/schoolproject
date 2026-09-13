@@ -66,7 +66,7 @@ class Student(models.Model):
         Province, on_delete=models.CASCADE, related_name="students_original")
     original_district = models.ForeignKey(
         District, on_delete=models.CASCADE, related_name="students_original")
-    orignial_zone = models.IntegerField()
+    original_zone = models.IntegerField()
     original_village = models.CharField(max_length=50)
     now_province = models.ForeignKey(
         Province, on_delete=models.CASCADE, related_name="students_current")
@@ -132,7 +132,7 @@ class ExamType(models.Model):
         return f"{self.name}"
 
 
-class AcademicYear(models.Model):
+class AcademiceYear(models.Model):
     id = models.AutoField(primary_key=True)
     year = models.IntegerField()
     start_date = models.DateField(auto_now=False, auto_now_add=False)
@@ -147,7 +147,7 @@ class Classes(models.Model):
     grade = models.IntegerField()
     section = models.CharField(max_length=50)
     guidence = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-    academice_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
+    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return f"{self.grade}-{self.section}"
@@ -158,7 +158,7 @@ class TeacherSubject(models.Model):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     classs = models.ForeignKey(Classes, on_delete=models.CASCADE)
-    academice_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
+    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return f"{self.teacher}-{self.subject}-{self.classs}"
@@ -169,7 +169,7 @@ class StudentClass(models.Model):
     student = models.ForeignKey(
         Student, on_delete=models.CASCADE, related_name="studentclass")
     classs = models.ForeignKey(Classes, on_delete=models.CASCADE)
-    academice_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
+    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return f"{self.classs.grade}-{self.classs.section}"
@@ -186,7 +186,7 @@ class Atendance(models.Model):
     sick = models.IntegerField()
     excused = models.IntegerField()
     alldays = models.IntegerField()
-    academice_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
+    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return f"{self.student}-{self.classs}-{self.month}"
@@ -202,7 +202,7 @@ class Assessment(models.Model):
         Month, on_delete=models.CASCADE)
     score = models.IntegerField()
     max_score = models.IntegerField()
-    academice_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
+    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return f"{self.student}-{self.teacher}-{self.subject}-{self.classs}-{self.month}"
@@ -216,7 +216,7 @@ class Exam(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     month: models.ForeignKey = models.ForeignKey(
         Month, on_delete=models.CASCADE)
-    academice_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
+    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.CASCADE)
     date = models.DateField(auto_now=False, auto_now_add=False)
 
     def __str__(self) -> str:
@@ -242,4 +242,4 @@ class Fee(models.Model):
     amount = models.IntegerField()
     paied = models.IntegerField()
     payment_date = models.DateField(auto_now=False, auto_now_add=False)
-    academice_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
+    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.CASCADE)
