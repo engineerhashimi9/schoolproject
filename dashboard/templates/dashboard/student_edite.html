@@ -216,7 +216,7 @@
         <div class="row single">
           <div>
             <label>وضعیت تحصیلی <span class="req">*</span></label>
-            <select name="status">
+            <select name="status" id="status">
               <option
                 value="1"
                 {% if student.status.name == "active" %}selected{% endif %}
@@ -253,6 +253,7 @@
             <input
               type="text"
               name="detached_date"
+              id="detach_date"
               value="{{student.detached_date|date:'Y-m-d'}}"
               placeholder="در حال تحصیل (ثبت نشده)"
               disabled

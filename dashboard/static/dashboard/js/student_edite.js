@@ -520,3 +520,13 @@ ori_p.addEventListener("change", function () {
     all_districts.filter((district) => district.province_id == this.value),
   );
 });
+const statusSelect = document.getElementById("status");
+const detached_date_input = document.getElementById("detach_date");
+
+statusSelect.addEventListener("change", function () {
+  if (detached_date_input.disabled) {
+    detached_date_input.disabled = false;
+  } else {
+    detached_date_input.disabled = true;
+  }
+});
