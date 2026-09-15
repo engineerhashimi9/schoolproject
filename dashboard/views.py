@@ -41,13 +41,10 @@ def student_edite(request, id):
     classes = Classes.objects.all()
     if request.method == "POST":
         form = StudentForm(request.POST)
-        print("form created")
+
         if form.is_valid():
-            print("form is valid")
-            if student.id != form.cleaned_data["id"]:
-                print("id is not equal", student.id, form.cleaned_data["id"])
-                student.id = form.cleaned_data["id"]
-                print("id is changed", student.id, form.cleaned_data["id"])
+            if student.school_id != form.cleaned_data["school_id"]:
+                student.school_id = form.cleaned_data["school_id"]
             if student.card_id != form.cleaned_data["card_id"]:
                 student.card_id = form.cleaned_data["card_id"]
             if student.name != form.cleaned_data["name"]:
@@ -94,6 +91,7 @@ def student_edite(request, id):
             if student.original_village != form.cleaned_data["original_village"]:
                 student.original_village = form.cleaned_data["original_village"]
             student.save()
+
             if "class_section" in form.cleaned_data:
                 grade, section = form.cleaned_data["class_section"].split("-")
                 academice_year = int(form.cleaned_data["academice_year"])
@@ -131,7 +129,7 @@ def student_create(request):
         form = StudentForm(request.POST)
 
         if form.is_valid():
-            id = form.cleaned_data["id"]
+            school_id = form.cleaned_data["school_id"]
             card_id = form.cleaned_data["card_id"]
             name = form.cleaned_data["name"]
             fname = form.cleaned_data["fname"]
@@ -155,7 +153,7 @@ def student_create(request):
             original_village = form.cleaned_data["original_village"]
             academice_year = int(form.cleaned_data["academice_year"])
             new_student = Student.objects.create(
-                id=id,
+                school_id=school_id,
                 card_id=card_id,
                 name=name,
                 fname=fname,

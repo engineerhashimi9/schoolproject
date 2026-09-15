@@ -1,5 +1,5 @@
 from django.db import models
-
+import uuid
 # Create your models here.
 
 
@@ -53,7 +53,8 @@ class District(models.Model):
 
 
 class Student(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
+    school_id=models.IntegerField(unique=True)
     name = models.CharField(max_length=50)
     fname = models.CharField(max_length=50)
     gfname = models.CharField(max_length=50)
