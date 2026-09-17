@@ -16,6 +16,7 @@ urlpatterns = [
 
     # worker urls
     path("worker/", views.TeacherListView.as_view(), name="worker-list"),
+    path("worker/create", views.teacher_create, name="worker-register"),
     path("worker/<int:pk>", views.TeacherDetailView.as_view(), name="worker-detail"),
     path("worker/<int:id>/edite", views.teacher_edite, name="worker-edite"),
 

@@ -147,7 +147,7 @@ class Classes(models.Model):
     id = models.AutoField(primary_key=True)
     grade = models.IntegerField()
     section = models.CharField(max_length=50)
-    guidence = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    guidence = models.ForeignKey(Teacher, on_delete=models.CASCADE,null=True,blank=True)
     academice_year = models.ForeignKey(AcademiceYear, on_delete=models.CASCADE)
 
     def __str__(self) -> str:

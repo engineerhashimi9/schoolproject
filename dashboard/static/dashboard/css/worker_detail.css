@@ -23,9 +23,9 @@
 
 .container {
     max-width: 1920px;
-    padding: 30px;
+    padding-top: 10px;
     max-width: 1920px;
-    max-height: calc(100vh - 80px);
+    max-height: 100vh;
     overflow-y: auto;
     overflow-x: hidden;
     padding-right: 8px;
@@ -166,7 +166,7 @@
 /* --- Profile Card (Top Right) --- */
 .profile-content {
     display: flex;
-  
+
     align-items: center;
 }
 

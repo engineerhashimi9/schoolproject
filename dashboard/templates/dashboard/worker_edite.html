@@ -13,10 +13,14 @@
       <div class="avatar">م<span class="cam">📷</span></div>
       <div>
         <h2 style="font-size: 20px; font-weight: 800">
-          محمد رضایی <span class="pill-green">فعال</span>
+          {{teacher.name}} {{teacher.last_name}}{% if teacher.status == "active" %}
+          <span class="pill-green">فعال</span>
+          {% else %}
+          <span class="pill-red">غیر فعال</span>
+          {% endif %}
         </h2>
         <p style="color: var(--muted); font-size: 13.5px">
-          دکتری مهندسی نرم‌افزار — استادیار گروه کامپیوتر
+        {{teacher.degree}} {{teacher.major}} - {{teacher.job}}
         </p>
         <div class="upload" style="margin-top: 12px; max-width: 340px">
           بارگذاری عکس جدید <b>(حداکثر ۲ مگابایت)</b>
@@ -24,42 +28,27 @@
       </div>
       <div class="meta">
         <div>
-          <small>کد پرسنلی استاد</small><strong dir="ltr">EMP - 10482</strong>
+          <small>کد پرسنلی استاد</small><strong dir="ltr">{{teacher.id}}</strong>
         </div>
         <div>
-          <small>تاریخ استخدام</small><strong dir="ltr">۱۳۹۵/۰۶/۰۱</strong>
+          <small>تاریخ استخدام</small><strong dir="ltr">{{registered_date}}</strong>
         </div>
         <div class="tenure">
-          <strong>۱۲ سال</strong><small>سابقه تدریس</small>
+          <strong>{{teacher.years_of_service}}</strong><small>سابقه تدریس</small>
         </div>
       </div>
     </div>
   </div>
+  {% if teacher %}
+    <form action="{% url 'dashboard:worker-edite' id=teacher.id %}" method="post">
+  {% else %}
+  <form action="{% url 'dashboard:worker-register' %}" method="post">
+  {% endif %}
+  
 
+    {% csrf_token %}
+    
   <div class="grid-2">
-    <section class="card">
-      <div class="card-title">
-        <span class="icon gold">✓</span> وضعیت و تاریخ استخدام
-      </div>
-      <div class="field">
-        <label>وضعیت کاری فعلی <span class="req">*</span></label>
-        <div class="select-wrap">
-          <select class="input">
-            <option>فعال (مشغول به تدریس)</option>
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label>تاریخ استخدام / ثبت‌نام <span class="req">*</span></label>
-        <input class="input" value="۱۳۹۵/۰۶/۰۱" readonly />
-      </div>
-      <div class="field">
-        <label>تاریخ فراغت / خروج (اختیاری)</label>
-        <input class="input disabled" value="در حال خدمت (ثبت نشده)" readonly />
-        <p class="hint">تنها در صورت قطع همکاری یا بازنشستگی پر شود.</p>
-      </div>
-    </section>
-
     <section class="card">
       <div class="card-title">
         <span class="icon blue">👤</span> اطلاعات هویتی و فردی
@@ -68,7 +57,8 @@
         <label>کد پرسنلی (غیرقابل تغییر)</label>
         <input
           class="input disabled"
-          value="10482"
+          value="{{teacher.id}}"
+          name="id"
           readonly
           style="text-align: right"
           dir="ltr"
@@ -78,26 +68,73 @@
         <label>شماره تماس همراه <span class="req">*</span></label>
         <input
           class="input"
-          value="09123456789"
+          name="phone"
+          value="{{teacher.phone}}"
           dir="ltr"
           style="text-align: right"
         />
       </div>
       <div class="field">
         <label>نام استاد <span class="req">*</span></label
-        ><input class="input" value="محمد" />
+        ><input class="input" name="name" value="{{teacher.name}}" />
       </div>
       <div class="field">
         <label>نام خانوادگی <span class="req">*</span></label
-        ><input class="input" value="رضایی" />
+        ><input class="input" name="last_name" value="{{teacher.last_name}}" />
       </div>
       <div class="field">
         <label>نام پدر <span class="req">*</span></label
-        ><input class="input" value="علی" />
+        ><input class="input" name="fname" value="{{teacher.fname}}" />
       </div>
       <div class="field">
-        <label>سال فراغ‌التحصیلی <span class="req">*</span></label>
-        <input class="input" value="1389" dir="ltr" style="text-align: right" />
+        <label>سال فارغ التحصیلی<span class="req">*</span></label>
+        <input class="input" name="graduation_year" value="{{teacher.graduation_year}}" dir="ltr" style="text-align: right" />
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-title">
+        <span class="icon gold">✓</span> وضعیت و تاریخ استخدام
+      </div>
+      <div class="field">
+        <label>وضعیت کاری فعلی <span class="req">*</span></label>
+        <div class="select-wrap">
+          <select class="input" name="status">
+            <option value="1" {% if teacher.status.id == 1  %}
+            selected
+            {% endif %} >فعال (مشغول به تدریس)</option>
+            <option value="2" {% if teacher.status.id == 2  %}
+            selected
+            {% endif %}>غیر فعال</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>تاریخ استخدام / ثبت‌نام <span class="req">*</span></label>
+        <input class="input" name="registered_date" value="{{teacher.registered_date}}"/>
+      </div>
+      <div class="field">
+        <label>تاریخ فراغت / خروج (اختیاری)</label>
+        <input class="input disabled" name="detached_date" value="{{teacher.detached_date}}" readonly />
+        <p class="hint">تنها در صورت قطع همکاری یا بازنشستگی پر شود.</p>
+      </div>
+      <div class="field">
+         <label>استاد نگران در</label>
+      <select class="input" name="guidence_at" >
+               {% for class in classes %}
+              <option
+                value="{{class}}"
+                {%
+                if
+                student.studentclass.first == "class"
+                
+                %}selected{%
+                endif
+                %}
+              >
+                {{class}}
+              {% endfor %}
+        </select>
       </div>
     </section>
   </div>
@@ -105,63 +142,67 @@
   <div class="grid-2">
     <section class="card">
       <div class="card-title">
-        <span class="icon green">$</span> اطلاعات مالی و حقوقی
-      </div>
-      <div class="field">
-        <label>حقوق پایه ماهانه (ریال) <span class="req">*</span></label>
-        <input class="input money" value="150,000,000" />
-        <p class="hint">معادل: ۱۵۰٬۰۰۰٬۰۰۰ ریال</p>
-      </div>
-      <div class="field">
-        <label>کسورات مالیات ماهانه (ریال) <span class="req">*</span></label>
-        <input class="input money error" value="15,000,000" />
-        <p class="hint discount">معادل: ۱۰٪ مالیات مصوب</p>
-      </div>
-      <div class="salary-box">دریافتی خالص ماهانه: ۱۲۵٬۰۰۰٬۰۰۰ ریال</div>
-    </section>
-
-    <section class="card">
-      <div class="card-title">
         <span class="icon violet">🎓</span> اطلاعات شغلی و تخصصی
       </div>
       <div class="field">
         <label>رشته تحصیلی / حوزه تخصصی <span class="req">*</span></label>
-        <input class="input" value="مهندسی نرم‌افزار" />
+        <input class="input" value="{{teacher.major}}" name="major" />
       </div>
       <div class="field">
         <label>مدرک تحصیلی (مقطع) <span class="req">*</span></label>
         <div class="select-wrap">
-          <select class="input">
+          <select class="input" name="degree">
+            <option>دکتری تخصصی (Ph.D)</option>
+            <option>دکتری تخصصی (Ph.D)</option>
             <option>دکتری تخصصی (Ph.D)</option>
           </select>
         </div>
       </div>
       <div class="field">
         <label>عنوان شغلی و رتبه <span class="req">*</span></label>
-        <input class="input" value="استادیار" />
+        <input class="input" name="job" value="{{teacher.job}}" />
       </div>
       <div class="field">
         <label>سابقه خدمت به سال <span class="req">*</span></label>
         <div class="input-wrap">
           <input
             class="input"
-            value="12"
+            value="{{teacher.years_of_service}}"
+            name="years_of_service"
             dir="ltr"
             style="text-align: right; padding-inline-end: 44px"
           /><span class="suffix">سال</span>
         </div>
       </div>
     </section>
+    <section class="card">
+      <div class="card-title">
+        <span class="icon green">$</span> اطلاعات مالی و حقوقی
+      </div>
+      <div class="field">
+        <label>معاش اصلی ماهانه (افغانی)<span class="req">*</span></label>
+        <input type="number" class="input money" name="salary" value="{{teacher.salary}}" dir="ltr" />
+       
+      </div>
+      <div class="field">
+        <label>مالیات ماهانه (افغانی) <span class="req">*</span></label>
+        <input type="number" class="input money error"  value="{{teacher.tax}}" name="tax" dir="ltr" />
+      </div>
+      <div class="salary-box">دریافتی خالص ماهانه:  افغانی </div>
+    </section>
   </div>
 
   <div class="action-bar">
-    <button class="btn primary">✓ ذخیره تغییرات</button>
+    <button type="submit" class="btn primary">✓ ذخیره تغییرات</button>
     <button class="btn ghost">انصراف و بازگشت</button>
     <span class="action-note"
       ><span class="note-dot">✓</span> تمامی تغییرات پس از ذخیره‌سازی فوراً در
       پرونده پرسنلی، سامانه آموزشی و سیستم حقوق اعمال خواهند شد.</span
     >
   </div>
+
+
+  </form>
 </div>
 
 {% endblock content %}

@@ -27,3 +27,25 @@ class StudentForm(forms.Form):
     status = forms.IntegerField(required=True)
     class_section = forms.CharField(max_length=20, required=True)
     academice_year = forms.IntegerField(required=True)
+
+
+class TeacherForm(forms.Form):
+    id=forms.IntegerField(required=False)
+    name = forms.CharField(max_length=50, required=True)
+    fname = forms.CharField(max_length=50, required=True)
+    last_name = forms.CharField(max_length=50, required=True)
+    phone = forms.CharField(max_length=20, required=True)
+    major = forms.CharField(max_length=50, required=True)
+    degree = forms.CharField(max_length=50, required=True)
+    job = forms.CharField(max_length=20, required=True)
+    years_of_service = forms.IntegerField(required=True)
+    registered_date = forms.DateField(required=True)
+    detached_date = forms.DateField(required=False)
+    graduation_year = forms.IntegerField(required=True)
+    salary= forms.IntegerField(required=True)
+    tax= forms.IntegerField(required=True)
+    status= forms.IntegerField(required=True)
+    guidence_at=forms.CharField(required=False)
+    
+    
+
