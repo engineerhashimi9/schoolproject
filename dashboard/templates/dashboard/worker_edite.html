@@ -31,7 +31,7 @@
           <small>کد پرسنلی استاد</small><strong dir="ltr">{{teacher.id}}</strong>
         </div>
         <div>
-          <small>تاریخ استخدام</small><strong dir="ltr">{{registered_date}}</strong>
+          <small>تاریخ استخدام</small><strong dir="ltr">{{teacher.registered_date|date:'Y-m-d'}}</strong>
         </div>
         <div class="tenure">
           <strong>{{teacher.years_of_service}}</strong><small>سابقه تدریس</small>
@@ -53,6 +53,8 @@
       <div class="card-title">
         <span class="icon blue">👤</span> اطلاعات هویتی و فردی
       </div>
+      <div class="personal-info">
+        
       <div class="field">
         <label>کد پرسنلی (غیرقابل تغییر)</label>
         <input
@@ -90,12 +92,15 @@
         <label>سال فارغ التحصیلی<span class="req">*</span></label>
         <input class="input" name="graduation_year" value="{{teacher.graduation_year}}" dir="ltr" style="text-align: right" />
       </div>
+      </div>
     </section>
 
     <section class="card">
       <div class="card-title">
         <span class="icon gold">✓</span> وضعیت و تاریخ استخدام
       </div>
+      <div class="personal-info">
+        
       <div class="field">
         <label>وضعیت کاری فعلی <span class="req">*</span></label>
         <div class="select-wrap">
@@ -111,30 +116,26 @@
       </div>
       <div class="field">
         <label>تاریخ استخدام / ثبت‌نام <span class="req">*</span></label>
-        <input class="input" name="registered_date" value="{{teacher.registered_date}}"/>
+        <input class="input" name="registered_date" value="{{teacher.registered_date|date:'Y-m-d'}}"/>
       </div>
       <div class="field">
         <label>تاریخ فراغت / خروج (اختیاری)</label>
-        <input class="input disabled" name="detached_date" value="{{teacher.detached_date}}" readonly />
+        <input class="input disabled" name="detached_date" value="{{teacher.detached_date|date:'Y-m-d'}}" readonly />
         <p class="hint">تنها در صورت قطع همکاری یا بازنشستگی پر شود.</p>
       </div>
       <div class="field">
          <label>استاد نگران در</label>
       <select class="input" name="guidence_at" >
+                <option value="{{teacher.classes}}" selected>{{teacher.classes}}</option>
                {% for class in classes %}
               <option
-                value="{{class}}"
-                {%
-                if
-                student.studentclass.first == "class"
-                
-                %}selected{%
-                endif
-                %}
+                value="{{class}}"  
               >
                 {{class}}
               {% endfor %}
+              <option value="None" {% if teacher.guidence_at == 'None' %}selected{% endif %}>در هیچ یک</option>
         </select>
+      </div>
       </div>
     </section>
   </div>
@@ -144,6 +145,8 @@
       <div class="card-title">
         <span class="icon violet">🎓</span> اطلاعات شغلی و تخصصی
       </div>
+      <div class="personal-info">
+        
       <div class="field">
         <label>رشته تحصیلی / حوزه تخصصی <span class="req">*</span></label>
         <input class="input" value="{{teacher.major}}" name="major" />
@@ -174,21 +177,26 @@
           /><span class="suffix">سال</span>
         </div>
       </div>
+      </div>
     </section>
     <section class="card">
       <div class="card-title">
         <span class="icon green">$</span> اطلاعات مالی و حقوقی
       </div>
+      <div class="personal-info">
+        
       <div class="field">
         <label>معاش اصلی ماهانه (افغانی)<span class="req">*</span></label>
-        <input type="number" class="input money" name="salary" value="{{teacher.salary}}" dir="ltr" />
+        <input type="number" class="input money" name="salary" value="{{teacher.salary}}"  />
        
       </div>
       <div class="field">
         <label>مالیات ماهانه (افغانی) <span class="req">*</span></label>
-        <input type="number" class="input money error"  value="{{teacher.tax}}" name="tax" dir="ltr" />
+        <input type="number" class="input money error"  value="{{teacher.tax}}" name="tax"  />
       </div>
-      <div class="salary-box">دریافتی خالص ماهانه:  افغانی </div>
+     
+      </div>
+       <div class="salary-box">دریافتی خالص ماهانه:  افغانی </div>
     </section>
   </div>
 

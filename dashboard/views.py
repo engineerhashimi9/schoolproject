@@ -6,6 +6,7 @@ from .forms import StudentForm, TeacherForm
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 import jdatetime
+from django.db.models import Q
 
 
 # Create your views here.
@@ -42,7 +43,7 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
 
 
 @is_admin
-def delete_student(request, id):
+def disable_student(request, id):
     target = get_object_or_404(Student, id=id)
     target.detached_date = jdatetime.date.today()
     target.status_id = 2
@@ -212,10 +213,11 @@ class TeacherDetailView(LoginRequiredMixin, DetailView):
     context_object_name = "worker"
 
 
-# TODO : fix the detached date issu
 @is_admin
 def teacher_edite(request, id):
     teacher = get_object_or_404(Teacher, id=id)
+    classes = Classes.objects.filter(
+        Q(guidence=teacher) | Q(guidence__isnull=True))
     if request.method == "POST":
         form = TeacherForm(request.POST)
         if form.is_valid():
@@ -265,7 +267,15 @@ def teacher_edite(request, id):
             print(request.POST)
 
     else:
-        return render(request, "dashboard/worker_edite.html", {"teacher": teacher})
+        return render(request, "dashboard/worker_edite.html", {"teacher": teacher,"classes":classes})
+@is_admin
+def disable_teacher(request,id) :
+    target=get_object_or_404(Teacher,id=id)
+    target.detached_date = jdatetime.date.today()
+    target.status_id = 2
+    target.save()
+    return redirect(reverse("dashboard:worker-list"))
+    
 
 
 @is_admin

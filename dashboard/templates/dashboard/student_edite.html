@@ -262,32 +262,24 @@
           </div>
         </div>
 
-        <div class="row single">
+        <div class="row">
           <div>
             <label>صنف</label>
-
+           
             <select name="class_section" id="class">
               {% for class in classes %}
               <option
                 value="{{class}}"
-                {%
-                if
-                student.studentclass.first == "class"
+              {% if student.studentclass.first.classs_id == class.id %}selected{%endif%}
                 
-                %}selected{%
-                endif
-                %}
+               
               >
                 {{class}}
               </option>
               {% endfor %}
             </select>
           </div>
-        </div>
-
-        
-        <div class="row single">
-          <div>
+             <div>
             <label>سال تعلیمی</label>
 
             <input
@@ -297,7 +289,9 @@
               >
           </div>
         </div>
-      </div>
+        </div>
+
+   
       <!-- محل سکونت فعلی -->
       <div class="card">
         <h2>محل سکونت فعلی</h2>
