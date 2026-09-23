@@ -1,190 +1,146 @@
 {% extends 'dashboard/base.html' %} {% load static %} {% block style %}
 <link rel="stylesheet" href="{% static 'dashboard/css/worker_detail.css' %}" />
 {% endblock style %} {% block content %}
+
 <div class="container">
   <!-- Header -->
-  <header class="page-header">
-    <div class="header-titles">
+  <div class="header">
+    <div>
       <h1>پروفایل استاد</h1>
-      <p>مشاهده و ویرایش اطلاعات پرسنلی</p>
+      <p class="subtitle">مشاهده و ویرایش اطلاعات پرسنلی</p>
     </div>
     <div class="header-actions">
-      <a
-        href="{% url 'dashboard:worker-edite' id=worker.id %}"
-        class="btn btn-primary"
-      >
-        <i class="fa-solid fa-pen"></i> ویرایش اطلاعات
-      </a>
-      <button class="btn btn-secondary">
-        <i class="fa-solid fa-print"></i> چاپ رزومه
-      </button>
+      <button class="btn btn-primary">✏️ ویرایش اطلاعات</button>
+      <button class="btn btn-outline">🖨 چاپ رزومه</button>
     </div>
-  </header>
+  </div>
 
-  <!-- Main Grid Layout -->
-  <div class="content-grid">
-    <!-- Right Column (Main) -->
-    <div class="main-col">
-      <!-- Personal Info Card -->
-      <div class="card profile-card">
-        <div class="profile-header">
-          <h3><i class="fa-solid fa-user text-blue"></i> اطلاعات فردی</h3>
-        </div>
-        <div class="profile-content">
-          <div class="profile-avatar">
-            <img
-              src="https://i.pravatar.cc/150?img=33"
-              alt="Professor Avatar"
-            />
-          </div>
-          <div class="profile-details">
-            <div class="detail-item">
-              <span class="label">نام</span>
-              <span class="value">{{ worker.name }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">نام خانوادگی</span>
-              <span class="value">{{ worker.last_name }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">نام پدر</span>
-              <span class="value">{{ worker.fname }}</span>
-            </div>
-            <div class="detail-item">
-              <span class="label">شماره تماس</span>
-              <span class="value">{{ worker.phone }}</span>
-            </div>
-            <div class="verified-badge">
-              <i class="fa-solid fa-circle-check"></i> استاد تایید شده
-            </div>
-          </div>
-        </div>
-        <!-- Blue vertical bar on left (right side visually) -->
-        <div class="profile-border-accent"></div>
+  <div class="grid">
+    <!-- اطلاعات فردی -->
+    <div class="card personal">
+      <div class="card-header">
+                <span class="card-icon">👤</span>
+        <span class="card-title">اطلاعات فردی</span>
       </div>
+      <div class="personal-header">
 
-      <!-- Job & Education Card -->
-      <div class="card education-card">
-        <div class="card-header">
-          <h3>
-            <i class="fa-solid fa-graduation-cap text-blue"></i> اطلاعات شغلی و
-            تحصیلی
-          </h3>
+        <div class="avatar-wrap">
+          <img
+            class="avatar"
+            src="https://i.pravatar.cc/150?img=12"
+            alt="avatar"
+          />
+          <span class="avatar-badge">✔</span>
         </div>
-
-        <div class="info-grid">
-          <div class="grid-item">
-            <span class="label">رشته تحصیلی</span>
-            <span class="value">{{ worker.major }}</span>
+              <div class="personal-name">
+          <div class="label">نام و نام خانوادگی</div>
+          <div class="value">محمد رضایی</div>
+          <div class="verified">✔ استاد تأیید شده</div>
+        </div>
+        <div class="personal-info">
+          
+  
+      </div>
+      <div class="personal-rows">
+        <div class="p-row">
+          <div class="p-col">
+            <span class="info-label">نام</span>
+            <span class="info-value">محمد</span>
           </div>
-          <div class="grid-item">
-            <span class="label">مدرك تحصیلی</span>
-            <span class="value">{{ worker.degree }}</span>
+          <div class="p-col">
+            <span class="info-label">نام خانوادگی</span>
+            <span class="info-value">رضایی</span>
           </div>
-          <div class="grid-item">
-            <span class="label">عنوان شغلی</span>
-            <span class="value">{{ worker.job }}</span>
+        </div>
+        <div class="p-row">
+          <div class="p-col">
+            <span class="info-label">نام پدر</span>
+            <span class="info-value">علی</span>
           </div>
-          <div class="grid-item">
-            <span class="label">سابقه خدمت (سال)</span>
-            <span class="value"
-              >{{ worker.years_of_service }} سال
-              <i class="fa-solid fa-chart-line text-blue"></i
-            ></span>
+          <div class="p-col">
+            <span class="info-label">شماره تماس</span>
+            <span class="info-value blue" dir="ltr">۰۹۱۲ ۳۴۵ ۶۷۸۹</span>
           </div>
+        </div>
+      </div>
+        </div>
+    </div>
+    <!-- سوابق و وضعیت -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">🕒</span>
+        <span class="card-title">سوابق و وضعیت</span>
+        <span class="badge">فعال</span>
+      </div>
+      <div class="info-list">
+        <div class="info-row">
+          <span class="info-label">سال فارغ‌التحصیلی</span>
+          <span class="info-value">۱۳۸۹</span>
+        </div>
+        <hr class="divider" />
+        <div class="info-row">
+          <span class="info-label">تاریخ استخدام</span>
+          <span class="info-value">۱۳۹۵/۰۶/۰۱</span>
+        </div>
+        <hr class="divider" />
+        <div class="info-row">
+          <span class="info-label"
+            >تاریخ خروج<br /><small class="muted"
+              >نامشخص (در حال خدمت)</small
+            ></span
+          >
+          <span class="info-value muted">—</span>
         </div>
       </div>
     </div>
 
-    <!-- Left Column (Side) -->
-    <div class="side-col">
-      <!-- Status & History Card -->
-      <div class="card status-card">
-        <div class="card-header">
-          <div class="header-right">
-            <span class="status-badge">فعال</span>
-            <h3>
-              <i class="fa-solid fa-clock-rotate-left text-blue"></i> سوابق و
-              وضعیت
-            </h3>
-          </div>
+    <!-- اطلاعات شغلی و تحصیلی -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">🎓</span>
+        <span class="card-title">اطلاعات شغلی و تحصیلی</span>
+      </div>
+      <div class="cells">
+        <div class="cell">
+          <div class="label">رشته تحصیلی</div>
+          <div class="value">مهندسی نرم‌افزار</div>
         </div>
-
-        <div class="timeline">
-          <div class="timeline">
-            <!-- Graduation -->
-            <div class="timeline-item">
-              <div class="timeline-icon">
-                <i class="fa-solid fa-graduation-cap"></i>
-              </div>
-
-              <div class="timeline-text">
-                <span class="label">سال فارغ‌التحصیلی</span>
-                <span class="value"> {{ worker.graduation_year }} </span>
-              </div>
-            </div>
-
-            <!-- Employment -->
-            <div class="timeline-item">
-              <div class="timeline-icon">
-                <i class="fa-regular fa-calendar"></i>
-              </div>
-
-              <div class="timeline-text">
-                <span class="label">تاریخ استخدام</span>
-                <span class="value"> {{ worker.registered_date }} </span>
-              </div>
-            </div>
-
-            <!-- Exit -->
-            <div class="timeline-item">
-              <div class="timeline-icon">
-                <i class="fa-solid fa-right-from-bracket"></i>
-              </div>
-
-              <div class="timeline-text">
-                <span class="label">تاریخ خروج</span>
-                <span class="value">
-                  {{ worker.detached_date|default:"نامشخص (در حال خدمت)" }}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div class="timeline-item">
-            <div class="timeline-text">
-              <span class="label">تاریخ خروج</span>
-              <span class="value">{{ worker.detached_date }}</span>
-            </div>
-            <div class="timeline-icon">
-              <i class="fa-solid fa-right-from-bracket"></i>
-            </div>
-          </div>
+        <div class="cell">
+          <div class="label">مدرک تحصیلی</div>
+          <div class="value">دکتری تخصصی (Ph.D)</div>
+        </div>
+        <div class="cell">
+          <div class="label">عنوان شغلی</div>
+          <div class="value">استادیار</div>
+        </div>
+        <div class="cell">
+          <div class="label">سابقه خدمت (سال)</div>
+          <div class="value blue">۱۲ سال 📈</div>
         </div>
       </div>
-
-      <!-- Financial Card -->
-      <div class="card financial-card">
-        <div class="card-header">
-          <h3><i class="fa-solid fa-wallet text-blue"></i> اطلاعات مالی</h3>
-        </div>
-
-        <div class="financial-row">
-          <span class="label">حقوق پایه</span>
-          <span class="value">{{ worker.salary }} افغانی</span>
-        </div>
-
-        <div class="financial-row red">
-          <span class="label">عایات (IJA)</span>
-          <span class="value">- {{ worker.tax }} افغانی</span>
-        </div>
-
-        <div class="financial-highlight">
-          <span class="label">دریافتی خاص</span>
-          <span class="value">{{ worker.special_allowance }} افغانی</span>
-        </div>
+    </div>
+    <!-- اطلاعات مالی -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">💼</span>
+        <span class="card-title">اطلاعات مالی</span>
+      </div>
+      <div class="fin-row">
+        <span class="info-label">حقوق پایه</span>
+        <span class="fin-amount">۱۵٬۰۰۰٬۰۰۰ ریال</span>
+      </div>
+      <div class="fin-row">
+        <span class="info-label"
+          >مالیات <span class="fin-note">(۲٪)</span></span
+        >
+        <span class="fin-amount negative">۳۰۰٬۰۰۰ - ریال</span>
+      </div>
+      <div class="fin-row total">
+        <span class="info-label">دریافتی خالص</span>
+        <span class="fin-amount blue">۱۴٬۷۰۰٬۰۰۰ ریال</span>
       </div>
     </div>
   </div>
 </div>
+
 {% endblock content %}
