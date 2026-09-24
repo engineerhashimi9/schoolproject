@@ -48,7 +48,7 @@
       <div class="detail-item">
         <div class="detail-text">
           <span class="label">تاریخ ثبت‌نام</span>
-          <span class="value">{{student.registered_date}}</span>
+          <span class="value">{{student.registered_date|date:'Y/m/d'}}</span>
         </div>
         <div class="icon-box"><i class="fa-regular fa-calendar-days"></i></div>
       </div>
@@ -56,7 +56,7 @@
       <div class="detail-item">
         <div class="detail-text">
           <span class="label">تاریخ خرد</span>
-          <span class="value">{{student.detached_date}}</span>
+          <span class="value">{{student.detached_date|date:'Y/m/d'}}</span>
         </div>
         <div class="icon-box"><i class="fa-regular fa-calendar"></i></div>
       </div>
@@ -94,7 +94,7 @@
           </div>
           <div class="identity-item">
             <span class="label">تاریخ تولد</span>
-            <span class="value">{{student.birth_date}}</span>
+            <span class="value">{{student.birth_date|date:'Y/m/d'}}</span>
           </div>
           <div class="identity-item">
             <span class="label">تابعیت</span>

@@ -34,7 +34,7 @@
           </div>
           <div class="personal-name">
             <div class="label">نام و نام خانوادگی</div>
-            <div class="value">محمد رضایی</div>
+            <div class="value">{{worker.name}} {{worker.last_name}}</div>
             <div class="verified">✔ استاد تأیید شده</div>
           </div>
         </div>
@@ -43,24 +43,24 @@
             <div class="p-row">
               <span class="info-label">نام</span>
               <br>
-              <span class="info-value">محمد</span>
+              <span class="info-value">{{worker.name}}</span>
             </div>
             <div class="p-row">
               <span class="info-label">نام خانوادگی</span>
               <br>
-              <span class="info-value">رضایی</span>
+              <span class="info-value">{{worker.last_name}}</span>
             </div>
           </div>
           <div class="p-col">
             <div class="p-row">
               <span class="info-label">نام پدر</span>
               <br>
-              <span class="info-value">علی</span>
+              <span class="info-value">{{worker.fname}}</span>
             </div>
             <div class="p-row">
               <span class="info-label">شماره تماس</span>
               <br>
-              <span class="info-value blue" dir="ltr">۰۹۱۲ ۳۴۵ ۶۷۸۹</span>
+              <span class="info-value blue" dir="ltr">{{worker.phone}}</span>
             </div>
           </div>
         </div>
@@ -71,17 +71,24 @@
       <div class="card-header">
         <span class="card-icon">🕒</span>
         <span class="card-title">سوابق و وضعیت</span>
-        <span class="badge">فعال</span>
+        
+        {% if worker.status == 1 %}
+             <span class="badge">فعال</span>
+          {% else %}
+          <span class="badge">غیر فعال</span>
+        {% endif %}
+          
+     
       </div>
       <div class="info-list">
         <div class="info-row">
           <span class="info-label">سال فارغ‌التحصیلی</span>
-          <span class="info-value">۱۳۸۹</span>
+          <span class="info-value">{{worker.graduation_year}}</span>
         </div>
         <hr class="divider" />
         <div class="info-row">
           <span class="info-label">تاریخ استخدام</span>
-          <span class="info-value">۱۳۹۵/۰۶/۰۱</span>
+          <span class="info-value">{{worker.registered_date|date:'Y/m/d'}}</span>
         </div>
         <hr class="divider" />
         <div class="info-row">
@@ -90,7 +97,7 @@
               >نامشخص (در حال خدمت)</small
             ></span
           >
-          <span class="info-value muted">—</span>
+          <span class="info-value muted">{{worker.detached_date|date:'Y/m/d'}}</span>
         </div>
       </div>
     </div>
@@ -104,19 +111,19 @@
       <div class="cells">
         <div class="cell">
           <div class="label">رشته تحصیلی</div>
-          <div class="value">مهندسی نرم‌افزار</div>
+          <div class="value">{{worker.major}}</div>
         </div>
         <div class="cell">
           <div class="label">مدرک تحصیلی</div>
-          <div class="value">دکتری تخصصی (Ph.D)</div>
+          <div class="value">{{worker.degree}}</div>
         </div>
         <div class="cell">
           <div class="label">عنوان شغلی</div>
-          <div class="value">استادیار</div>
+          <div class="value">{{worker.job}}</div>
         </div>
         <div class="cell">
           <div class="label">سابقه خدمت (سال)</div>
-          <div class="value blue">۱۲ سال 📈</div>
+          <div class="value blue">{{worker.years_of_service}}</div>
         </div>
       </div>
     </div>
@@ -128,17 +135,17 @@
       </div>
       <div class="fin-row">
         <span class="info-label">حقوق پایه</span>
-        <span class="fin-amount">۱۵٬۰۰۰٬۰۰۰ ریال</span>
+        <span class="fin-amount">{{worker.salary}} افغانی</span>
       </div>
       <div class="fin-row">
         <span class="info-label"
           >مالیات <span class="fin-note">(۲٪)</span></span
         >
-        <span class="fin-amount negative">۳۰۰٬۰۰۰ - ریال</span>
+        <span class="fin-amount negative">{{worker.salary}} افغانی</span>
       </div>
       <div class="fin-row total">
         <span class="info-label">دریافتی خالص</span>
-        <span class="fin-amount blue">۱۴٬۷۰۰٬۰۰۰ ریال</span>
+        <span class="fin-amount blue"></span>
       </div>
     </div>
   </div>
