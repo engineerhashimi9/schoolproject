@@ -19,7 +19,10 @@ django_login==1.0
 djangorestframework==3.17.1
 djangorestframework_simplejwt==5.5.1
 djoser==2.3.3
+gunicorn==26.2.0
 idna==3.17
+jalali_core==1.0.0
+jdatetime==6.1.0
 oauthlib==3.3.1
 pillow==12.2.0
 psycopg==3.3.4
@@ -34,3 +37,4 @@ social-auth-core==4.9.1
 sqlparse==0.5.5
 tzdata==2026.2
 urllib3==2.7.0
+whitenoise==6.12.0

@@ -167,12 +167,12 @@
 }
 
 .info-label {
-    font-size: 13px;
+    font-size: 16px;
     color: #777;
 }
 
 .info-value {
-    font-size: 13px;
+    font-size: 18px;
     font-weight: 600;
     color: #222;
 }
@@ -214,19 +214,22 @@
     gap: 16px;
     margin-bottom: 18px;
 }
+
 .personal-info {
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 4px;
+    padding: 20px;
 }
+
 .avatar-wrap {
     position: relative;
 }
 
 .avatar {
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid #e5ecff;
@@ -249,18 +252,22 @@
 }
 
 .personal-name .value {
-    font-size: 16px;
+    display: flex;
+    font-size: 25px;
     font-weight: 800;
+    justify-content: center;
+
 }
 
 .personal-name .label {
-    font-size: 12px;
+    font-size: 10px;
     color: #888;
     margin-bottom: 2px;
 }
 
 .verified {
-    margin-top: 8px;
+    margin-top: 10px;
+    margin-right: 10px;
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -273,24 +280,24 @@
 }
 
 .personal-rows {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.p-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    padding-top: 50px;
+    gap: 10px;
 }
 
 .p-col {
-    flex: 1;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 10px;
+    flex-direction: column;
+    justify-content: space-evenly;
+    gap: 10px;
+
+
 }
+
+
+
 
 /* ---------- Grid cells (bottom cards) ---------- */
 .cells {

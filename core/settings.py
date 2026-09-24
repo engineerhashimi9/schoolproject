@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -13,7 +13,8 @@ SECRET_KEY = "django-insecure-!xyx)h0opn660ns2q(q4!fk6t1u5%-8bmjd^*0wz)wj=sy6mbv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']  # Or os.getenv('DJANGO_ALLOWED_HOSTS', '').split(',')
+CSRF_TRUSTED_ORIGINS = ['https://*.koyeb.app']
 
 
 # Application definition
@@ -29,8 +30,10 @@ INSTALLED_APPS = [
     "dashboard",
 ]
 
+# 1. Update MIDDLEWARE: Keep SecurityMiddleware first, followed immediately by WhiteNoise
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # Must be right after SecurityMiddleware
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -39,12 +42,24 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+# 2. Add STATIC_ROOT and WhiteNoise storage engine
+STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Keep your existing STATICFILES_DIRS as they are
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    BASE_DIR / "accounts/static",
+    BASE_DIR / "dashboard/static",
+]
+
 ROOT_URLCONF = "core.urls"
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates", BASE_DIR / "accounts/templates",BASE_DIR / "dashboard/templates"],
+        "DIRS": [BASE_DIR / "templates", BASE_DIR / "accounts/templates", BASE_DIR / "dashboard/templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -104,17 +119,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "static/"
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-    BASE_DIR / "accounts/static",
-    BASE_DIR / "dashboard/static",
-]
 
 AUTH_USER_MODEL = "accounts.User"
 LOGIN_URL = "accounts:login"
