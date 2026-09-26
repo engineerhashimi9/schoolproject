@@ -14,9 +14,45 @@
     font-weight: 700;
     font-display: swap;
 }
+
 html {
     scroll-behavior: smooth;
 }
+
+
+.container {
+    max-width: 1920px;
+    max-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+    scrollbar-gutter: stable;
+}
+
+.container::-webkit-scrollbar {
+    width: 10px;
+}
+
+.container::-webkit-scrollbar-track {
+    background: #eef2f7;
+    border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--primary-blue), #7aa9dd);
+    border-radius: 10px;
+    border: 2px solid #eef2f7;
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--primary-blue-hover), #4d8ed8);
+}
+
+.container {
+    scrollbar-color: #7aa9dd #eef2f7;
+    scrollbar-width: thin;
+}
+
 
 * {
     margin: 0;

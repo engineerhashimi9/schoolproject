@@ -1,5 +1,4 @@
-{% extends 'dashboard/base.html' %} {% load static %} 
-{% block style %} 
+{% extends 'dashboard/base.html' %} {% load static %} {% block style %}
 <link rel="stylesheet" href="{% static 'dashboard/css/class_list.css' %}" />
 
 {% endblock style %} {% block content %}
@@ -7,9 +6,9 @@
   <!-- Header -->
   <div class="header">
     <div>
-      <h1>لیست صنف‌ها و کلاس‌ها</h1>
+      <h1>لیست صنف‌ها و صنف‌ها</h1>
       <p>
-        مدیریت و نظارت بر کلاس‌های درسی، پایه‌های آموزشی، اساتید راهنما و سال
+        مدیریت و نظارت بر صنف‌های درسی، پایه‌های آموزشی، اساتید راهنما و سال
         تحصیلی فعال
       </p>
     </div>
@@ -61,9 +60,8 @@
         </svg>
       </div>
       <div class="stat-body">
-        <div class="label">کل کلاس‌ها و صنف‌ها</div>
+        <div class="label">کل صنف‌ها و صنف‌ها</div>
         <h2>۲۴ صنف</h2>
-        <div class="sub green">۲۰٪ فعال در نیم‌سال دوم</div>
       </div>
     </div>
     <div class="stat">
@@ -84,9 +82,9 @@
         </svg>
       </div>
       <div class="stat-body">
-        <div class="label">پایه‌های تحصیلی تحت پوشش</div>
-        <h2>۳ پایه</h2>
-        <div class="sub blue">دهم، یازدهم و دوازدهم</div>
+        <div class="label">صنوف تعلیمی تحت پوشش</div>
+        <h2>13</h2>
+        <div class="sub blue">از صنف آمادگی الی دوازدهم</div>
       </div>
     </div>
     <div class="stat">
@@ -211,36 +209,38 @@
       <thead>
         <tr>
           <th># شناسه</th>
-          <th>عنوان صنف و دوره</th>
-          <th>پایه تحصیلی (GRADE)</th>
+          <th>عنوان صنف </th>
+          <th> درجه تعلیمی(GRADE)</th>
           <th>شعبه (SECTION)</th>
           <th>استاد راهنما (GUIDANCE)</th>
-          <th>سال تحصیلی</th>
+          <th>سال تعلیمی</th>
           <th>ظرفیت دانش‌آموزان</th>
           <th>وضعیت</th>
           <th>عملیات</th>
         </tr>
       </thead>
       <tbody>
+        {% for class in classes %}
+
         <tr>
-          <td class="row-num">CLS-101</td>
+          <td class="row-num">CLS-{{class.id}}</td>
           <td>
             <div class="class-title">
-              دهم ریاضی <span class="badge">کلاس ۱۰۲ الف</span>
+              دهم ریاضی <span class="badge">صنف ۱۰۲ الف</span>
             </div>
             <div class="class-meta">۲۰۴ ساعت • ساختمان اصلی</div>
           </td>
           <td><span class="grade-badge grade-blue">پایه دهم</span></td>
-          <td>شعبه الف</td>
+          <td>شعبه {{class.section}}</td>
           <td>
             <div class="teacher">
               <span class="t-name"
-                ><span class="avatar">م.ر</span> استاد محمد رضایی</span
+                ><span class="avatar">م.ر</span> استاد {{class.guidence}} </span
               >
               <span class="t-sub">دبیر ریاضی و هندسه</span>
             </div>
           </td>
-          <td>۱۴۰۲-۱۴۰۳</td>
+          <td>{{class.academice_year.year}}</td>
           <td>
             <div class="enrolled">
               <span class="count">۳۰ از ۳۲</span>
@@ -256,144 +256,19 @@
           <td>
             <div class="actions">
               <button class="icon-btn danger" title="حذف">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <polyline points="3 6 5 6 21 6" />
-                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                  <path d="M10 11v6M14 11v6" />
-                </svg>
-              </button>
-              <button class="icon-btn" title="آرشیو">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <polyline points="21 8 21 21 3 21 3 8" />
-                  <rect x="1" y="3" width="22" height="5" rx="1" />
-                  <line x1="10" y1="12" x2="14" y2="12" />
-                </svg>
+                <i class="fa-solid fa-trash"></i>
               </button>
               <button class="icon-btn" title="ویرایش">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
-                  />
-                  <path
-                    d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
-                  />
-                </svg>
+                <i class="fa-solid fa-pen"></i>
               </button>
               <button class="icon-btn" title="مشاهده">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
+                <i class="fa-solid fa-eye"></i>
               </button>
             </div>
           </td>
         </tr>
-        <tr>
-          <td class="row-num">CLS-102</td>
-          <td>
-            <div class="class-title">
-              یازدهم علوم <span class="badge">کلاس ۱۱۰ ب</span>
-            </div>
-            <div class="class-meta">۲۰۴ ساعت • ساختمان نوآوری</div>
-          </td>
-          <td><span class="grade-badge grade-green">پایه یازدهم</span></td>
-          <td>شعبه ب</td>
-          <td>
-            <div class="teacher">
-              <span class="t-name"
-                ><span class="avatar">س.ا</span> استاد سارا احمدی</span
-              >
-              <span class="t-sub">دبیر شیمی و آزمایشگاه</span>
-            </div>
-          </td>
-          <td>۱۴۰۲-۱۴۰۳</td>
-          <td>
-            <div class="enrolled">
-              <span class="count">۲۸ از ۳۰</span>
-              <div class="progress">
-                <span class="fill-green" style="width: 93%"></span>
-              </div>
-              <span class="pct">٪۹۳</span>
-            </div>
-          </td>
-          <td>
-            <span class="status"><span class="dot"></span>فعال</span>
-          </td>
-          <td>
-            <div class="actions">
-              <button class="icon-btn danger" title="حذف">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <polyline points="3 6 5 6 21 6" />
-                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                  <path d="M10 11v6M14 11v6" />
-                </svg>
-              </button>
-              <button class="icon-btn" title="آرشیو">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <polyline points="21 8 21 21 3 21 3 8" />
-                  <rect x="1" y="3" width="22" height="5" rx="1" />
-                  <line x1="10" y1="12" x2="14" y2="12" />
-                </svg>
-              </button>
-              <button class="icon-btn" title="ویرایش">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
-                  />
-                  <path
-                    d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
-                  />
-                </svg>
-              </button>
-              <button class="icon-btn" title="مشاهده">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
-              </button>
-            </div>
-          </td>
-        </tr>
+
+        {% endfor %}
       </tbody>
     </table>
   </div>

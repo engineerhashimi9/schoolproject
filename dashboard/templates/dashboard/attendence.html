@@ -1,0 +1,290 @@
+{% extends 'dashboard/base.html' %} {% load static %}
+
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'dashboard/css/attendence.css' %}">
+{% endblock style %}
+    
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+  <div class="page-title">
+    <h2>ثبت و نظارت بر حضور و غیاب صنف‌ها</h2>
+    <p style="color: var(--text-secondary); font-size: 0.875rem">
+      بررسی گزارش ماهانه و روزانه حضور دانش‌آموزان، ثبت غیبت و رخصتی‌ها
+    </p>
+  </div>
+  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap">
+    <button class="btn btn-secondary">خروجی اکسل</button>
+    <button class="btn btn-secondary">ثبت سریع امروز</button>
+    <button class="btn btn-primary" onclick="toggleModal('attendance-modal')">
+      <span class="material-symbols-outlined">add_circle</span>
+      ثبت حضور و غیاب جدید
+    </button>
+  </div>
+</div>
+
+<!-- Stats Grid -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-info">
+      <span>کل روزهای آموزشی</span>
+      <h3>۲۴ روز</h3>
+      <span>تقویم ماه عقرب</span>
+    </div>
+    <div class="stat-icon">
+      <span class="material-symbols-outlined">calendar_month</span>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-info">
+      <span>نرخ حضور</span>
+      <h3>۹۴.۲٪</h3>
+      <span>+۲.۴٪ ↑ نسبت به قبل</span>
+    </div>
+    <div class="stat-icon">
+      <span class="material-symbols-outlined">verified</span>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-info text-danger">
+      <span>غیبت‌های غیرموجه</span>
+      <h3>۱۸ مورد</h3>
+      <span>نیازمند پیگیری</span>
+    </div>
+    <div class="stat-icon bg-danger-light">
+      <span class="material-symbols-outlined">person_cancel</span>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-info">
+      <span>مجموع رخصتی و مریضی</span>
+      <h3>۳۲ مورد</h3>
+      <span>دارای تصدیق معتبر</span>
+    </div>
+    <div class="stat-icon">
+      <span class="material-symbols-outlined">medical_services</span>
+    </div>
+  </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+  <div class="filter-grid">
+    <div class="form-group">
+      <label>صنف و پایه آموزشی</label>
+      <select class="form-control">
+        <option>دهم - ریاضی فیزیک (الف)</option>
+        <option>دهم - تجربی (ب)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>ماه تحصیلی</label>
+      <select class="form-control">
+        <option>عقرب / آبان</option>
+        <option>میزان / مهر</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>وضعیت حضور</label>
+      <select class="form-control">
+        <option>همه وضعیت‌ها</option>
+        <option>دارای غیبت</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>جستجو</label>
+      <input
+        type="text"
+        class="form-control"
+        placeholder="نام یا شماره تذکره..."
+      />
+    </div>
+  </div>
+</div>
+
+<!-- Data Table -->
+<div class="table-card">
+  <div class="table-header">
+    <h3>جدول کارنامه جامع حضور و غیاب</h3>
+    <span style="font-size: 0.875rem; color: var(--text-secondary)"
+      >بروزرسانی: امروز</span
+    >
+  </div>
+  <div style="overflow-x: auto">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>شناسه</th>
+          <th>مشخصات دانش‌آموز</th>
+          <th>صنف</th>
+          <th style="text-align: center">کل روزها</th>
+          <th style="text-align: center">حاضر</th>
+          <th style="text-align: center">غیرحاضر</th>
+          <th>درصد حضور</th>
+          <th style="text-align: center">عملیات</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>#ATN-1041</td>
+          <td>
+            <div class="student-cell">
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQNAcAj-efWuNzemgaGJa_AmTaeiuDX_kn8QzJMbbh_HqDn_UzV_UzIE48bjzJz7QmZVms_uJ1xZhVlFsFmU-pmuUpuPjaJDiuA6zIkQ0qRcz0fagBTKn_k9BazW4SMnbRdTtdBnUa9ts7QS1cUcOfKJgQ7MIgBKn-pscBzV-OlKHI9BxcUwQ8XriydlIL5ZQMaEMDY63hO8La_Z5XnG9_EDYuGBJJ84fPYQ5wtqeE0lfEkmIFqt-I1w"
+              />
+              <div>
+                <div style="font-weight: bold">محمد رحیمی</div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary)">
+                  کد: ۰۴۴-۳۸۹۱
+                </div>
+              </div>
+            </div>
+          </td>
+          <td>دهم ریاضی الف</td>
+          <td style="text-align: center">۲۴</td>
+          <td style="text-align: center">
+            <span class="badge badge-success">۲۳ روز</span>
+          </td>
+          <td style="text-align: center">
+            <span class="badge badge-gray">۰</span>
+          </td>
+          <td>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                font-size: 0.75rem;
+                font-weight: bold;
+              "
+            >
+              <span>۹۵.۸٪</span> <span>عالی</span>
+            </div>
+            <div class="progress-container">
+              <div class="progress-bar" style="width: 95.8%"></div>
+            </div>
+          </td>
+          <td style="text-align: center">
+            <div class="action-buttons" style="justify-content: center">
+              <button class="icon-btn" style="border: none">
+                <span class="material-symbols-outlined">edit</span>
+              </button>
+              <button class="icon-btn" style="border: none">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" id="attendance-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 style="display: flex; align-items: center; gap: 0.5rem">
+        <span class="material-symbols-outlined">assignment_add</span> ثبت حضور و
+        غیاب
+      </h3>
+      <button
+        class="icon-btn"
+        style="border: none"
+        onclick="toggleModal('attendance-modal')"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="filter-grid" style="margin-bottom: 1rem">
+        <div class="form-group">
+          <label>دانش‌آموز</label>
+          <select class="form-control">
+            <option>محمد رحیمی</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>صنف</label>
+          <select class="form-control">
+            <option>دهم ریاضی الف</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="days-grid">
+        <div class="form-group">
+          <label style="text-align: center">کل روزها</label>
+          <input
+            type="number"
+            class="form-control"
+            style="text-align: center"
+            value="24"
+          />
+        </div>
+        <div class="form-group">
+          <label style="text-align: center; color: var(--color-success)"
+            >حاضر</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            style="text-align: center"
+            value="22"
+          />
+        </div>
+        <div class="form-group">
+          <label style="text-align: center; color: var(--color-danger)"
+            >غایب</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            style="text-align: center"
+            value="1"
+          />
+        </div>
+        <div class="form-group">
+          <label style="text-align: center; color: var(--color-warning)"
+            >بیمار</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            style="text-align: center"
+            value="1"
+          />
+        </div>
+        <div class="form-group">
+          <label style="text-align: center">رخصتی</label>
+          <input
+            type="number"
+            class="form-control"
+            style="text-align: center"
+            value="0"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="toggleModal('attendance-modal')">
+        انصراف
+      </button>
+      <button class="btn btn-primary">ذخیره رکورد</button>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block js %}
+<script>
+  // Simple vanilla JS function to handle the modal
+  function toggleModal(modalID) {
+    const modal = document.getElementById(modalID);
+    if (modal.classList.contains("active")) {
+      modal.classList.remove("active");
+    } else {
+      modal.classList.add("active");
+    }
+  }
+</script>
+{% endblock %}

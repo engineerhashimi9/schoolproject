@@ -454,7 +454,6 @@ const all_districts = [
 ];
 function get_html(data, selectedId = null) {
   let s = "";
-
   for (let i = 0; i < data.length; i++) {
     if (data[i].id == selectedId) {
       s += `<option value="${data[i].id}" selected>${data[i].name}</option>`;
@@ -467,6 +466,8 @@ function get_html(data, selectedId = null) {
 }
 
 const ori_p = document.getElementById("original-province");
+
+
 const now_p = document.getElementById("now-province");
 const ori_d = document.getElementById("original-district");
 const now_d = document.getElementById("now-district");
@@ -475,21 +476,21 @@ const now_d = document.getElementById("now-district");
 // CURRENT PROVINCE
 // =========================
 
-now_p.innerHTML = get_html(provinces, "{{ student.now_province.id }}");
+now_p.innerHTML = get_html(provinces,Number(now_p.getAttribute("value")));
 
 // =========================
 // ORIGINAL PROVINCE
 // =========================
 
-ori_p.innerHTML = get_html(provinces, "{{ student.original_province.id }}");
+ori_p.innerHTML = get_html(provinces, Number(ori_p.getAttribute("value")));
 
 // =========================
 // LOAD CURRENT DISTRICTS
 // =========================
 
 now_d.innerHTML = get_html(
-  all_districts.filter((district) => district.province_id == now_p.value),
-  "{{ student.now_district.id }}",
+  all_districts.filter((district) => district.province_id == Number(now_p.getAttribute("value"))),
+  Number(now_d.getAttribute("value")),
 );
 
 // =========================
@@ -497,8 +498,8 @@ now_d.innerHTML = get_html(
 // =========================
 
 ori_d.innerHTML = get_html(
-  all_districts.filter((district) => district.province_id == ori_p.value),
-  "{{ student.original_district.id }}",
+  all_districts.filter((district) => district.province_id == ori_p.getAttribute("value")),
+  ori_d.getAttribute("value"),
 );
 
 // =========================

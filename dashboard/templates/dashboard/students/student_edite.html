@@ -265,7 +265,7 @@
         <div class="row">
           <div>
             <label>صنف</label>
-           
+
             <select name="class_section" id="class">
               {% for class in classes %}
               <option
@@ -299,13 +299,13 @@
         <div class="row">
           <div>
             <label>ولایت <span class="req">*</span></label>
-            <select name="now_province" id="now-province" value={{student.now_province.id}}>
+            <select name="now_province" id="now-province" value="{{student.now_province.id}}">
 
             </select>
           </div>
           <div>
             <label>ولسوالی <span class="req">*</span></label>
-            <select name="now_district" id="now-district">
+            <select name="now_district" id="now-district" value="{{student.now_district.id}}">
          
             </select>
           </div>
@@ -334,12 +334,12 @@
         <div class="row">
           <div>
             <label>ولایت <span class="req">*</span></label>
-            <select name="original_province" id="original-province" value={{student.original_province.id}}>
+            <select name="original_province" id="original-province" value="{{ student.original_province.id }}">
             </select>
           </div>
           <div>
             <label>ولسوالی <span class="req">*</span></label>
-        <select name="original_district" id="original-district" value={{student.original_district.id}}>
+        <select name="original_district" id="original-district" value="{{ student.original_district.id }}">
             </select>
           </div>
         </div>
@@ -350,7 +350,7 @@
             <input
               type="number"
               name="original_zone"
-              value="{{student.original_zone}}"
+              value="{{ student.original_zone }}"
             />
           </div>
           <div>
@@ -358,7 +358,7 @@
             <input
               type="text"
               name="original_village"
-              value="{{student.original_village}}"
+              value="{{ student.original_village }}"
             />
           </div>
         </div>
@@ -388,5 +388,7 @@
 </div>
 
 {% endblock content %} {% block js %}
-<script src="{% static 'dashboard/js/student_edite.js' %}"></script>
+<script src="{% static 'dashboard/js/student_edite.js' %}">
+</script>
+
 {% endblock js %}

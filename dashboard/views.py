@@ -9,7 +9,14 @@ import jdatetime
 from django.db.models import Q
 
 
-# Create your views here.
+# -----------------------------------------------------------------------------
+#####
+#####
+######### -------------- Tsecurity section SECTION --------------###
+#####
+#####
+# ---------------------------------------------------------------------------
+
 
 # is Admin derator
 def is_admin(func):
@@ -21,24 +28,37 @@ def is_admin(func):
 
     return wrapper
 
-# dashboard section
 
+# -----------------------------------------------------------------------------
+#####
+#####
+######### -------------- Main Dashboard  SECTION --------------###
+#####
+#####
+# ---------------------------------------------------------------------------
 
 @is_admin
 def dashboard_view(request):
     return render(request, "dashboard/dashboard.html")
 
 
-############## ---------- STUDENT SECTION -------------------##
+# -----------------------------------------------------------------------------
+#####
+#####
+######### -------------- Students SECTION --------------###
+#####
+#####
+# ---------------------------------------------------------------------------
+
 class StudentListView(LoginRequiredMixin, ListView):
     model = Student
-    template_name = "dashboard/student_list.html"
+    template_name = "dashboard/students/student_list.html"
     context_object_name = "students"
 
 
 class StudentDetailView(LoginRequiredMixin, DetailView):
     model = Student
-    template_name = "dashboard/student_detail.html"
+    template_name = "dashboard/students/student_detail.html"
     context_object_name = "student"
 
 
@@ -129,7 +149,7 @@ def student_edite(request, id):
             print(form.errors)
         return redirect(reverse("dashboard:student-detail", kwargs={"pk": student.id}))
     else:
-        return render(request, "dashboard/student_edite.html", {"student": student, "classes": classes})
+        return render(request, "dashboard/students/student_edite.html", {"student": student, "classes": classes})
 
 
 @is_admin
@@ -198,18 +218,23 @@ def student_create(request):
 
     return render(request, "dashboard/student_edite.html", {"classes": classes})
 
+# -----------------------------------------------------------------------------
+#####
+#####
 ######### -------------- TEACHERS ANS WORKERS SECTION --------------###
-
+#####
+#####
+# ---------------------------------------------------------------------------
 
 class TeacherListView(LoginRequiredMixin, ListView):
     model = Teacher
-    template_name = "dashboard/workers_list.html"
+    template_name = "dashboard/workers/workers_list.html"
     context_object_name = "workers"
 
 
 class TeacherDetailView(LoginRequiredMixin, DetailView):
     model = Teacher
-    template_name = "dashboard/worker_detail.html"
+    template_name = "dashboard/workers/worker_detail.html"
     context_object_name = "worker"
 
 
@@ -267,7 +292,7 @@ def teacher_edite(request, id):
             print(request.POST)
 
     else:
-        return render(request, "dashboard/worker_edite.html", {"teacher": teacher,"classes":classes})
+        return render(request, "dashboard/workers/worker_edite.html", {"teacher": teacher,"classes":classes})
 @is_admin
 def disable_teacher(request,id) :
     target=get_object_or_404(Teacher,id=id)
@@ -329,10 +354,28 @@ def teacher_create(request):
             print(form.errors)
             print(request.POST)
     else:
-        return render(request, "dashboard/worker_edite.html", {"classes": classes})
+        return render(request, "dashboard/workers/worker_edite.html", {"classes": classes})
 
+
+# -----------------------------------------------------------------------------
+#####
+#####
+######### -------------- Classes SECTION --------------###
+#####
+#####
+# ---------------------------------------------------------------------------
 
 class ClassesListView(LoginRequiredMixin, ListView):
     model = Classes
     template_name = "dashboard/class_list.html"
     context_object_name = "classes"
+
+# -----------------------------------------------------------------------------
+#####
+#####
+######### -------------- Attendence SECTION --------------###
+#####
+#####
+# ---------------------------------------------------------------------------
+def attendence(request) :
+    return render(request,"dashboard/attendence.html",{})

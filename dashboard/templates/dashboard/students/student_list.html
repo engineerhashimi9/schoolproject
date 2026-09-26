@@ -141,7 +141,7 @@
                 <button
                   class="btn-icon"
                   id="disable"
-                  onclick="disevent({{student.id}})"
+                  onclick="disevent(event,{{student.id}})"
                 >
                   <i class="fa-solid fa-trash"></i>
                 </button>
@@ -179,28 +179,34 @@
 
 {% endblock content %} {% block js %}
 <script>
-  const closeBtn = document.getElementById("closeBoxBtn");
   const modal = document.getElementById("msgBoxModal");
 
-  // Hide the message box when clicking the close button
-  closeBtn.addEventListener("click", () => {
+  function closeModal() {
     modal.style.display = "none";
-  });
+    modal.innerHTML = "";
+  }
 
-  // Optional: Hide the box if user clicks anywhere outside the white box
-  window.addEventListener("click", (event) => {
-    if (event.target === modal) {
-      modal.style.display = "none";
-    }
-  });
-  function disevent(id) {
+  function disevent(event, id) {
+    if (event) event.stopPropagation();
+
     modal.innerHTML = `
-      <div class="message-content"><h3>اخطار</h3>
-      <p class="message">این دانش آموز غیر فعال شود؟</p>
-      <a href="http://localhost:8000/dashboard/student/${id}/disable" class="option-btn" >بله</a>
-      <button class="option-btn" id="closeBoxBtn">خیر</button></div>`;
+        <div class="message-content">
+          <h3>اخطار</h3>
+          <p class="message">این دانش‌آموز غیرفعال شود؟</p>
+          <a href="/dashboard/student/${id}/disable" class="option-btn">بله</a>
+          <button type="button" class="option-btn" id="closeBoxBtn">خیر</button>
+        </div>`;
     modal.style.display = "flex";
   }
+
+  window.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+    if (e.target && e.target.id === "closeBoxBtn") {
+      closeModal();
+    }
+  });
 </script>
 
 {% endblock js %}

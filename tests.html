@@ -1,678 +1,847 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ویرایش پرونده دانش‌آموز</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <style>
-        :root {
-            --bg-main: #f4f6f8;
-            --bg-card: #ffffff;
-            --primary-blue: #0066cc;
-            --primary-blue-light: #eef6ff;
-            --text-dark: #333333;
-            --text-light: #777777;
-            --border-color: #e2e8f0;
-            --green: #28a745;
-            --font: 'Vazirmatn', sans-serif;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            --radius: 12px;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: var(--font);
-        }
-
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-dark);
-            padding: 30px;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .text-blue {
-            color: var(--primary-blue);
-            margin-left: 8px;
-        }
-
-        .text-green {
-            color: var(--green);
-        }
-
-        /* --- Header --- */
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-        }
-
-        .header-titles h1 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .header-titles p {
-            font-size: 0.95rem;
-            color: var(--text-light);
-            margin-top: 5px;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        .btn {
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            border: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-blue);
-            color: #fff;
-        }
-
-        .btn-primary:hover {
-            background-color: #0052a3;
-        }
-
-        .btn-secondary {
-            background-color: #fff;
-            color: var(--text-dark);
-            border: 1px solid var(--border-color);
-        }
-
-        .btn-secondary:hover {
-            background-color: #f1f5f9;
-        }
-
-        /* --- Cards --- */
-        .card {
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            padding: 24px;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-            margin-bottom: 20px;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .card-header h3 {
-            font-size: 1.15rem;
-            font-weight: 700;
-        }
-
-        .header-note {
-            font-size: 0.8rem;
-            color: var(--text-light);
-        }
-
-        /* --- Top Banner --- */
-        .profile-banner {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .banner-info {
-            display: flex;
-            gap: 30px;
-        }
-
-        .info-box {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .info-box .label {
-            font-size: 0.8rem;
-            color: var(--text-light);
-        }
-
-        .info-box .value {
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .banner-profile {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .profile-text {
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .badge-active {
-            background: #fff8e1;
-            color: #a1887f;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .profile-text h2 {
-            font-size: 1.5rem;
-            margin-bottom: 4px;
-        }
-
-        .profile-text p {
-            color: var(--text-light);
-            font-size: 0.95rem;
-        }
-
-        .profile-image-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .profile-image-wrapper img {
-            width: 110px;
-            height: 110px;
-            border-radius: 12px;
-            object-fit: cover;
-            border: 3px solid #f8fafc;
-            box-shadow: var(--shadow);
-        }
-
-        .image-actions {
-            text-align: center;
-        }
-
-        .btn-upload {
-            background: transparent;
-            border: none;
-            color: var(--primary-blue);
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .file-hint {
-            font-size: 0.7rem;
-            color: var(--text-light);
-            display: block;
-            margin-top: 4px;
-        }
-
-        /* --- Grid Layout --- */
-        .content-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            /* Main content is wider */
-            gap: 20px;
-            align-items: start;
-        }
-
-        .side-col {
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* --- Forms --- */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .form-group.full-width {
-            grid-column: span 2;
-        }
-
-        .label-req::after {
-            content: " *";
-            color: var(--primary-blue);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 0.95rem;
-            background: #fff;
-            color: var(--text-dark);
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
-        }
-
-        .form-control:disabled {
-            background-color: #f8f9fa;
-            color: var(--text-light);
-            cursor: not-allowed;
-        }
-
-        select.form-control {
-            cursor: pointer;
-        }
-
-        /* Input with icon */
-        .input-icon-wrapper {
-            position: relative;
-        }
-
-        .input-icon-wrapper input {
-            padding-left: 35px;
-            /* Space for icon */
-        }
-
-        .input-icon-wrapper i {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-light);
-        }
-
-        /* Text helper */
-        .help-text {
-            font-size: 0.75rem;
-            color: var(--text-light);
-        }
-
-        /* Box info in sidebar */
-        .box-info {
-            background: #f8fafc;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .box-info .label {
-            font-size: 0.85rem;
-            color: var(--text-light);
-        }
-
-        .box-info .value {
-            font-size: 0.95rem;
-            font-weight: 600;
-        }
-
-        /* --- Footer --- */
-        .footer-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--bg-card);
-            padding: 20px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-            margin-top: 20px;
-        }
-
-        .footer-note {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* --- Responsive --- */
-        @media (max-width: 992px) {
-            .content-grid {
-                grid-template-columns: 1fr;
+<html dir="rtl" lang="fa"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ویرایش پرونده استاد | EduAdmin</title>
+<!-- Google Fonts: Vazirmatn -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Vazirmatn', 'Tahoma', 'Segoe UI', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef6ff',
+              100: '#d9eaff',
+              500: '#2563eb',
+              600: '#1d4ed8',
+              700: '#1e40af',
+            },
+            sidebar: {
+              DEFAULT: '#0b1329',
+              active: '#1e293b',
+              hover: '#15213d'
             }
-
-            .profile-banner {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+          }
         }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 15px;
-            }
-
-            .page-header {
-                flex-direction: column-reverse;
-                gap: 20px;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-group.full-width {
-                grid-column: span 1;
-            }
-
-            .banner-info {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .banner-profile {
-                flex-direction: column;
-                text-align: center;
-                align-items: center;
-                width: 100%;
-            }
-
-            .footer-actions {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
+      }
+    }
+  </script>
+<style data-purpose="custom-typography-and-scroll">
+    body {
+      font-family: 'Vazirmatn', Tahoma, Segoe UI, sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+  </style>
+<meta content="web_dashboard" name="shell-type"/></head>
+<body class="min-h-screen bg-[#f8fafc] flex antialiased selection:bg-blue-500 selection:text-white">
+<!-- BEGIN: RightSidebar -->
+<aside class="w-64 bg-[#0b1329] text-slate-300 flex-shrink-0 flex flex-col justify-between min-h-screen sticky top-0 h-screen border-l border-slate-800 z-30" data-purpose="sidebar-navigation">
+<!-- Top Brand & Menu -->
+<div class="p-5 flex flex-col">
+<!-- Portal Logo & Brand -->
+<div class="flex items-center gap-3 mb-8 px-2" data-purpose="brand-logo">
+<div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-600/30">
+<svg class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.98l-5 2.73-5-2.73v-3.71l5 2.73 5-2.73v3.71z"></path>
+</svg>
+</div>
+<div>
+<h1 class="text-white font-bold text-lg leading-snug tracking-wide">EduAdmin</h1>
+<p class="text-xs text-slate-400 font-normal">سیستم جامع مدیریت مدارس</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="space-y-1.5" data-purpose="main-menu">
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 text-sm font-medium transition-colors" href="#">
+<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+<rect height="7" rx="1.5" width="7" x="3" y="3"></rect>
+<rect height="7" rx="1.5" width="7" x="14" y="3"></rect>
+<rect height="7" rx="1.5" width="7" x="14" y="14"></rect>
+<rect height="7" rx="1.5" width="7" x="3" y="14"></rect>
+</svg>
+<span>داشبورد</span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 text-sm font-medium transition-colors" href="#">
+<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+<path d="M12 14l9-5-9-5-9 5 9 5z" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>دانش‌آموزان</span>
+</a>
+<!-- Active Item: کارمندان و اساتید -->
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 text-sm font-medium transition-colors" href="#">
+<div class="flex items-center gap-3">
+<svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>کارمندان و اساتید</span>
+</div>
+<span class="w-1.5 h-4 bg-blue-500 rounded-full"></span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 text-sm font-medium transition-colors" href="#">
+<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+<path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>صنف‌ها و کلاس‌ها</span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 text-sm font-medium transition-colors" href="#">
+<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+<path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>حاضری و غیاب</span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 text-sm font-medium transition-colors" href="#">
+<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>امتحانات و نتایج</span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 text-sm font-medium transition-colors" href="#">
+<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>تنظیمات سیستم</span>
+</a>
+</nav>
+</div>
+<!-- Bottom User Bar -->
+<div class="p-4 border-t border-slate-800 bg-[#070d1e]" data-purpose="user-profile-badge">
+<div class="flex items-center gap-3">
+<img alt="مدیر سیستم" class="w-10 h-10 rounded-full border border-blue-500/40 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8H8IJ_pyB8aWqZVlVx-Y0UhyXas9k28YJLTy2DyxKZAK82pZg6oMYeOfxiCHdDo7R29GyOG7eQseRWJIPD3NdcDlhm-tSQ6tLnQPN0NHlA9gEJf2ZZLD3_AqoIZRt1KT29R0FTGlpjgld-aL2PbB4XlKhGq84rR0-CzRlQqrWyirj6glehtVk4fwn3AGJ12jLiGhlEhZPrWqqFGevtPUWViMsVIhHBbZHA_61EGy--cSjZkK6DDbdpQ"/>
+<div class="flex flex-col min-w-0">
+<span class="text-sm font-medium text-white truncate">مدیر سیستم (ادمین)</span>
+<span class="text-xs text-slate-400 truncate">admin@eduportal.com</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- END: RightSidebar -->
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+<!-- BEGIN: TopBar -->
+<header class="bg-white border-b border-slate-200 sticky top-0 z-20 px-8 py-3.5 flex items-center justify-between shadow-sm" data-purpose="header">
+<!-- Breadcrumb -->
+<nav class="flex items-center gap-2 text-sm text-slate-500 font-normal">
+<a class="hover:text-blue-600 transition-colors" href="#">کارمندان و اساتید</a>
+<span>/</span>
+<a class="hover:text-blue-600 transition-colors" href="#">محمد رضایی</a>
+<span>/</span>
+<span class="text-slate-900 font-semibold">ویرایش اطلاعات استاد</span>
+</nav>
+<!-- Top Tools & Status -->
+<div class="flex items-center gap-3.5">
+<!-- Academic Year Badge -->
+<div class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-xs font-medium border border-slate-200">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span>سال تحصیلی: ۱۴۰۲-۱۴۰۳</span>
+</div>
+<!-- Help Button -->
+<button class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 transition" title="راهنما" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+<!-- Notification Button -->
+<button class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 relative transition" title="اعلان‌ها" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="w-2 h-2 rounded-full bg-red-500 absolute top-2 right-2 border-2 border-white"></span>
+</button>
+<div class="h-6 w-px bg-slate-200 mx-1"></div>
+<!-- Top Action Buttons -->
+<button class="px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition" type="button">
+          انصراف
+        </button>
+<button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl flex items-center gap-1.5 shadow-sm transition" form="edit-teacher-form" type="submit">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span>ذخیره تغییرات</span>
+</button>
+</div>
+</header>
+<!-- END: TopBar -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 p-8 space-y-6 max-w-7xl w-full mx-auto"><div class="flex flex-col w-full space-y-6">
+<!-- TOP HEADER AREA -->
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant">
+<span>آموزش و امور تحصیلی</span>
+<span>/</span>
+<span>حضور و غیاب و انضباطی</span>
+<span>/</span>
+<span class="text-secondary font-semibold">کارنامه حضور و غیاب ماهانه</span>
+</div>
+<h1 class="text-headline-lg font-headline-lg text-primary tracking-tight">
+        ثبت و نظارت بر حضور و غیاب صنف‌ها
+      </h1>
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+        بررسی گزارش ماهانه و روزانه حضور دانش‌آموزان، ثبت غیبت، مریضی و رخصتی‌های موجه بر اساس سال تعلیمی
+      </p>
+</div>
+<!-- Quick Action Buttons -->
+<div class="flex flex-wrap items-center gap-2.5">
+<button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-container-low text-primary hover:bg-surface-container font-label-md text-label-md transition shadow-sm" type="button">
+<span class="material-symbols-outlined text-lg">download</span>
+<span>خروجی اکسل و چاپ جدول</span>
+</button>
+<button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-container-high text-primary hover:bg-surface-container-highest font-label-md text-label-md transition shadow-sm" type="button">
+<span class="material-symbols-outlined text-lg">fact_check</span>
+<span>ثبت سریع امروز</span>
+</button>
+<button class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-secondary text-on-secondary hover:bg-secondary-container transition font-label-md text-label-md shadow-sm" onclick="document.getElementById('attendance-modal').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-xl">add_circle</span>
+<span>+ ثبت حضور و غیاب جدید</span>
+</button>
+</div>
+</div>
+<!-- STATS OVERVIEW CARDS (4 KPIs) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Card 1: alldays -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex items-center justify-between">
+<div class="space-y-1">
+<span class="text-label-sm font-label-sm text-on-surface-variant">مجموع کل روزهای آموزشی ماه</span>
+<div class="flex items-baseline gap-2">
+<span class="text-headline-lg font-headline-lg text-primary">۲۴</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">روز کاری رسمی</span>
+</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>تقویم آموزشی ماه عقرب</span>
+</div>
+</div>
+<div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-2xl">calendar_month</span>
+</div>
+</div>
+<!-- Card 2: present rate -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex items-center justify-between">
+<div class="space-y-1">
+<span class="text-label-sm font-label-sm text-on-surface-variant">میانگین نرخ حضور (Present Rate)</span>
+<div class="flex items-baseline gap-2">
+<span class="text-headline-lg font-headline-lg text-primary">۹۴.۲٪</span>
+<span class="inline-flex items-center text-label-sm font-label-sm text-secondary font-semibold">
+            +۲.۴٪ ↑
+          </span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">نسبت به ماه گذشته (میزان پایداری بالا)</span>
+</div>
+<div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-2xl">verified</span>
+</div>
+</div>
+<!-- Card 3: absent -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex items-center justify-between">
+<div class="space-y-1">
+<span class="text-label-sm font-label-sm text-on-surface-variant">کل غیبت‌های غیرموجه (Absent)</span>
+<div class="flex items-baseline gap-2">
+<span class="text-headline-lg font-headline-lg text-error">۱۸</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">مورد در صنف</span>
+</div>
+<div class="text-label-sm font-label-sm text-error flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span>نیازمند پیگیری اولیا و انضباطی</span>
+</div>
+</div>
+<div class="w-12 h-12 rounded-xl bg-error-container/60 flex items-center justify-center text-error">
+<span class="material-symbols-outlined text-2xl">person_cancel</span>
+</div>
+</div>
+<!-- Card 4: excused & sick -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm flex items-center justify-between">
+<div class="space-y-1">
+<span class="text-label-sm font-label-sm text-on-surface-variant">مجموع رخصتی و مریضی</span>
+<div class="flex items-baseline gap-2">
+<span class="text-headline-lg font-headline-lg text-primary">۳۲</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">مورد ثبت‌شده</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">دارای تصدیق‌نامه و برگه پزشکی معتبر</span>
+</div>
+<div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-2xl">medical_services</span>
+</div>
+</div>
+</div>
+<!-- FILTER & CRITERIA BAR -->
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-sm space-y-4">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3.5">
+<!-- Academic Year -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm text-on-surface">سال تحصیلی</label>
+<div class="relative">
+<select class="w-full h-10 px-3 pr-9 rounded-lg bg-surface-container-low text-on-surface text-body-sm font-body-sm appearance-none focus:outline-none focus:ring-2 focus:ring-secondary">
+<option selected="">سال تحصیلی: ۱۴۰۲-۱۴۰۳</option>
+<option>سال تحصیلی: ۱۴۰۱-۱۴۰۲</option>
+<option>سال تحصیلی: ۱۴۰۰-۱۴۰۱</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 pointer-events-none text-on-surface-variant text-lg">calendar_today</span>
+</div>
+</div>
+<!-- Class / Grade -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm text-on-surface">صنف و پایه آموزشی</label>
+<div class="relative">
+<select class="w-full h-10 px-3 pr-9 rounded-lg bg-surface-container-low text-on-surface text-body-sm font-body-sm appearance-none focus:outline-none focus:ring-2 focus:ring-secondary">
+<option selected="">دهم - ریاضی فیزیک (شعبه الف - ۱۰۱)</option>
+<option>دهم - تجربی (شعبه ب - ۱۰۲)</option>
+<option>یازدهم - ریاضی فیزیک (شعبه الف - ۲۰۱)</option>
+<option>دوازدهم - ریاضی فیزیک (شعبه الف - ۳۰۱)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 pointer-events-none text-on-surface-variant text-lg">meeting_room</span>
+</div>
+</div>
+<!-- Month Selector -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm text-on-surface">ماه تحصیلی</label>
+<div class="relative">
+<select class="w-full h-10 px-3 pr-9 rounded-lg bg-surface-container-low text-on-surface text-body-sm font-body-sm appearance-none focus:outline-none focus:ring-2 focus:ring-secondary">
+<option>میزان / مهر</option>
+<option selected="">عقرب / آبان</option>
+<option>قوس / آذر</option>
+<option>جدی / دی</option>
+<option>دلو / بهمن</option>
+<option>حوت / اسفند</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 pointer-events-none text-on-surface-variant text-lg">date_range</span>
+</div>
+</div>
+<!-- Status Filter -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm text-on-surface">وضعیت حضور</label>
+<div class="relative">
+<select class="w-full h-10 px-3 pr-9 rounded-lg bg-surface-container-low text-on-surface text-body-sm font-body-sm appearance-none focus:outline-none focus:ring-2 focus:ring-secondary">
+<option selected="">همه وضعیت‌ها</option>
+<option>دارای غیبت غیرموجه (هشدار)</option>
+<option>دارای رخصتی یا مریضی</option>
+<option>حضور کامل (۱۰۰٪)</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 pointer-events-none text-on-surface-variant text-lg">filter_alt</span>
+</div>
+</div>
+<!-- Search Input -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm text-on-surface">جستجوی دانش‌آموز</label>
+<div class="relative">
+<input class="w-full h-10 px-3 pr-9 rounded-lg bg-surface-container-low text-on-surface placeholder:text-on-surface-variant text-body-sm font-body-sm focus:outline-none focus:ring-2 focus:ring-secondary" placeholder="نام یا شماره تذکره / اساس..." type="text"/>
+<span class="material-symbols-outlined absolute right-2.5 top-2.5 text-on-surface-variant text-lg">search</span>
+</div>
+</div>
+</div>
+<!-- Active Legend & Visual Guide Bar -->
+<div class="pt-2 flex flex-wrap items-center justify-between gap-3 text-label-sm font-label-sm">
+<div class="flex flex-wrap items-center gap-4">
+<span class="text-on-surface-variant font-medium">راهنمای رنگی کارنامه:</span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-primary font-semibold">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<span>حاضر (Present)</span>
+</span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-error-container/60 text-error font-semibold">
+<span class="w-2.5 h-2.5 rounded-full bg-error"></span>
+<span>غیرحاضر غیرموجه (Absent)</span>
+</span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-semibold">
+<span class="w-2.5 h-2.5 rounded-full bg-on-tertiary-container"></span>
+<span>مریضی با نسخه (Sick)</span>
+</span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-semibold">
+<span class="w-2.5 h-2.5 rounded-full bg-outline"></span>
+<span>رخصتی موجه (Excused)</span>
+</span>
+</div>
+<div class="text-on-surface-variant">
+        نمایش <span class="font-semibold text-primary">۳۲</span> دانش‌آموز ثبت شده در این صنف
+      </div>
+</div>
+</div>
+<!-- ATTENDANCE DATA TABLE CONTAINER -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<!-- Table Header Info Bar -->
+<div class="p-4 bg-surface-container-low flex flex-wrap items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">table_view</span>
+<span class="font-headline-md text-headline-md text-primary">جدول کارنامه جامع حضور و غیاب ماه عقرب ۱۴۰۲</span>
+</div>
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant">
+<span>آخرین به‌روزرسانی حاضری: امروز ۱۱:۴۵ صبح</span>
+</div>
+</div>
+<!-- Table Responsive Wrapper -->
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container text-on-surface text-label-sm font-label-sm">
+<th class="py-3 px-4 font-semibold"># شناسه</th>
+<th class="py-3 px-4 font-semibold">مشخصات دانش‌آموز</th>
+<th class="py-3 px-4 font-semibold">صنف و شعبه</th>
+<th class="py-3 px-4 font-semibold">ماه و دوره</th>
+<th class="py-3 px-4 text-center font-semibold">کل روزها</th>
+<th class="py-3 px-4 text-center font-semibold text-secondary">حاضر</th>
+<th class="py-3 px-4 text-center font-semibold text-error">غیرحاضر</th>
+<th class="py-3 px-4 text-center font-semibold text-on-tertiary-container">بیمار</th>
+<th class="py-3 px-4 text-center font-semibold">رخصتی</th>
+<th class="py-3 px-4 font-semibold min-w-[140px]">درصد حضور ماهانه</th>
+<th class="py-3 px-4 text-center font-semibold">عملیات</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-body-sm font-body-sm text-on-surface">
+<!-- Row 1: محمد رحیمی -->
+<tr class="hover:bg-surface-container-low/70 transition-colors">
+<td class="py-3.5 px-4 font-semibold text-on-surface-variant text-label-sm">
+              #ATN-1041
+            </td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover shadow-sm bg-surface-container" data-alt="Close up portrait of a polite Afghan high school student boy Mohammad Rahimi wearing school uniform with confident smile in bright classroom" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQNAcAj-efWuNzemgaGJa_AmTaeiuDX_kn8QzJMbbh_HqDn_UzV_UzIE48bjzJz7QmZVms_uJ1xZhVlFsFmU-pmuUpuPjaJDiuA6zIkQ0qRcz0fagBTKn_k9BazW4SMnbRdTtdBnUa9ts7QS1cUcOfKJgQ7MIgBKn-pscBzV-OlKHI9BxcUwQ8XriydlIL5ZQMaEMDY63hO8La_Z5XnG9_EDYuGBJJ84fPYQ5wtqeE0lfEkmIFqt-I1w"/>
+<div class="flex flex-col">
+<span class="font-semibold text-primary">محمد رحیمی</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">فرزند: علی‌رضا • تذکره: ۰۴۴-۳۸۹۱</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md bg-surface-container text-label-sm font-label-sm text-primary">دهم ریاضی الف</span>
+</td>
+<td class="py-3.5 px-4 text-label-sm font-label-sm text-on-surface-variant">
+              عقرب ۱۴۰۲
+            </td>
+<td class="py-3.5 px-4 text-center font-semibold text-primary">۲۴</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-bold text-label-sm">۲۳ روز</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm">۰</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-semibold text-label-sm">۱ روز</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm">۰</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-label-sm font-label-sm">
+<span class="font-bold text-secondary">۹۵.۸٪</span>
+<span class="text-on-surface-variant">عالی</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 95.8%;"></div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-secondary hover:bg-surface-container transition" title="ویرایش روزها" type="button">
+<span class="material-symbols-outlined text-lg">edit_calendar</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition" title="مشاهده کارنامه ماهانه" type="button">
+<span class="material-symbols-outlined text-lg">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: احمد کریمی -->
+<tr class="hover:bg-surface-container-low/70 transition-colors bg-surface-container-lowest">
+<td class="py-3.5 px-4 font-semibold text-on-surface-variant text-label-sm">
+              #ATN-1042
+            </td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover shadow-sm bg-surface-container" data-alt="Portrait of an Afghan teen school boy Ahmad Karimi wearing white shirt smiling in front of school library books" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeTn_E6MI6B3ct1c28K2ZUrNvd3mkmPld2HuxgUSB0BsGHhMuuZhOXR6CM7xvFKpME8l8NFMD3j57z6M-eew7lV_rS2O_-UNiN_OlLL2x7vy2ptFX8FxJYyqmv3VByHGpVu7ncEZCKkap23s8qqgt7JGnTqquNpJWjjfvbUt024SoN-psDNFkKI8RnUj_3Y4o1R3yML5K0EiiQ-2AGiB3rmJdiZkNbsPIjS1SKFfA1hOVkiTA8WYT5Ng"/>
+<div class="flex flex-col">
+<span class="font-semibold text-primary">احمد کریمی</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">فرزند: غلام‌سرور • تذکره: ۰۱۸-۴۲۰۲</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md bg-surface-container text-label-sm font-label-sm text-primary">دهم ریاضی الف</span>
+</td>
+<td class="py-3.5 px-4 text-label-sm font-label-sm text-on-surface-variant">
+              عقرب ۱۴۰۲
+            </td>
+<td class="py-3.5 px-4 text-center font-semibold text-primary">۲۴</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-bold text-label-sm">۱۸ روز</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-error-container text-on-error-container font-bold text-label-sm">۴ روز غیبت</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm">۰</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface font-semibold text-label-sm">۲ روز</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-label-sm font-label-sm">
+<span class="font-bold text-error">۷۵.۰٪</span>
+<span class="text-error font-medium">هشدار انضباطی</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 75.0%;"></div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-secondary hover:bg-surface-container transition" title="ویرایش روزها" type="button">
+<span class="material-symbols-outlined text-lg">edit_calendar</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition" title="مشاهده کارنامه ماهانه" type="button">
+<span class="material-symbols-outlined text-lg">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: رضا حسینی -->
+<tr class="hover:bg-surface-container-low/70 transition-colors">
+<td class="py-3.5 px-4 font-semibold text-on-surface-variant text-label-sm">
+              #ATN-1043
+            </td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover shadow-sm bg-surface-container" data-alt="Portrait of student Reza Hosseini intelligent adolescent student looking at camera with glasses in academic high school hallway" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcS_830t7DcnsODg27yzPdub3oXM9xxPwLP14rb92nHYCW_UEoDISgRYRr3I-stfRq7Ejes-EbbI0dqeGoL81OsbM34HT3Fl8tQghGBfmqXHWD7ZJqFjkGGXMD_5MyIK0MWUgA6MaDfSfN56abmWlCGuWcygeMQsZamXVSN5kg7NQXRq-HOn8OOgES4h9LlSfs6fCA3ClFr0pCTDK2n7q2Vp52aGcTk2FoK5eOCM5XEWLTAZHNJxvVTg"/>
+<div class="flex flex-col">
+<span class="font-semibold text-primary">رضا حسینی</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">فرزند: محمدباقر • تذکره: ۰۳۲-۹۱۰۵</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md bg-surface-container text-label-sm font-label-sm text-primary">دهم ریاضی الف</span>
+</td>
+<td class="py-3.5 px-4 text-label-sm font-label-sm text-on-surface-variant">
+              عقرب ۱۴۰۲
+            </td>
+<td class="py-3.5 px-4 text-center font-semibold text-primary">۲۴</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-bold text-label-sm">۲۴ روز</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm">۰</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm">۰</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm">۰</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-label-sm font-label-sm">
+<span class="font-bold text-secondary">۱۰۰٪</span>
+<span class="text-secondary font-medium">حضور کامل ★</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 100%;"></div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-secondary hover:bg-surface-container transition" title="ویرایش روزها" type="button">
+<span class="material-symbols-outlined text-lg">edit_calendar</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition" title="مشاهده کارنامه ماهانه" type="button">
+<span class="material-symbols-outlined text-lg">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: علی احمدی -->
+<tr class="hover:bg-surface-container-low/70 transition-colors bg-surface-container-lowest">
+<td class="py-3.5 px-4 font-semibold text-on-surface-variant text-label-sm">
+              #ATN-1044
+            </td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover shadow-sm bg-surface-container" data-alt="Headshot of teenage boy student Ali Ahmadi in neat dark blazer standing outdoors in school courtyard" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrk0mXXf9xSj185L1BfKUUYBZiqRwapg9Ar4R8BOk0ZN2Ervrj0_Otyc6vJdtKmqlrfkiTAKc4SDta53WTwU5P2R3PQ282LuCC2hpCTHBCDEw5mhGGaGhjmdN2vnPDFoTIUni3XXKqzaulf2CILKYPnUcIIzL7h9K56m-JZpfQHtVbo54TpNMgpfi9GVKfaq6VGu0XOn8e4Djr7paT9tmO_g4K_ET3y_COp-5cjm1uZIn2_aEUqNf0UA"/>
+<div class="flex flex-col">
+<span class="font-semibold text-primary">علی احمدی</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">فرزند: احمدضیا • تذکره: ۰۱۱-۶۷۳۴</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md bg-surface-container text-label-sm font-label-sm text-primary">دهم ریاضی الف</span>
+</td>
+<td class="py-3.5 px-4 text-label-sm font-label-sm text-on-surface-variant">
+              عقرب ۱۴۰۲
+            </td>
+<td class="py-3.5 px-4 text-center font-semibold text-primary">۲۴</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-bold text-label-sm">۲۱ روز</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-error-container text-on-error-container font-semibold text-label-sm">۱ روز</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-semibold text-label-sm">۲ روز</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm">۰</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-label-sm font-label-sm">
+<span class="font-bold text-secondary">۸۷.۵٪</span>
+<span class="text-on-surface-variant">مناسب</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 87.5%;"></div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-secondary hover:bg-surface-container transition" title="ویرایش روزها" type="button">
+<span class="material-symbols-outlined text-lg">edit_calendar</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition" title="مشاهده کارنامه ماهانه" type="button">
+<span class="material-symbols-outlined text-lg">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: مهدی اکبری -->
+<tr class="hover:bg-surface-container-low/70 transition-colors">
+<td class="py-3.5 px-4 font-semibold text-on-surface-variant text-label-sm">
+              #ATN-1045
+            </td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover shadow-sm bg-surface-container" data-alt="Portrait photograph of young teenage Afghan pupil Mehdi Akbari smiling with backpack in sunlit classroom environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6WYQjWVFiUuP7sMVxOvUiXumqFpZE7VmTrUWpE2ptWLNsYIAhF8n6jMZaugG1SL8h5APCbsXtnkryz7MAKPYu8LeqgWAGSuW-jRUtcJ5w0QJDu32fKN-M8yWh7EbzQLvTX8kHk1nKm6x9zpOJgg-cvOt4k_ZOV9UJRuu_aV-jLQNXKOWbHVyUUzmmLXWNo10OpV8hBh4lL2sCXU5awk6R-KFnCG1kOLNTqlX3J8F7iGPsWhYKRdESpw"/>
+<div class="flex flex-col">
+<span class="font-semibold text-primary">مهدی اکبری</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">فرزند: غلام‌رسول • تذکره: ۰۸۷-۵۵۴۱</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="px-2.5 py-1 rounded-md bg-surface-container text-label-sm font-label-sm text-primary">دهم ریاضی الف</span>
+</td>
+<td class="py-3.5 px-4 text-label-sm font-label-sm text-on-surface-variant">
+              عقرب ۱۴۰۲
+            </td>
+<td class="py-3.5 px-4 text-center font-semibold text-primary">۲۴</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-bold text-label-sm">۲۲ روز</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm">۰</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm">۰</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-block px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface font-semibold text-label-sm">۲ روز</span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-label-sm font-label-sm">
+<span class="font-bold text-secondary">۹۱.۶٪</span>
+<span class="text-on-surface-variant">بسیار خوب</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-high overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 91.6%;"></div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-secondary hover:bg-surface-container transition" title="ویرایش روزها" type="button">
+<span class="material-symbols-outlined text-lg">edit_calendar</span>
+</button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container transition" title="مشاهده کارنامه ماهانه" type="button">
+<span class="material-symbols-outlined text-lg">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- PAGINATION & SUMMARY FOOTER -->
+<div class="p-4 bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="text-label-sm font-label-sm text-on-surface-variant">
+        نمایش <span class="font-bold text-primary">۱ تا ۵</span> از کل <span class="font-bold text-primary">۳۲</span> دانش‌آموز صنف دهم ریاضی الف
+      </div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-lg bg-surface-container text-outline opacity-50 cursor-not-allowed" disabled="" type="button">
+<span class="material-symbols-outlined text-base">chevron_right</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-secondary text-on-secondary font-bold text-label-sm flex items-center justify-center shadow-sm" type="button">
+          ۱
+        </button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-lowest text-on-surface hover:bg-surface-container transition font-medium text-label-sm flex items-center justify-center" type="button">
+          ۲
+        </button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-lowest text-on-surface hover:bg-surface-container transition font-medium text-label-sm flex items-center justify-center" type="button">
+          ۳
+        </button>
+<button class="p-2 rounded-lg bg-surface-container-lowest text-on-surface hover:bg-surface-container transition" type="button">
+<span class="material-symbols-outlined text-base">chevron_left</span>
+</button>
+</div>
+</div>
+</div>
+<!-- INTERACTIVE MODAL FOR REGISTERING / EDITING ATTENDANCE (Hidden by default, triggered by action button) -->
+<div class="hidden fixed inset-0 z-50 flex items-center justify-center bg-primary/40 backdrop-blur-sm p-4" id="attendance-modal">
+<div class="bg-surface-container-lowest w-full max-w-2xl rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+<!-- Modal Header -->
+<div class="p-5 bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">assignment_add</span>
+<h2 class="text-headline-md font-headline-md text-primary">ثبت پرونده حضور و غیاب ماهانه دانش‌آموز</h2>
+</div>
+<button class="w-8 h-8 rounded-lg text-on-surface-variant hover:bg-surface-container flex items-center justify-center transition" onclick="document.getElementById('attendance-modal').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Modal Form based on Django Atendance Model -->
+<form class="p-6 space-y-4" id="attendance-form" onsubmit="event.preventDefault(); document.getElementById('attendance-modal').classList.add('hidden');">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Student Selection -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm text-on-surface">دانش‌آموز (student)</label>
+<select class="h-10 px-3 rounded-lg bg-surface-container-low text-on-surface text-body-sm font-body-sm focus:outline-none focus:ring-2 focus:ring-secondary">
+<option>محمد رحیمی - فرزند علی‌رضا (کد: ۱۰۴۱)</option>
+<option>احمد کریمی - فرزند غلام‌سرور (کد: ۱۰۴۲)</option>
+<option>رضا حسینی - فرزند محمدباقر (کد: ۱۰۴۳)</option>
+<option>علی احمدی - فرزند احمدضیا (کد: ۱۰۴۴)</option>
+<option>مهدی اکبری - فرزند غلام‌رسول (کد: ۱۰۴۵)</option>
+</select>
+</div>
+<!-- Class Selection -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm text-on-surface">صنف (classs)</label>
+<select class="h-10 px-3 rounded-lg bg-surface-container-low text-on-surface text-body-sm font-body-sm focus:outline-none focus:ring-2 focus:ring-secondary">
+<option>دهم ریاضی الف (پایه دهم)</option>
+<option>دهم تجربی ب</option>
+<option>یازدهم ریاضی الف</option>
+</select>
+</div>
+<!-- Month -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm text-on-surface">ماه (month)</label>
+<select class="h-10 px-3 rounded-lg bg-surface-container-low text-on-surface text-body-sm font-body-sm focus:outline-none focus:ring-2 focus:ring-secondary">
+<option>عقرب (آبان)</option>
+<option>میزان (مهر)</option>
+<option>قوس (آذر)</option>
+</select>
+</div>
+<!-- Academic Year -->
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm text-on-surface">سال تعلیمی (academice_year)</label>
+<select class="h-10 px-3 rounded-lg bg-surface-container-low text-on-surface text-body-sm font-body-sm focus:outline-none focus:ring-2 focus:ring-secondary">
+<option>۱۴۰۲-۱۴۰۳</option>
+<option>۱۴۰۱-۱۴۰۲</option>
+</select>
+</div>
+</div>
+<!-- Days Inputs Grid -->
+<div class="p-4 rounded-xl bg-surface-container-low space-y-3">
+<div class="text-label-sm font-label-sm text-primary font-bold">تعداد روزها بر اساس تقویم اجرایی ماه:</div>
+<div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm text-on-surface">کل روزها (alldays)</label>
+<input class="h-10 px-3 rounded-lg bg-surface-container-lowest text-on-surface text-body-sm font-body-sm focus:ring-2 focus:ring-secondary focus:outline-none text-center font-bold" type="number" value="24"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm text-secondary font-semibold">حاضر (present)</label>
+<input class="h-10 px-3 rounded-lg bg-surface-container-lowest text-on-surface text-body-sm font-body-sm focus:ring-2 focus:ring-secondary focus:outline-none text-center font-bold" type="number" value="22"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm text-error font-semibold">غیرحاضر (absent)</label>
+<input class="h-10 px-3 rounded-lg bg-surface-container-lowest text-on-surface text-body-sm font-body-sm focus:ring-2 focus:ring-secondary focus:outline-none text-center font-bold" type="number" value="1"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm text-on-tertiary-container font-semibold">بیمار (sick)</label>
+<input class="h-10 px-3 rounded-lg bg-surface-container-lowest text-on-surface text-body-sm font-body-sm focus:ring-2 focus:ring-secondary focus:outline-none text-center font-bold" type="number" value="1"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-label-sm font-label-sm text-on-surface-variant font-semibold">رخصتی (excused)</label>
+<input class="h-10 px-3 rounded-lg bg-surface-container-lowest text-on-surface text-body-sm font-body-sm focus:ring-2 focus:ring-secondary focus:outline-none text-center font-bold" type="number" value="0"/>
+</div>
+</div>
+</div>
+<!-- Note & Actions -->
+<div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3">
+<span class="text-label-sm font-label-sm text-on-surface-variant">
+            * مجموع روزهای حاضر، غایب، رخصت و بیمار نباید از کل روزها بیشتر باشد.
+          </span>
+<div class="flex items-center gap-2">
+<button class="px-4 py-2 rounded-lg bg-surface-container text-on-surface text-label-md font-label-md hover:bg-surface-container-high transition" onclick="document.getElementById('attendance-modal').classList.add('hidden')" type="button">
+              انصراف
+            </button>
+<button class="px-5 py-2 rounded-lg bg-secondary text-on-secondary text-label-md font-label-md hover:bg-secondary-container transition shadow-sm" type="submit">
+              ذخیره و ثبت رکورد
+            </button>
+</div>
+</div>
+</form>
+</div>
+</div>
+</div>
+<!-- Client-side script to set sidebar active tab to Attendance 'حاضری و غیاب' for consistency -->
+<script>
+  (function updateSidebarActiveItem() {
+    const navLinks = document.querySelectorAll('aside[data-purpose="sidebar-navigation"] nav a');
+    navLinks.forEach(link => {
+      const text = link.textContent.trim();
+      const isAttendance = text.includes('حاضری و غیاب');
+      const indicator = link.querySelector('span.rounded-full');
+      const icon = link.querySelector('svg');
+      
+      if (isAttendance) {
+        link.classList.remove('text-slate-400');
+        link.classList.add('text-white', 'bg-slate-800/80', 'font-semibold');
+        if (icon) {
+          icon.classList.remove('text-slate-400');
+          icon.classList.add('text-blue-400');
         }
-    </style>
-</head>
-
-<body>
-
-    <div class="container">
-
-        <!-- Page Header -->
-        <header class="page-header">
-            <div class="header-actions">
-                <button class="btn btn-primary"><i class="fa-solid fa-check"></i> ذخیره تغییرات</button>
-                <button class="btn btn-secondary">انصراف</button>
-            </div>
-            <div class="header-titles">
-                <h1>ویرایش پرونده دانش‌آموز <i class="fa-solid fa-arrow-left"></i></h1>
-                <p>فرم ویرایش و مشاهده اطلاعات هویتی، آدرس و وضعیت تحصیلی</p>
-            </div>
-        </header>
-
-        <!-- Top Profile Banner -->
-        <div class="card profile-banner">
-            <div class="banner-info">
-                <div class="info-box">
-                    <span class="label">وضعیت تحصیلی</span>
-                    <span class="value text-green">مشغول به تحصیل</span>
-                </div>
-                <div class="info-box">
-                    <span class="label">تاریخ ثبت‌نام</span>
-                    <span class="value">۱۴۰۲/۰۶/۱۵</span>
-                </div>
-                <div class="info-box">
-                    <span class="label">شماره پرونده</span>
-                    <span class="value">STU-1402-8893</span>
-                </div>
-            </div>
-
-            <div class="banner-profile">
-                <div class="profile-text">
-                    <div class="badge-active">فعال</div>
-                    <h2>محمد رضایی</h2>
-                    <p>کلاس دهم – رشته ریاضی فیزیک</p>
-                </div>
-
-                <div class="profile-image-wrapper">
-                    <img src="https://i.pravatar.cc/150?img=11" alt="Profile Photo">
-                    <div class="image-actions">
-                        <button class="btn-upload"><i class="fa-solid fa-camera"></i> بارگذاری عکس جدید</button>
-                        <span class="file-hint">حداکثر ۲ مگابایت (JPG, PNG)</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Grid Layout -->
-        <div class="content-grid">
-
-            <!-- Right Column (Main Content) -->
-            <div class="main-col">
-
-                <!-- Identity Info Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fa-solid fa-user text-blue"></i> اطلاعات هویتی و فردی</h3>
-                        <span class="header-note">فیلدهای ستاره‌دار الزامی هستند</span>
-                    </div>
-
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="label-req">شماره دانش‌آموز (شناسه یکتا)</label>
-                            <input type="text" class="form-control" value="10482" disabled>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="label-req">شماره شناسایی / تذکره / کد ملی</label>
-                            <input type="text" class="form-control" value="044-123456-7">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="label-req">نام دانش‌آموز</label>
-                            <input type="text" class="form-control" value="محمد">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="label-req">نام خانوادگی</label>
-                            <input type="text" class="form-control" value="رضایی">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="label-req">نام پدر</label>
-                            <input type="text" class="form-control" value="علی">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="label-req">نام پدربزرگ / جد</label>
-                            <input type="text" class="form-control" value="حسین">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="label-req">تاریخ تولد (شمسی)</label>
-                            <div class="input-icon-wrapper">
-                                <input type="text" class="form-control" value="۱۳۸۵/۰۴/۱۴">
-                                <i class="fa-regular fa-calendar"></i>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="label-req">تابعیت / ملیت</label>
-                            <input type="text" class="form-control" value="ایرانی">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="label-req">زبان مادری (دری)</label>
-                            <input type="text" class="form-control" value="فارسی (دری)">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="label-req">شغل پدر</label>
-                            <input type="text" class="form-control" value="کارمند دولتی / خصوصی">
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label class="label-req">شماره تماس ضروری (پدر / ولی)</label>
-                            <div class="input-icon-wrapper">
-                                <input type="text" class="form-control" value="۰۹۱۲ ۳۴۵ ۶۷۸۹">
-                                <i class="fa-solid fa-phone"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Current Residence Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fa-solid fa-location-dot text-blue"></i> محل سکونت فعلی</h3>
-                    </div>
-
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="label-req">ولایت / استان فعلی</label>
-                            <input type="text" class="form-control" value="تهران">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="label-req">ولسوالی / شهرستان فعلی</label>
-                            <input type="text" class="form-control" value="تهران مرکزی">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="label-req">ناحیه / منطقه شهرداری</label>
-                            <input type="text" class="form-control" value="۲">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="label-req">قریه / محله / کوچه</label>
-                            <input type="text" class="form-control" value="سعادت‌آباد، خیابان عالمه">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Main Residence Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fa-solid fa-house text-blue"></i> محل سکونت اصلی (زادگاه)</h3>
-                    </div>
-
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="label-req">ولایت / استان اصلی</label>
-                            <input type="text" class="form-control" value="اصفهان">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="label-req">ولسوالی / شهرستان اصلی</label>
-                            <input type="text" class="form-control" value="کاشان">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="label-req">ناحیه / حوزه اصلی</label>
-                            <input type="text" class="form-control" value="۱">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="label-req">قریه / روستا / محله اصلی</label>
-                            <input type="text" class="form-control" value="قمصر">
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Left Column (Sidebar) -->
-            <div class="side-col">
-
-                <!-- Enrollment Status Card -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fa-solid fa-id-card text-blue"></i> وضعیت پرونده و ثبت‌نام</h3>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="label-req">وضعیت تحصیلی</label>
-                        <select class="form-control">
-                            <option>فعال (مشغول به تحصیل)</option>
-                            <option>تعلیق</option>
-                            <option>فارغ التحصیل</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="label-req">تاریخ ثبت‌نام اولیه</label>
-                        <div class="input-icon-wrapper">
-                            <input type="text" class="form-control" value="۱۴۰۲/۰۶/۱۵">
-                            <i class="fa-regular fa-calendar"></i>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="label-req">تاریخ فراغت / خروج (اختیاری)</label>
-                        <div class="input-icon-wrapper">
-                            <input type="text" class="form-control" value="در حال تحصیل (ثبت نشده)">
-                            <i class="fa-solid fa-right-from-bracket"></i>
-                        </div>
-                        <p class="help-text">تنها در صورت فراغت یا انصراف پر شود.</p>
-                    </div>
-
-                    <div class="box-info">
-                        <div>
-                            <span class="label">پایه و رشته:</span>
-                            <span class="value">دهم ریاضی (الف)</span>
-                        </div>
-                        <div>
-                            <span class="label">استاد راهنما:</span>
-                            <span class="value">استاد رضایی</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Footer Actions -->
-        <footer class="footer-actions">
-            <div class="buttons">
-                <button class="btn btn-primary"><i class="fa-solid fa-check"></i> ذخیره تغییرات</button>
-                <button class="btn btn-secondary">انصراف و بازگشت</button>
-            </div>
-            <p class="footer-note"><i class="fa-solid fa-circle-check text-green"></i> تمامی تغییرات پس از ذخیره‌سازی
-                فوراً در سوابق تحصیلی اعمال خواهند شد.</p>
-        </footer>
-
-    </div>
-
-</body>
-
-</html>
+        if (!indicator) {
+          const pill = document.createElement('span');
+          pill.className = 'w-1.5 h-4 bg-blue-500 rounded-full mr-auto';
+          link.appendChild(pill);
+        }
+      } else {
+        link.classList.remove('bg-slate-800/80', 'text-white', 'font-semibold');
+        link.classList.add('text-slate-400');
+        if (indicator && !isAttendance) {
+          indicator.remove();
+        }
+        if (icon && !isAttendance && !text.includes('حاضری و غیاب')) {
+          icon.classList.remove('text-blue-400');
+          icon.classList.add('text-slate-400');
+        }
+      }
+    });
+  })();
+</script></main>
+<!-- END: MainContent -->
+</div>
+</body></html>

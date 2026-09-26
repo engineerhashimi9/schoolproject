@@ -178,13 +178,7 @@
 </main>
 {% endblock content %} {% block js %}
 <script>
-  const closeBtn = document.getElementById("closeBoxBtn");
   const modal = document.getElementById("msgBoxModal");
-
-  // Hide the message box when clicking the close button
-  closeBtn.addEventListener("click", () => {
-    modal.style.display = "none";
-  });
 
   // Optional: Hide the box if user clicks anywhere outside the white box
   window.addEventListener("click", (event) => {
@@ -199,6 +193,11 @@
       <a href="http://localhost:8000/dashboard/worker/${id}/disable" class="option-btn" >بله</a>
       <button class="option-btn" id="closeBoxBtn">خیر</button></div>`;
     modal.style.display = "flex";
+    const closeBtn = document.getElementById("closeBoxBtn");
+    // Hide the message box when clicking the close button
+    closeBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
   }
 </script>
 {% endblock js %}
