@@ -28,8 +28,7 @@ local_settings.py
 media/
 
 # Static files (Only if you run collectstatic locally)
-static/
-staticfiles/
+
 
 # Testing & Coverage
 .coverage
