@@ -60,12 +60,15 @@
               >
             </li>
             <li>
-              <a href="{% url 'dashboard:attendence' %}"
+              <a href="{% url 'dashboard:attendence-list' %}"
                 ><i class="fa-solid fa-calendar-check"></i> حضور و غیاب</a
               >
             </li>
             <li>
-              <a href="#"><i class="fa-regular fa-file-lines"></i> امتحانات</a>
+              <a href="{% url 'dashboard:assesment-list' %}"><i class="fa-regular fa-file-lines"></i> ارزیابی های ماهوار</a>
+            </li>
+            <li>
+              <a href="{% url 'dashboard:exam-list' %}"><i class="fa-solid fa-trophy"></i> امتحانات</a>
             </li>
             <li>
               <a href="#"><i class="fa-solid fa-gear"></i> تنظیمات</a>

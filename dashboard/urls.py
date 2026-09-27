@@ -19,12 +19,20 @@ urlpatterns = [
     path("worker/create", views.teacher_create, name="worker-register"),
     path("worker/<int:pk>", views.TeacherDetailView.as_view(), name="worker-detail"),
     path("worker/<int:id>/edite", views.teacher_edite, name="worker-edite"),
-    path("woreker/<int:id>/disable",views.disable_teacher, name="worker-disable"),
+    path("woreker/<int:id>/disable", views.disable_teacher, name="worker-disable"),
 
     # classes urls
     path("class/", views.ClassesListView.as_view(), name="class-list"),
     # attendence urls
-     path("attendence/", views.attendence, name="attendence"),
+    path("attendence/", views.AttendenceListView.as_view(
+    ), name="attendence-list"),
+    
+    # assesment urls
+    path("assesment/", views.AssesmentListView.as_view(
+    ), name="assesment-list"),
+    # exam urls
+    path("exam/", views.ExamListView.as_view(
+    ), name="exam-list"),
     # register urls
     # path("register/province", views.register_pro, name="register-province"),
 

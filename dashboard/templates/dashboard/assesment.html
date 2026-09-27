@@ -1,0 +1,410 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'dashboard/css/assesment.css' %}">
+{% endblock style %}
+
+{% block content %}
+
+    
+<div class="container">
+    
+    <!-- Hero Header -->
+    <div class="hero-header">
+        <div class="hero-title-area">
+            <div class="system-badge">
+                <span class="dot" style="background-color: #60a5fa;"></span>
+                سامانه هوشمند ارزیابی و ثبت نمرات ماهانه
+            </div>
+            <h1>مدیریت و ثبت نمرات و ارزیابی تحصیلی (Assessment)</h1>
+            <p>ارزیابی مستمر ماهانه، ثبت نمرات مضامین درسی به تفکیک صنف و استاد، تحلیل نمره و صدور لحظه‌ای کارنامه رسمی استاندارد وزارت معارف</p>
+        </div>
+        <div class="hero-actions">
+            <button class="btn btn-primary">+ ثبت نمره جدید</button>
+            <button class="btn btn-outline-dark">خروجی اکسل و کارنامه PDF</button>
+            <button class="btn btn-outline-dark">تنظیم بازه و اوزان</button>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <!-- Card 1 -->
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-title">میانگین کل نمرات صنف<br>از ۱۰۰</div>
+                <div class="stat-icon" style="background-color: var(--primary-bg); color: var(--primary);">
+                    📊
+                </div>
+            </div>
+            <div class="stat-value" style="color: var(--text-main);">۸۸.۵</div>
+            <div class="stat-footer">
+                <span class="badge-stat" style="background-color: var(--primary-bg); color: var(--primary);">۳.۲٪ رشد ماهانه</span>
+                <span style="color: var(--primary); font-size: 0.8rem;">سطح عالی و پایدار</span>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-title">بالاترین نمره ثبت‌شده<br>۱۰۰ / <span style="font-size: 1.2rem; font-weight: bold; color: var(--text-main);">۱۰۰</span></div>
+                <div class="stat-icon" style="background-color: var(--warning-bg); color: var(--warning);">
+                    🏆
+                </div>
+            </div>
+            <div class="stat-footer" style="padding-top: 16px;">
+                <span style="color: var(--text-muted); font-size: 0.8rem;">🥇 شاگرد اول: رضا حسینی (ریاضیا...</span>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-title">نیازمند تلاش و تقویت<br>دانش‌آموز</div>
+                <div class="stat-icon" style="background-color: var(--danger-bg); color: var(--danger);">
+                    ⚠
+                </div>
+            </div>
+            <div class="stat-value" style="color: var(--danger);">۲</div>
+            <div class="stat-footer">
+                <span class="badge-stat" style="background-color: var(--danger-bg); color: var(--danger);">زیر حد نصاب ۶۰٪</span>
+                <span style="color: var(--primary); cursor: pointer; font-size: 0.8rem;">ارسال اطلاعیه</span>
+            </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="stat-card">
+            <div class="stat-header">
+                <div class="stat-title">مجموع نمرات ثبت‌شده<br>از ۳۲ شاگرد</div>
+                <div class="stat-icon" style="background-color: var(--gray-bg); color: var(--text-main);">
+                    ☑
+                </div>
+            </div>
+            <div class="stat-value" style="color: var(--text-main);">۳۲</div>
+            <div class="stat-footer">
+                <span class="badge-stat" style="background-color: var(--primary-bg); color: var(--primary);">تکمیل ۱۰۰٪ ارزیابی</span>
+                <span style="color: var(--text-muted); font-size: 0.8rem;">ماه عقرب</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filters-section">
+        <div class="filters-header">
+            <div class="filters-title">
+                <span style="color: var(--primary);">⚗</span> فیلترهای جدول ارزیابی نمرات
+            </div>
+            <div class="legend-row">
+                <div class="legend-item"><span class="dot" style="background-color: var(--primary);"></span> عالی (۱۰۰-۹۰: A)</div>
+                <div class="legend-item"><span class="dot" style="background-color: var(--success);"></span> بسیار خوب (۸۹-۷۵: B)</div>
+                <div class="legend-item"><span class="dot" style="background-color: var(--warning);"></span> متوسط (۷۴-۶۰: C)</div>
+                <div class="legend-item"><span class="dot" style="background-color: var(--danger);"></span> نیاز به تقویت (زیر ۶۰)</div>
+            </div>
+        </div>
+        <div class="filter-row">
+            <div class="input-group">
+                <label>صنف تحصیلی:</label>
+                <select class="input-control">
+                    <option>دهم ریاضی الف</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>مضمون درسی:</label>
+                <select class="input-control">
+                    <option>ریاضیات عالی و هند...</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>استاد ارزیاب:</label>
+                <select class="input-control">
+                    <option>استاد محمد رضایی</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>ماه ارزیابی:</label>
+                <select class="input-control">
+                    <option>عقرب (آبان)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>سال تحصیلی:</label>
+                <select class="input-control">
+                    <option>۱۴۰۳ - ۱۴۰۲</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>جستجوی دانش‌آموز:</label>
+                <input type="text" class="input-control" placeholder="نام یا شماره تذکره...">
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-section">
+        <div class="table-header">
+            <div class="table-title">
+                <div class="table-icon">📄</div>
+                <div class="table-info">
+                    <h2>جدول نمرات و ارزیابی ماهانه - صنف دهم ریاضی الف (مضمون: ریاضیات عالی)</h2>
+                    <p>آخرین همگام‌سازی نمرات: امروز، ۱۱:۴۵ قبل از ظهر</p>
+                </div>
+            </div>
+            <div class="table-actions">
+                <button class="btn-table-action">چاپ لیست کامل صنف 🖨</button>
+                <button class="btn-table-action">تازه سازی ↻</button>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 40px;"></th>
+                    <th># شناسه</th>
+                    <th>مشخصات دانش‌آموز</th>
+                    <th>صنف و<br>شعبه</th>
+                    <th>مضمون<br>درسی</th>
+                    <th>استاد<br>ارزیاب</th>
+                    <th>نمره<br>ثبت‌شده</th>
+                    <th>حداکثر<br>نمره</th>
+                    <th>درصد و بازخورد<br>بصری</th>
+                    <th>وضعیت<br>رتبه</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Row 1 -->
+                <tr>
+                    <td><input type="radio" name="student"></td>
+                    <td style="color: var(--text-muted); font-size: 0.8rem;">ASM-<br>2041</td>
+                    <td>
+                        <div class="student-cell">
+                            <img src="https://i.pravatar.cc/100?img=11" alt="Avatar" class="avatar">
+                            <div class="student-info">
+                                <strong>رضا حسینی</strong>
+                                <span>فرزند: علی‌رضا - تذکره: ۰۴۲۰۳۸۹۱</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td><div class="badge-circle">دهم<br>ریاضی<br>الف</div></td>
+                    <td style="color: var(--primary); font-weight: 500;">ریاضیات<br>عالی</td>
+                    <td style="color: var(--text-muted); font-size: 0.85rem;">استاد<br>محمد<br>رضایی</td>
+                    <td><div class="score-box">۱۰۰</div></td>
+                    <td style="color: var(--text-muted);">۱۰۰</td>
+                    <td>
+                        <div class="progress-cell">
+                            <div class="progress-header">
+                                <span style="color: var(--primary);">کامل</span>
+                                <strong style="color: var(--primary);">۱۰۰٪</strong>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: 100%; background-color: var(--primary);"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="rank-badge" style="background-color: var(--primary-bg); color: var(--primary); border: 1px solid #bfdbfe;">
+                            نمره<br>کامل<br>★ ۱۰۰
+                        </div>
+                    </td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-btn">✎</button>
+                            <button class="action-btn">✉</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 2 -->
+                <tr>
+                    <td><input type="radio" name="student"></td>
+                    <td style="color: var(--text-muted); font-size: 0.8rem;">ASM-<br>2042</td>
+                    <td>
+                        <div class="student-cell">
+                            <img src="https://i.pravatar.cc/100?img=12" alt="Avatar" class="avatar">
+                            <div class="student-info">
+                                <strong>محمد رحیمی</strong>
+                                <span>فرزند: محمداکبر - تذکره: ۰۱۲۰۳۱۲۰</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td><div class="badge-circle">دهم<br>ریاضی<br>الف</div></td>
+                    <td style="color: var(--primary); font-weight: 500;">ریاضیات<br>عالی</td>
+                    <td style="color: var(--text-muted); font-size: 0.85rem;">استاد<br>محمد<br>رضایی</td>
+                    <td><div class="score-box" style="background-color: #e0e7ff; color: #4338ca;">۹۵</div></td>
+                    <td style="color: var(--text-muted);">۱۰۰</td>
+                    <td>
+                        <div class="progress-cell">
+                            <div class="progress-header">
+                                <span style="color: #4338ca;">سطح A</span>
+                                <strong style="color: #4338ca;">۹۵٪</strong>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: 95%; background-color: #4338ca;"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="rank-badge" style="background-color: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe;">
+                            عالی
+                        </div>
+                    </td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-btn">✎</button>
+                            <button class="action-btn">✉</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 3 -->
+                <tr>
+                    <td><input type="radio" name="student"></td>
+                    <td style="color: var(--text-muted); font-size: 0.8rem;">ASM-<br>2043</td>
+                    <td>
+                        <div class="student-cell">
+                            <img src="https://i.pravatar.cc/100?img=13" alt="Avatar" class="avatar">
+                            <div class="student-info">
+                                <strong>مهدی اکبری</strong>
+                                <span>فرزند: غلام‌سخی - تذکره: ۰۹۱۰۵۵۱۲</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td><div class="badge-circle">دهم<br>ریاضی<br>الف</div></td>
+                    <td style="color: var(--primary); font-weight: 500;">ریاضیات<br>عالی</td>
+                    <td style="color: var(--text-muted); font-size: 0.85rem;">استاد<br>محمد<br>رضایی</td>
+                    <td><div class="score-box" style="background-color: var(--gray-bg); color: var(--text-main);">۸۸</div></td>
+                    <td style="color: var(--text-muted);">۱۰۰</td>
+                    <td>
+                        <div class="progress-cell">
+                            <div class="progress-header">
+                                <span style="color: var(--text-main);">سطح B</span>
+                                <strong style="color: var(--text-main);">۸۸٪</strong>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: 88%; background-color: var(--text-main);"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="rank-badge" style="background-color: var(--gray-bg); color: var(--text-main); border: 1px solid var(--border-color);">
+                            بسیار<br>خوب
+                        </div>
+                    </td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-btn">✎</button>
+                            <button class="action-btn">✉</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 4 -->
+                <tr>
+                    <td><input type="radio" name="student"></td>
+                    <td style="color: var(--text-muted); font-size: 0.8rem;">ASM-<br>2044</td>
+                    <td>
+                        <div class="student-cell">
+                            <img src="https://i.pravatar.cc/100?img=14" alt="Avatar" class="avatar">
+                            <div class="student-info">
+                                <strong>احمد کریمی</strong>
+                                <span>فرزند: نعمت‌الله - تذکره: ۷۰۱۰۴۴۰۲</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td><div class="badge-circle">دهم<br>ریاضی<br>الف</div></td>
+                    <td style="color: var(--primary); font-weight: 500;">ریاضیات<br>عالی</td>
+                    <td style="color: var(--text-muted); font-size: 0.85rem;">استاد<br>محمد<br>رضایی</td>
+                    <td><div class="score-box" style="background-color: var(--warning-bg); color: var(--warning);">۷۲</div></td>
+                    <td style="color: var(--text-muted);">۱۰۰</td>
+                    <td>
+                        <div class="progress-cell">
+                            <div class="progress-header">
+                                <span style="color: #d97706;">سطح C</span>
+                                <strong style="color: #d97706;">۷۲٪</strong>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: 72%; background-color: #d97706;"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="rank-badge" style="background-color: var(--warning-bg); color: #d97706; border: 1px solid #fde68a;">
+                            متوسط
+                        </div>
+                    </td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-btn">✎</button>
+                            <button class="action-btn">✉</button>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Row 5 -->
+                <tr>
+                    <td><input type="radio" name="student"></td>
+                    <td style="color: var(--text-muted); font-size: 0.8rem;">ASM-<br>2045</td>
+                    <td>
+                        <div class="student-cell">
+                            <img src="https://i.pravatar.cc/100?img=15" alt="Avatar" class="avatar">
+                            <div class="student-info">
+                                <strong>علی احمدی</strong>
+                                <span>فرزند: شاه‌محمود - تذکره: ۰۹۰۰۷۸۱۹</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td><div class="badge-circle">دهم<br>ریاضی<br>الف</div></td>
+                    <td style="color: var(--primary); font-weight: 500;">ریاضیات<br>عالی</td>
+                    <td style="color: var(--text-muted); font-size: 0.85rem;">استاد<br>محمد<br>رضایی</td>
+                    <td><div class="score-box" style="background-color: var(--danger-bg); color: var(--danger);">۵۸</div></td>
+                    <td style="color: var(--text-muted);">۱۰۰</td>
+                    <td>
+                        <div class="progress-cell">
+                            <div class="progress-header">
+                                <span style="color: var(--danger);">زیر حد نصاب</span>
+                                <strong style="color: var(--danger);">۵۸٪</strong>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: 58%; background-color: var(--danger);"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="rank-badge" style="background-color: var(--danger-bg); color: var(--danger); border: 1px solid #fecaca;">
+                            ! نیازمند<br>تقویت
+                        </div>
+                    </td>
+                    <td>
+                        <div class="row-actions">
+                            <button class="action-btn">✎</button>
+                            <button class="action-btn">✉</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <div>نمایش ۱ تا ۵ از کل ۳۲ نمره ثبت‌شده صنف دهم ریاضی الف</div>
+            <div class="page-numbers">
+                <button class="page-btn" style="width: auto; padding: 0 12px; color: var(--text-muted);">❮ صفحه قبل</button>
+                <button class="page-btn active">۱</button>
+                <button class="page-btn">۲</button>
+                <button class="page-btn">۳</button>
+                <span>...</span>
+                <button class="page-btn">۷</button>
+                <button class="page-btn" style="width: auto; padding: 0 12px; color: var(--text-main);">صفحه بعد ❯</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+
+{% block js %}
+    
+{% endblock js %}
+    

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import ListView, DetailView
-from .models import Student, Teacher, Classes, Job, StudentClass, AcademiceYear, Degree
+from .models import Student, Teacher, Classes, Job, StudentClass, AcademiceYear, Degree,Attendance,Assessment,ExamResult,Exam
 from .forms import StudentForm, TeacherForm
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -377,5 +377,16 @@ class ClassesListView(LoginRequiredMixin, ListView):
 #####
 #####
 # ---------------------------------------------------------------------------
-def attendence(request) :
-    return render(request,"dashboard/attendence.html",{})
+
+class AttendenceListView(ListView):
+    model = Attendance
+    template_name = "dashboard/attendence.html"
+    context_object_name="attendences"
+class AssesmentListView(ListView):
+    model = Assessment
+    template_name = "dashboard/assesment.html"
+    context_object_name="assesments"
+class ExamListView(ListView):
+    model = ExamResult
+    template_name = "dashboard/exam.html"
+    context_object_name="exams"

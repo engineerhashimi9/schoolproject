@@ -146,6 +146,7 @@ class AcademiceYear(models.Model):
 class Classes(models.Model):
     id = models.AutoField(primary_key=True)
     grade = models.IntegerField()
+    alpha_grade=models.CharField(max_length=50)
     section = models.CharField(max_length=50)
     guidence = models.ForeignKey(Teacher, on_delete=models.CASCADE,null=True,blank=True)
     academice_year = models.ForeignKey(AcademiceYear, on_delete=models.CASCADE)
@@ -176,7 +177,7 @@ class StudentClass(models.Model):
         return f"{self.classs.grade}-{self.classs.section}"
 
 
-class Atendance(models.Model):
+class Attendance(models.Model):
     id = models.AutoField(primary_key=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     classs = models.ForeignKey(Classes, on_delete=models.CASCADE)
@@ -188,6 +189,7 @@ class Atendance(models.Model):
     excused = models.IntegerField()
     alldays = models.IntegerField()
     academice_year = models.ForeignKey(AcademiceYear, on_delete=models.CASCADE)
+    present_percent=models.DecimalField(max_digits=5, decimal_places=2)
 
     def __str__(self) -> str:
         return f"{self.student}-{self.classs}-{self.month}"
