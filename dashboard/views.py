@@ -12,13 +12,15 @@ from django.db.models import Q
 # -----------------------------------------------------------------------------
 #####
 #####
-######### -------------- Tsecurity section SECTION --------------###
+######### -------------- security And Constants section SECTION --------------###
 #####
 #####
 # ---------------------------------------------------------------------------
 
 
 # is Admin derator
+students_count=Student.objects.all().count()
+teachers_count=Teacher.objects.all().count()
 def is_admin(func):
     def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated and request.user.is_staff:
@@ -367,8 +369,19 @@ def teacher_create(request):
 
 class ClassesListView(LoginRequiredMixin, ListView):
     model = Classes
-    template_name = "dashboard/class_list.html"
+    template_name = "dashboard/classes/class_list.html"
     context_object_name = "classes"
+    def get_context_data(self, **kwargs) -> dict[str, object]:
+        context = super().get_context_data(**kwargs)
+        context["teachers_count"] =teachers_count 
+        context["students_count"] =students_count 
+        return context
+    
+class ClassDetailView(LoginRequiredMixin,DetailView):
+    model = Classes
+    template_name = "dashboard/classes/class_detail.html"
+    context_object_name="class"
+
 
 # -----------------------------------------------------------------------------
 #####
@@ -378,15 +391,15 @@ class ClassesListView(LoginRequiredMixin, ListView):
 #####
 # ---------------------------------------------------------------------------
 
-class AttendenceListView(ListView):
+class AttendenceListView(LoginRequiredMixin,ListView):
     model = Attendance
     template_name = "dashboard/attendence.html"
     context_object_name="attendences"
-class AssesmentListView(ListView):
+class AssesmentListView(LoginRequiredMixin,ListView):
     model = Assessment
     template_name = "dashboard/assesment.html"
     context_object_name="assesments"
-class ExamListView(ListView):
+class ExamListView(LoginRequiredMixin,ListView):
     model = ExamResult
     template_name = "dashboard/exam.html"
     context_object_name="exams"

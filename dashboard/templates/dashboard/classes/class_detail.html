@@ -1,0 +1,697 @@
+{% extends 'dashboard/base.html' %} {% load static %} {% block style %}
+
+<link rel="stylesheet" href="{% static 'dashboard/css/class_detail.css' %}" />
+{% endblock style %} {% block content %}
+
+<div class="container">
+  <!-- ==========================================
+         SECTION 1: Class Meta Data (Dark Theme)
+         ========================================== -->
+  <section>
+    <div class="section-header">
+      <div class="status-text"><span>✔</span> دیتابیس به‌روزرسانی شده</div>
+      <div class="section-title-wrapper">
+        <span class="meta-pill">Class Model Meta</span>
+        <h2>بخش اول: اطلاعات صنف و کادر راهنما</h2>
+        <div class="blue-bar"></div>
+      </div>
+    </div>
+
+    <div class="dark-dashboard">
+      <div class="dark-top">
+        <div class="dark-top-content">
+          <div class="tags-row">
+            <div class="dark-tag tag-blue"># کد صنف: CLS-{{class.id}}}</div>
+            <div class="dark-tag tag-blue">
+              🎓 پایه: {{class.grade}} (Grade {{class.grade}})
+            </div>
+            <div class="dark-tag tag-blue">
+              {{class.alpha_grade}} - {{class.section}}
+            </div>
+            <div class="dark-tag tag-gold">
+              🌅 شعبه: {{class.section}} (نوبت صبحانه)
+            </div>
+            <div class="dark-tag tag-green">
+              📅 سال تعلیمی: {{class.academice_year.year}}-
+            </div>
+          </div>
+
+          <div class="dark-title">
+            <div class="dark-tag tag-active">● برحال و در حال تدریس</div>
+            <h1>
+              صنف {{class.alpha_grade}} - شعبه {{class.section}}
+              ({{class.grade}}-{{class.section}} عالی)
+            </h1>
+          </div>
+
+          <p class="dark-desc">
+            تحلیلی، دایر در تالار شماره ۳۰۲ (طبقه دوم بخش علوم).
+          </p>
+        </div>
+
+        <div class="dark-top-actions">
+          <button class="btn btn-dark-primary">👤+ ثبت شاگرد جدید</button>
+          <button class="btn btn-dark-outline">✎ ویرایش صنف</button>
+          <button class="btn btn-dark-outline">🖨 چاپ لایحه</button>
+          <button class="btn btn-dark-danger">📄 گزارش PDF</button>
+        </div>
+      </div>
+
+      <div class="dark-grid">
+        <!-- Card 3: Location & Time (Visual Left in RTL) -->
+        <div class="dark-card">
+          <div class="dark-card-header">
+            <div class="dark-card-title">مکان و زمان<br />برگزاری</div>
+            <div class="dark-tag tag-gold" style="border: none">صبحانه</div>
+          </div>
+
+          <div
+            class="contact-box"
+            style="margin-bottom: 12px; justify-content: space-between"
+          >
+            <span>شماره و موقعیت اتاق:</span>
+            <strong style="color: white; text-align: left"
+              >اتاق ۳۰۲<br />(طبقه ۲)</strong
+            >
+          </div>
+
+          <div
+            class="contact-box"
+            style="margin-bottom: 16px; justify-content: space-between"
+          >
+            <span>ساعت درسی:</span>
+            <strong style="color: white; direction: ltr">08:00 - 12:30</strong>
+          </div>
+
+          <p style="font-size: 0.8rem; color: var(--dark-text-muted)">
+            مضامین فعال این هفته:
+          </p>
+          <div class="subject-tags">
+            <span class="subject-tag">ریاضیات</span>
+            <span class="subject-tag">فیزیک</span>
+            <span class="subject-tag">کیمیا</span>
+            <span class="subject-tag">هندسه</span>
+            <span class="subject-tag">ادبیات دری</span>
+          </div>
+
+          <div
+            class="dark-card-footer"
+            style="margin-top: 24px; padding: 0; border: none"
+          >
+            <button class="btn btn-dark-outline" style="width: 100%">
+              📅 مشاهده جدول اوقات تدریس
+            </button>
+          </div>
+        </div>
+
+        <!-- Card 2: Capacity & Stats (Visual Middle) -->
+        <div class="dark-card">
+          <div class="dark-card-header">
+            <div class="dark-card-title">ظرفیت و وضعیت<br />آموزشی صنف</div>
+            <div class="dark-tag tag-green" style="border-radius: 20px">
+              رتبه {{class.grade}} صنف<br />{{class.alpha_grade}}
+            </div>
+          </div>
+
+          <div class="stats-section">
+            <div class="stats-row">
+              <span style="font-size: 0.85rem; color: var(--dark-text-muted)"
+                >شاگردان برحال /<br />ظرفیت کل صنف:</span
+              >
+              <strong style="font-size: 1.1rem; color: white"
+                >۳۲ از ۳۵ نفر (۳<br />سیت خالی)</strong
+              >
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill"></div>
+            </div>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                font-size: 0.75rem;
+              "
+            >
+              <span style="color: var(--success)">ثبت‌نام مجاز و فعال</span>
+              <span style="color: var(--dark-text-muted)"
+                >درصد تکمیل: ۹۱.۴٪</span
+              >
+            </div>
+          </div>
+
+          <div class="mini-stats-grid">
+            <div class="mini-stat-box">
+              <div class="mini-stat-label">معدل نمرات کلاس</div>
+              <div class="mini-stat-value" style="color: var(--dark-primary)">
+                ۸۸.۵
+              </div>
+              <div class="mini-stat-label">سطح کیفی:<br />عالی (A)</div>
+            </div>
+            <div class="mini-stat-box">
+              <div class="mini-stat-label">میانگین حاضری ماهوار</div>
+              <div class="mini-stat-value">۹۴.۰۸٪</div>
+              <div class="mini-stat-label" style="color: var(--success)">
+                ▲ ۲.۱٪<br />بهبود
+              </div>
+            </div>
+          </div>
+
+          <div class="dark-card-footer">
+            <span
+              >نگران صنف:
+              <strong style="color: white"
+                >{{class.guidence.name}} {{class.guidence.last_name}}</strong
+              ></span
+            >
+            <span
+              class="dark-tag"
+              style="
+                border-color: var(--dark-primary);
+                color: var(--dark-primary);
+              "
+              >کارت: CRD-{{class.guidence.id}}</span
+            >
+          </div>
+        </div>
+
+        <!-- Card 1: Teacher Profile (Visual Right in RTL) -->
+        <div class="dark-card">
+          <div class="dark-card-header">
+            <div class="dark-card-title">
+              استاد راهنما صنف<span>(Guidance Teacher)</span>
+            </div>
+            <div class="dark-tag tag-blue" style="border: none">
+              FK:<br />{{class.guidance.id}}
+            </div>
+          </div>
+
+          <div class="teacher-profile">
+            <img
+              src="https://i.pravatar.cc/150?img=11"
+              alt="Dr. Rezaei"
+              class="teacher-avatar"
+            />
+            <div class="teacher-info">
+              <h3>
+              {{class.guidence.name}} {{class.guidence.last_name}}<span class="badge-phd">دکترای {{class.guidence.major}}</span>
+              </h3>
+              <p>
+                استاد راهنمای تربیتی، آموزشی و ناظر پیشرفت تحصیلی شاگردان صنف
+              </p>
+            </div>
+          </div>
+
+          <div class="teacher-contacts">
+            <div class="contact-box">✉ </div>
+            <div class="contact-box" style="direction: ltr">
+              📞 {{class.guidence.phone}}
+            </div>
+            <div class="contact-box full-width">
+              📘 مضمون: حسابان و فیز... <span>⏱ شنبه تا چهارشنبه (صبح)</span>
+            </div>
+          </div>
+
+          <div class="dark-card-footer">
+            <span>وظیفه: نظارت مستقیم و مشاوره اولیا</span>
+            <a href="{% url 'dashboard:worker-detail' pk=class.guidence.id %}" class="link-primary">مشاهده پرونده استاد ←</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+         SECTION 2: Students Roster (Light Theme)
+         ========================================== -->
+  <section>
+    <div class="section-header">
+      <div class="header-actions">
+        <button
+          class="btn btn-primary"
+          style="font-size: 1rem; padding: 10px 24px"
+        >
+          + افزودن<br />شاگرد
+        </button>
+        <button class="btn btn-outline">✓ ثبت حاضری<br />گروهی</button>
+        <button
+          class="btn btn-outline"
+          style="
+            color: var(--success);
+            border-color: #bbf7d0;
+            background-color: var(--success-light);
+          "
+        >
+          📥 خروجی اکسل<br />(Excel)
+        </button>
+      </div>
+
+      <div class="section-title-wrapper">
+        <span class="count-badge">۳۲ شاگرد<br />فعال</span>
+        <div style="text-align: right">
+          <h2>بخش دوم: لیست شاگردان صنف (Students Roster)</h2>
+        </div>
+        <div class="blue-bar" style="background-color: var(--success)"></div>
+      </div>
+    </div>
+
+    <div class="light-dashboard">
+      <div class="controls-bar">
+        <div class="input-group search-input-wrapper" style="flex-grow: 1">
+          <input
+            type="text"
+            class="search-input"
+            placeholder="🔍 جستجو بر اساس نام، نام پدر (ولد)، یا شماره کارت شناسایی (card_id)..."
+          />
+        </div>
+        <select class="select-input">
+          <option>شاگردان حاضر و برحال (۳۲)</option>
+        </select>
+        <select class="select-input">
+          <option>مرتب‌سازی: شماره ردیف ID صعودی</option>
+        </select>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 50px">ID</th>
+            <th>نام و مشخصات شاگرد<br />(Name)</th>
+            <th>نام پدر / ولد<br />(Father Name)</th>
+            <th>کد کارت شناسایی<br />(Card ID)</th>
+            <th>وضعیت انضباطی<br />و حضور</th>
+            <th>معدل<br />صنف</th>
+            <th>شماره تماس<br />ولی</th>
+            <th>عملیات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Student 1 -->
+          <tr>
+            <td style="color: var(--text-muted); font-weight: 700">#01</td>
+            <td>
+              <div class="student-cell">
+                <img
+                  src="https://i.pravatar.cc/100?img=12"
+                  alt="Avatar"
+                  class="avatar"
+                />
+                <div class="student-info">
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: flex-start;
+                    "
+                  >
+                    <strong>رضا<br />حسینی</strong>
+                    <span class="badge-rep">مبصر<br />صنف</span>
+                  </div>
+                  <span>تاریخ شمولیت:<br />۱۴۰۱/۰۱/۱۵</span>
+                </div>
+              </div>
+            </td>
+            <td style="color: var(--text-muted)">علی‌رضا حسینی</td>
+            <td>
+              <div class="card-id-badge">🪪 CRD-89401</div>
+              <div
+                style="
+                  font-size: 0.7rem;
+                  color: var(--text-muted);
+                  margin-top: 4px;
+                "
+              >
+                اساس: EXM-801
+              </div>
+            </td>
+            <td>
+              <div class="status-pill status-present">
+                <span class="dot"></span> حاضر و<br />برحال
+              </div>
+              <div
+                style="
+                  font-size: 0.75rem;
+                  color: var(--text-muted);
+                  margin-top: 4px;
+                "
+              >
+                حاضری: ۹۸.۵٪
+              </div>
+            </td>
+            <td>
+              <div class="score-info" style="color: var(--primary)">
+                ۹۶.۴
+                <span>ممتاز (+A)</span>
+              </div>
+            </td>
+            <td
+              style="
+                color: var(--text-muted);
+                font-size: 0.85rem;
+                direction: ltr;
+              "
+            >
+              0799-111-222
+            </td>
+            <td>
+              <div class="table-actions">
+                <button class="action-btn">👁</button>
+                <button class="action-btn">✎</button>
+                <button class="action-btn">🗑</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Student 2 -->
+          <tr>
+            <td style="color: var(--text-muted); font-weight: 700">#02</td>
+            <td>
+              <div class="student-cell">
+                <div class="avatar-initials">م.ر</div>
+                <div class="student-info">
+                  <strong>محمد رحیمی</strong>
+                  <span>تاریخ شمولیت:<br />۱۴۰۱/۰۱/۱۸</span>
+                </div>
+              </div>
+            </td>
+            <td style="color: var(--text-muted)">غلام‌سخی رحیمی</td>
+            <td>
+              <div class="card-id-badge">🪪 CRD-89402</div>
+              <div
+                style="
+                  font-size: 0.7rem;
+                  color: var(--text-muted);
+                  margin-top: 4px;
+                "
+              >
+                اساس: EXM-804
+              </div>
+            </td>
+            <td>
+              <div class="status-pill status-present">
+                <span class="dot"></span> حاضر و<br />برحال
+              </div>
+              <div
+                style="
+                  font-size: 0.75rem;
+                  color: var(--text-muted);
+                  margin-top: 4px;
+                "
+              >
+                حاضری: ۹۵.۰٪
+              </div>
+            </td>
+            <td>
+              <div class="score-info" style="color: var(--primary)">
+                ۹۱.۲
+                <span>عالی (A)</span>
+              </div>
+            </td>
+            <td
+              style="
+                color: var(--text-muted);
+                font-size: 0.85rem;
+                direction: ltr;
+              "
+            >
+              0780-333-222
+            </td>
+            <td>
+              <div class="table-actions">
+                <button class="action-btn">👁</button>
+                <button class="action-btn">✎</button>
+                <button class="action-btn">🗑</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Student 3 -->
+          <tr>
+            <td style="color: var(--text-muted); font-weight: 700">#03</td>
+            <td>
+              <div class="student-cell">
+                <img
+                  src="https://i.pravatar.cc/100?img=13"
+                  alt="Avatar"
+                  class="avatar"
+                />
+                <div class="student-info">
+                  <strong>مهدی اکبری</strong>
+                  <span>تاریخ شمولیت:<br />۱۴۰۱/۰۱/۲۰</span>
+                </div>
+              </div>
+            </td>
+            <td style="color: var(--text-muted)">عبدالحمید اکبری</td>
+            <td>
+              <div class="card-id-badge">🪪 CRD-89403</div>
+              <div
+                style="
+                  font-size: 0.7rem;
+                  color: var(--text-muted);
+                  margin-top: 4px;
+                "
+              >
+                اساس: EXM-812
+              </div>
+            </td>
+            <td>
+              <div class="status-pill status-present">
+                <span class="dot"></span> حاضر و<br />برحال
+              </div>
+              <div
+                style="
+                  font-size: 0.75rem;
+                  color: var(--text-muted);
+                  margin-top: 4px;
+                "
+              >
+                حاضری: ۹۲.۲٪
+              </div>
+            </td>
+            <td>
+              <div class="score-info" style="color: var(--text-main)">
+                ۸۷.۸
+                <span style="color: var(--text-muted)">خیلی خوب (+B)</span>
+              </div>
+            </td>
+            <td
+              style="
+                color: var(--text-muted);
+                font-size: 0.85rem;
+                direction: ltr;
+              "
+            >
+              0772-987-652
+            </td>
+            <td>
+              <div class="table-actions">
+                <button class="action-btn">👁</button>
+                <button class="action-btn">✎</button>
+                <button class="action-btn">🗑</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Student 4 -->
+          <tr>
+            <td style="color: var(--text-muted); font-weight: 700">#04</td>
+            <td>
+              <div class="student-cell">
+                <div
+                  class="avatar-initials"
+                  style="background-color: var(--text-main)"
+                >
+                  ج.ر
+                </div>
+                <div class="student-info">
+                  <strong>جواد رضایی</strong>
+                  <span>تاریخ شمولیت:<br />۱۴۰۱/۰۲/۰۲</span>
+                </div>
+              </div>
+            </td>
+            <td style="color: var(--text-muted)">محمدظاهر<br />رضایی</td>
+            <td>
+              <div class="card-id-badge">🪪 CRD-89404</div>
+              <div
+                style="
+                  font-size: 0.7rem;
+                  color: var(--text-muted);
+                  margin-top: 4px;
+                "
+              >
+                اساس: EXM-819
+              </div>
+            </td>
+            <td>
+              <div class="status-pill status-warning">
+                <span class="dot"></span> نیازمند<br />تقویه
+              </div>
+              <div
+                style="
+                  font-size: 0.75rem;
+                  color: var(--text-muted);
+                  margin-top: 4px;
+                "
+              >
+                حاضری: ۸۷.۰٪
+              </div>
+            </td>
+            <td>
+              <div class="score-info warning">
+                ۷۹.۳
+                <span>متوسط (B)</span>
+              </div>
+            </td>
+            <td
+              style="
+                color: var(--text-muted);
+                font-size: 0.85rem;
+                direction: ltr;
+              "
+            >
+              0705-555-666
+            </td>
+            <td>
+              <div class="table-actions">
+                <button class="action-btn">👁</button>
+                <button class="action-btn">✎</button>
+                <button class="action-btn">🗑</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Student 5 -->
+          <tr>
+            <td style="color: var(--text-muted); font-weight: 700">#05</td>
+            <td>
+              <div class="student-cell">
+                <div class="avatar-initials" style="background-color: #6366f1">
+                  ا.ک
+                </div>
+                <div class="student-info">
+                  <strong>احمد کریمی</strong>
+                  <span>تاریخ شمولیت:<br />۱۴۰۱/۰۱/۱۵</span>
+                </div>
+              </div>
+            </td>
+            <td style="color: var(--text-muted)">نعمت‌الله کریمی</td>
+            <td>
+              <div class="card-id-badge">🪪 CRD-89405</div>
+              <div
+                style="
+                  font-size: 0.7rem;
+                  color: var(--text-muted);
+                  margin-top: 4px;
+                "
+              >
+                اساس: EXM-825
+              </div>
+            </td>
+            <td>
+              <div class="status-pill status-present">
+                <span class="dot"></span> حاضر و<br />برحال
+              </div>
+              <div
+                style="
+                  font-size: 0.75rem;
+                  color: var(--text-muted);
+                  margin-top: 4px;
+                "
+              >
+                حاضری: ۹۴.۱٪
+              </div>
+            </td>
+            <td>
+              <div class="score-info" style="color: var(--primary)">
+                ۹۱.۵
+                <span>عالی (A)</span>
+              </div>
+            </td>
+            <td
+              style="
+                color: var(--text-muted);
+                font-size: 0.85rem;
+                direction: ltr;
+              "
+            >
+              0793-222-888
+            </td>
+            <td>
+              <div class="table-actions">
+                <button class="action-btn">👁</button>
+                <button class="action-btn">✎</button>
+                <button class="action-btn">🗑</button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Student 6 -->
+          <tr>
+            <td style="color: var(--text-muted); font-weight: 700">#06</td>
+            <td>
+              <div class="student-cell">
+                <div class="avatar-initials" style="background-color: #0ea5e9">
+                  ع.ا
+                </div>
+                <div class="student-info">
+                  <strong>علی احمدی</strong>
+                  <span>تاریخ شمولیت:<br />۱۴۰۱/۰۲/۱۰</span>
+                </div>
+              </div>
+            </td>
+            <td style="color: var(--text-muted)">بشیراحمد احمدی</td>
+            <td>
+              <div class="card-id-badge">🪪 CRD-89406</div>
+              <div
+                style="
+                  font-size: 0.7rem;
+                  color: var(--text-muted);
+                  margin-top: 4px;
+                "
+              >
+                اساس: EXM-830
+              </div>
+            </td>
+            <td>
+              <div class="status-pill status-present">
+                <span class="dot"></span> حاضر و<br />برحال
+              </div>
+              <div
+                style="
+                  font-size: 0.75rem;
+                  color: var(--text-muted);
+                  margin-top: 4px;
+                "
+              >
+                حاضری: ۹۳.۲٪
+              </div>
+            </td>
+            <td>
+              <div class="score-info" style="color: var(--text-main)">
+                ۸۵.۰
+                <span style="color: var(--text-muted)">خوب (B)</span>
+              </div>
+            </td>
+            <td
+              style="
+                color: var(--text-muted);
+                font-size: 0.85rem;
+                direction: ltr;
+              "
+            >
+              0781-777-999
+            </td>
+            <td>
+              <div class="table-actions">
+                <button class="action-btn">👁</button>
+                <button class="action-btn">✎</button>
+                <button class="action-btn">🗑</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+{% endblock content %} {% block js %} {% endblock js %}

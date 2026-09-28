@@ -61,7 +61,7 @@
       </div>
       <div class="stat-body">
         <div class="label">کل صنف‌ها و صنف‌ها</div>
-        <h2>۲۴ صنف</h2>
+        <h2>{{classes|length}} صنف</h2>
       </div>
     </div>
     <div class="stat">
@@ -103,7 +103,7 @@
       </div>
       <div class="stat-body">
         <div class="label">اساتید راهنمای اختصاص یافته</div>
-        <h2>۱۸ استاد</h2>
+        <h2>{{teachers_count}} استاد</h2>
         <div class="sub yellow">تکمیل ظرفیت راهنمایی</div>
       </div>
     </div>
@@ -121,7 +121,7 @@
       </div>
       <div class="stat-body">
         <div class="label">مجموع دانش‌آموزان مشغول به تحصیل</div>
-        <h2>۶۵۰ نفر</h2>
+        <h2>{{students_count}} نفر</h2>
         <div class="sub green">میانگین ۲۷ دانش‌آموز در صنف</div>
       </div>
     </div>
@@ -255,15 +255,15 @@
           </td>
           <td>
             <div class="actions">
-              <button class="icon-btn danger" title="حذف">
+              <a class="icon-btn danger" title="حذف">
                 <i class="fa-solid fa-trash"></i>
-              </button>
-              <button class="icon-btn" title="ویرایش">
+              </a>
+              <a  class="icon-btn" title="ویرایش">
                 <i class="fa-solid fa-pen"></i>
-              </button>
-              <button class="icon-btn" title="مشاهده">
+              </a>
+              <a href="{% url 'dashboard:class-detail' pk=class.id %}"  class="icon-btn" title="مشاهده">
                 <i class="fa-solid fa-eye"></i>
-              </button>
+              </a>
             </div>
           </td>
         </tr>
