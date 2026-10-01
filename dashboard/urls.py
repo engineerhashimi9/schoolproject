@@ -25,6 +25,8 @@ urlpatterns = [
     path("class/", views.ClassesListView.as_view(), name="class-list"),
     path("class/<int:pk>", views.ClassDetailView.as_view(), name="class-detail"),
     path("class/<int:id>/edite", views.class_edite, name="class-edite"),
+    path("class/create", views.class_create, name="class-register"),
+    path("class/<int:id>/delete", views.class_disable, name="class-disable"),
     # attendence urls
     path("attendence/", views.AttendenceListView.as_view(
     ), name="attendence-list"),

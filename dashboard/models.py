@@ -155,7 +155,9 @@ class Classes(models.Model):
         AcademiceYear, on_delete=models.DO_NOTHING)
     registered = models.IntegerField(default=0)
     capacity = models.IntegerField(default=30)
-
+    start_time = models.TimeField(auto_now=False, auto_now_add=False,default="08:00") # type: ignore
+    end_time = models.TimeField(auto_now=False, auto_now_add=False,default="16:00") # type: ignore
+    turn=models.CharField(max_length=50,default="صبح") # type: ignore
     def __str__(self) -> str:
         return f"{self.grade}-{self.section}"
 

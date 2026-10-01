@@ -382,10 +382,17 @@ class ClassDetailView(LoginRequiredMixin,DetailView):
     model = Classes
     template_name = "dashboard/classes/class_detail.html"
     context_object_name="class"
-
+@is_admin
+def class_create(request,id):
+    return render(request,"dashboard/classes/class_edite.html",{})
 @is_admin
 def class_edite(request,id):
     return render(request,"dashboard/classes/class_edite.html",{})
+
+
+@is_admin
+def class_disable(request,id):
+    return redirect(reverse("dashboard:class-list"))
 # -----------------------------------------------------------------------------
 #####
 #####
