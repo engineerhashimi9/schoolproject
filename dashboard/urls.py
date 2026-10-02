@@ -24,10 +24,11 @@ urlpatterns = [
     # classes urls
     path("class/", views.ClassesListView.as_view(), name="class-list"),
     path("class/<int:pk>", views.ClassDetailView.as_view(), name="class-detail"),
+    path("class/<int:id>/edite", views.class_edite, name="class-edite"),
     # attendence urls
     path("attendence/", views.AttendenceListView.as_view(
     ), name="attendence-list"),
-    
+
     # assesment urls
     path("assesment/", views.AssesmentListView.as_view(
     ), name="assesment-list"),

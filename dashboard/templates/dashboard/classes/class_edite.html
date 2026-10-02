@@ -1,0 +1,431 @@
+{% extends 'dashboard/base.html' %} {% load static %} {% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/class_edite.css' %}" />
+{% endblock style %} {% block content %}
+<div class="container">
+  <div class="detail-container">
+    <!-- Top Header Card -->
+    <div class="header-card">
+      <div class="header-info">
+        <div class="header-icon">📄</div>
+        <div class="header-text">
+          <h1>ویرایش مشخصات صنف <span>کد: #CLS-104</span></h1>
+          <div style="margin: 4px 0">
+            <span class="status-dot"></span>
+            <span
+              style="color: var(--primary); font-size: 0.9rem; font-weight: 500"
+              >در حال تدریس و فعال</span
+            >
+          </div>
+          <div class="header-subtext">
+            صنف دهم عالی - شعبه الف | سال تحصیلی مصوب: ۱۴۰۲-۱۴۰۳
+          </div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-text">انصراف و بازگشت ✕</button>
+        <button class="btn btn-primary">ذخیره تغییرات صنف 💾</button>
+      </div>
+    </div>
+
+    <!-- Main Content Layout -->
+    <div class="main-layout">
+      <!-- RIGHT COLUMN: MAIN FORM -->
+      <div class="main-content">
+        <!-- Section 1 -->
+        <div class="card">
+          <div class="section-header">
+            <div class="section-title-wrapper">
+              <div class="blue-indicator"></div>
+              <div class="section-title">
+                <h2>مشخصات پایه و هویت صنف</h2>
+                <p>اطلاعات هویتی و ثبت ساختار سازمانی صنف تحصیلی</p>
+              </div>
+            </div>
+            <div class="section-progress">بخش ۱ از ۴</div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>کد سیستمی صنف (شناسه یکتا) *</label>
+              <div class="input-wrapper">
+                <span class="icon-right" style="font-size: 0.75rem"
+                  >غیرقابل تغییر</span
+                >
+                <input
+                  type="text"
+                  class="form-control disabled input-icon-right input-icon-left"
+                  value="CLS-104"
+                  disabled
+                  style="text-align: center"
+                />
+                <span class="icon-left">🔒</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>سال تحصیلی مصوب *</label>
+              <div class="input-wrapper">
+                <input
+                  type="text"
+                  class="form-control input-icon-left"
+                  value="۱۴۰۲ - ۱۴۰۳ (سال جاری مصوب)"
+                />
+                <span class="icon-left">📅</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>پایه تحصیلی عددی (Grade) *</label>
+              <div class="input-wrapper">
+                <input
+                  type="text"
+                  class="form-control input-icon-left"
+                  value="صنف دهم (10 Grade - دوره عالی)"
+                />
+                <span class="icon-left">#</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>شعبه و بخش صنف (Section) *</label>
+              <div class="input-wrapper">
+                <input
+                  type="text"
+                  class="form-control input-icon-left"
+                  value="شعبه الف (نوبت صبحانه)"
+                />
+                <span class="icon-left">🏢</span>
+              </div>
+            </div>
+
+            <div class="form-group form-grid-full">
+              <label>عنوان حروفی و تشریحی پایه (Alpha Grade) *</label>
+              <div class="input-wrapper">
+                <input
+                  type="text"
+                  class="form-control input-icon-left"
+                  value="دهم عالی (علوم تجربی و ریاضیات فیزیک)"
+                />
+                <span class="icon-left">📘</span>
+              </div>
+              <div class="helper-text">
+                این عنوان در کارنامه‌ها، تصدیق‌نامه‌ها و اعلانات عمومی شاگردان
+                درج خواهد گردید.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2 -->
+        <div class="card">
+          <div class="section-header">
+            <div class="section-title-wrapper">
+              <div class="blue-indicator"></div>
+              <div class="section-title">
+                <h2>کادر نظارتی و استاد راهنما (Guidance)</h2>
+                <p>انتصاب ناصح و سرپرست امور تربیتی و انضباطی صنف</p>
+              </div>
+            </div>
+            <div class="section-progress">بخش ۲ از ۴</div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 24px">
+            <label>انتخاب استاد راهنما (ناصح صنف) *</label>
+            <div class="input-wrapper">
+              <select class="form-control input-icon-left">
+                <option>
+                  استاد سمیرا کریمی - لیسانس کیمیای آلی (کد: 312-TCH)
+                </option>
+              </select>
+              <span class="icon-left" style="pointer-events: none">👨‍🏫</span>
+            </div>
+          </div>
+
+          <div class="teacher-box">
+            <a href="#" class="teacher-link">❮ مشاهده دوسیه کامل استاد</a>
+
+            <div class="teacher-details">
+              <div class="teacher-info" style="text-align: right">
+                <h4>دکتور محمد رضایی <span>استاد رسمی کادر علمی</span></h4>
+                <p style="direction: ltr; justify-content: flex-end">
+                  📞 0799-234-567
+                </p>
+                <p style="direction: ltr; justify-content: flex-end">
+                  ✉ m.rezaei@edu.af
+                </p>
+                <p>🏢 دیپارتمنت ریاضی و فیزیک</p>
+              </div>
+              <img
+                src="https://i.pravatar.cc/150?img=11"
+                alt="دکتور محمد رضایی"
+                class="teacher-avatar"
+              />
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>نماینده شاگردان (مبصر صنف)</label>
+              <div class="input-wrapper">
+                <input
+                  type="text"
+                  class="form-control input-icon-left"
+                  value="رضا حسینی (شاگرد ردیف اول - آی‌دی: 89401-D)"
+                />
+                <span class="icon-left">👤</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>معاون مبصر صنف</label>
+              <div class="input-wrapper">
+                <input
+                  type="text"
+                  class="form-control input-icon-left"
+                  value="علی‌سینا سادات (آی‌دی: 89415-D)"
+                />
+                <span class="icon-left">👤</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3 -->
+        <div class="card">
+          <div class="section-header">
+            <div class="section-title-wrapper">
+              <div class="blue-indicator"></div>
+              <div class="section-title">
+                <h2>مضامین تخصصی و اساتید تدریس‌کننده</h2>
+                <p>برنامه درسی مصوب این صنف در سمستر تحصیلی جاری</p>
+              </div>
+            </div>
+            <button class="btn btn-outline-primary">
+              افزودن مضمون به صنف ⊕
+            </button>
+          </div>
+
+          <div class="subject-list">
+            <!-- Subject 1 -->
+            <div class="subject-item">
+              <div class="subject-main">
+                <div class="subject-icon">🧮</div>
+                <div class="subject-text">
+                  <h4>ریاضیات عالی و حسابان پیشرفته</h4>
+                  <p>استاد مدرس: دکتور محمد رضایی (۴ ساعت در هفته)</p>
+                </div>
+              </div>
+              <div class="subject-actions">
+                <span>ضریب: ۴</span>
+                <span class="edit-icon">✎</span>
+              </div>
+            </div>
+
+            <!-- Subject 2 -->
+            <div class="subject-item">
+              <div class="subject-main">
+                <div class="subject-icon">⚗</div>
+                <div class="subject-text">
+                  <h4>فیزیک مکانیک و دینامیک نیوتنی</h4>
+                  <p>
+                    استاد مدرس: استاد احمد فاروقی (۳ ساعت در هفته + ۱ ساعت
+                    لابراتوار)
+                  </p>
+                </div>
+              </div>
+              <div class="subject-actions">
+                <span>ضریب: ۳</span>
+                <span class="edit-icon">✎</span>
+              </div>
+            </div>
+
+            <!-- Subject 3 -->
+            <div class="subject-item">
+              <div class="subject-main">
+                <div class="subject-icon">🔬</div>
+                <div class="subject-text">
+                  <h4>کیمیای عمومی و اتومی</h4>
+                  <p>استاد مدرس: استاد سمیرا کریمی (۳ ساعت در هفته)</p>
+                </div>
+              </div>
+              <div class="subject-actions">
+                <span>ضریب: ۳</span>
+                <span class="edit-icon">✎</span>
+              </div>
+            </div>
+
+            <!-- Subject 4 -->
+            <div class="subject-item">
+              <div class="subject-main">
+                <div class="subject-icon">📖</div>
+                <div class="subject-text">
+                  <h4>ادبیات، قواعد و لسان دری</h4>
+                  <p>استاد مدرس: استاد حامد صمیمی (۲ ساعت در هفته)</p>
+                </div>
+              </div>
+              <div class="subject-actions">
+                <span>ضریب: ۲</span>
+                <span class="edit-icon">✎</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEFT COLUMN: SIDEBAR -->
+      <div class="sidebar1">
+        <!-- Location & Capacity Card -->
+        <div class="card sidebar1-card">
+          <div class="section-title-wrapper" style="margin-bottom: 20px">
+            <div class="blue-indicator"></div>
+            <div class="section-title">
+              <h2>ظرفیت و موقعیت صنف</h2>
+              <p>مقررات مکانی و گنجایش شاگردان</p>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 16px">
+            <label>شماره اتاق و موقعیت جغرافیایی</label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                class="form-control input-icon-right"
+                value="اتاق ۳۰۲ (طبقه دوم - بلاک علوم)"
+              />
+              <span class="icon-right">🚪</span>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 16px">
+            <label>نوبت تحصیلی و ساعات فعالیت</label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                class="form-control input-icon-right"
+                value="نوبت صبح (۰۸:۰۰ صبح الی ۱۲:۳۰)"
+              />
+              <span class="icon-right">⏱</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label style="display: flex; justify-content: space-between">
+              ظرفیت مصوب صنف (سیت)
+              <strong>۳۵ نفر</strong>
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                class="form-control input-icon-right"
+                value="35"
+                style="text-align: left; direction: ltr"
+              />
+              <span class="icon-right">👥</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Card -->
+        <div
+          class="card sidebar-card"
+          style="background-color: var(--bg-page); border: none"
+        >
+          <div class="stats-header">
+            <div class="stats-header-text">
+              <h3>۳۲ شاگرد ثبت‌نام شده <span>۹۱.۴٪</span></h3>
+              <p
+                style="
+                  font-size: 0.8rem;
+                  color: var(--text-muted);
+                  margin-top: 4px;
+                "
+              >
+                فعال
+              </p>
+            </div>
+            <div class="stats-badge">تکمیل</div>
+          </div>
+
+          <div class="progress-bg">
+            <div class="progress-fill"></div>
+          </div>
+
+          <div class="stats-footer">
+            <span><span class="status-dot"></span> ۳۲ پرشده</span>
+            <span>۳ سیت خالی باقی‌مانده</span>
+          </div>
+        </div>
+
+        <!-- Actions Card -->
+        <div class="card sidebar-card">
+          <div class="section-title-wrapper" style="margin-bottom: 20px">
+            <div class="blue-indicator"></div>
+            <div class="section-title">
+              <h2>وضعیت و عملیات صنف</h2>
+              <p>دستورات اداری و اسناد رسمی</p>
+            </div>
+          </div>
+
+          <div class="status-toggle">
+            <div>
+              <div style="font-weight: 500; font-size: 0.9rem">
+                وضعیت فعالیت صنف
+              </div>
+              <div style="font-size: 0.8rem; color: var(--text-muted)">
+                صنف فعال و در حال تدریس
+              </div>
+            </div>
+            <div class="toggle-switch">
+              <div class="toggle-knob"></div>
+            </div>
+          </div>
+
+          <ul class="action-list">
+            <li>
+              <div class="action-list-left">
+                <span class="action-icon">🪪</span>
+                <span>چاپ کارت‌های شناسایی شاگردان این صنف</span>
+              </div>
+              <span>❮</span>
+            </li>
+            <li>
+              <div class="action-list-left">
+                <span class="action-icon">📊</span>
+                <span>خروجی لایحه و تقویم درسی (PDF)</span>
+              </div>
+              <span>❮</span>
+            </li>
+            <li>
+              <div class="action-list-left">
+                <span class="action-icon">🗄</span>
+                <span>بایگانی و انتقال صنف به پایان سال</span>
+              </div>
+              <span>❮</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Dark Alert Card -->
+        <div class="dark-alert">
+          <h4><span style="font-size: 1.2rem">ⓘ</span> نکته مهم سیستمی</h4>
+          <p>
+            تغییر استاد راهنما یا ارتقای پایه به صورت خودکار به پورتال شاگردان و
+            اولیای محترم اطلاع‌رسانی خواهد شد.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Sticky Footer -->
+  <div class="sticky-footer">
+    <div class="footer-info">
+      <span>⏱</span> آخرین به‌روزرسانی: ۲ ساعت قبل توسط مدیر سیستم (ادمین)
+    </div>
+    <div class="footer-actions">
+      <button class="btn btn-text">↻ بازنشانی فرم</button>
+      <button class="btn btn-text">انصراف</button>
+      <button class="btn btn-primary">✓ ذخیره و به‌روزرسانی نهایی</button>
+    </div>
+  </div>
+</div>
+{% endblock content %}

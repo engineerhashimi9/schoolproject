@@ -258,7 +258,7 @@
               <a class="icon-btn danger" title="حذف">
                 <i class="fa-solid fa-trash"></i>
               </a>
-              <a  class="icon-btn" title="ویرایش">
+              <a href="{% url 'dashboard:class-edite' class.id %}" class="icon-btn" title="ویرایش">
                 <i class="fa-solid fa-pen"></i>
               </a>
               <a href="{% url 'dashboard:class-detail' pk=class.id %}"  class="icon-btn" title="مشاهده">

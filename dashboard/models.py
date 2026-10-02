@@ -54,7 +54,7 @@ class District(models.Model):
 
 class Student(models.Model):
     id = models.AutoField(primary_key=True)
-    school_id=models.IntegerField(unique=True)
+    school_id = models.IntegerField(unique=True)
     name = models.CharField(max_length=50)
     fname = models.CharField(max_length=50)
     gfname = models.CharField(max_length=50)
@@ -146,22 +146,32 @@ class AcademiceYear(models.Model):
 class Classes(models.Model):
     id = models.AutoField(primary_key=True)
     grade = models.IntegerField()
-    alpha_grade=models.CharField(max_length=50)
+    alpha_grade = models.CharField(max_length=50)
     section = models.CharField(max_length=50)
-    guidence = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING,null=True,blank=True)
-    representative=models.ForeignKey(Student, on_delete=models.DO_NOTHING)
-    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.DO_NOTHING)
+    guidence = models.ForeignKey(
+        Teacher, on_delete=models.DO_NOTHING, null=True, blank=True)
+    representative = models.ForeignKey(Student, on_delete=models.DO_NOTHING)
+    academice_year = models.ForeignKey(
+        AcademiceYear, on_delete=models.DO_NOTHING)
+    registered = models.IntegerField(default=0)
+    capacity = models.IntegerField(default=30)
 
     def __str__(self) -> str:
         return f"{self.grade}-{self.section}"
 
 
+
+
+
+
 class TeacherSubject(models.Model):
     id = models.AutoField(primary_key=True)
-    teacher = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING,related_name="teachersubject")
+    teacher = models.ForeignKey(
+        Teacher, on_delete=models.DO_NOTHING, related_name="teachersubject")
     subject = models.ForeignKey(Subject, on_delete=models.DO_NOTHING)
     classs = models.ForeignKey(Classes, on_delete=models.DO_NOTHING)
-    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.DO_NOTHING)
+    academice_year = models.ForeignKey(
+        AcademiceYear, on_delete=models.DO_NOTHING)
 
     def __str__(self) -> str:
         return f"{self.teacher}-{self.subject}-{self.classs}"
@@ -171,8 +181,10 @@ class StudentClass(models.Model):
     id = models.AutoField(primary_key=True)
     student = models.ForeignKey(
         Student, on_delete=models.DO_NOTHING, related_name="studentclass")
-    classs = models.ForeignKey(Classes, on_delete=models.DO_NOTHING,related_name="studentclass")
-    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.DO_NOTHING)
+    classs = models.ForeignKey(
+        Classes, on_delete=models.DO_NOTHING, related_name="studentclass")
+    academice_year = models.ForeignKey(
+        AcademiceYear, on_delete=models.DO_NOTHING)
 
     def __str__(self) -> str:
         return f"{self.classs.grade}-{self.classs.section}"
@@ -189,8 +201,9 @@ class Attendance(models.Model):
     sick = models.IntegerField()
     excused = models.IntegerField()
     alldays = models.IntegerField()
-    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.DO_NOTHING)
-    present_percent=models.DecimalField(max_digits=5, decimal_places=2)
+    academice_year = models.ForeignKey(
+        AcademiceYear, on_delete=models.DO_NOTHING)
+    present_percent = models.DecimalField(max_digits=5, decimal_places=2)
 
     def __str__(self) -> str:
         return f"{self.student}-{self.classs}-{self.month}"
@@ -206,7 +219,8 @@ class Assessment(models.Model):
         Month, on_delete=models.DO_NOTHING)
     score = models.IntegerField()
     max_score = models.IntegerField()
-    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.DO_NOTHING)
+    academice_year = models.ForeignKey(
+        AcademiceYear, on_delete=models.DO_NOTHING)
 
     def __str__(self) -> str:
         return f"{self.student}-{self.teacher}-{self.subject}-{self.classs}-{self.month}"
@@ -220,7 +234,8 @@ class Exam(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.DO_NOTHING)
     month: models.ForeignKey = models.ForeignKey(
         Month, on_delete=models.DO_NOTHING)
-    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.DO_NOTHING)
+    academice_year = models.ForeignKey(
+        AcademiceYear, on_delete=models.DO_NOTHING)
     date = models.DateField(auto_now=False, auto_now_add=False)
 
     def __str__(self) -> str:
@@ -246,4 +261,16 @@ class Fee(models.Model):
     amount = models.IntegerField()
     paied = models.IntegerField()
     payment_date = models.DateField(auto_now=False, auto_now_add=False)
-    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.DO_NOTHING)
+    academice_year = models.ForeignKey(
+        AcademiceYear, on_delete=models.DO_NOTHING)
+class EducationalDay(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50)
+
+class TimeTable(models.Model):
+    id = models.AutoField(primary_key=True)
+    day=models.ForeignKey(EducationalDay,on_delete=models.DO_NOTHING)
+    hour=models.IntegerField()
+    Subject=models.ForeignKey(Subject,  on_delete=models.DO_NOTHING)
+    teacher=models.ForeignKey(Teacher,on_delete=models.DO_NOTHING)
+    classs=models.ForeignKey(Classes,on_delete=models.DO_NOTHING)

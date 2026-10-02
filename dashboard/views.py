@@ -9,6 +9,7 @@ import jdatetime
 from django.db.models import Q
 
 
+
 # -----------------------------------------------------------------------------
 #####
 #####
@@ -382,7 +383,9 @@ class ClassDetailView(LoginRequiredMixin,DetailView):
     template_name = "dashboard/classes/class_detail.html"
     context_object_name="class"
 
-
+@is_admin
+def class_edite(request,id):
+    return render(request,"dashboard/classes/class_edite.html",{})
 # -----------------------------------------------------------------------------
 #####
 #####
