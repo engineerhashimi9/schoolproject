@@ -1,13 +1,12 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import ListView, DetailView
-from .models import Student, Teacher, Classes, Job, StudentClass, AcademiceYear, Degree,Attendance,Assessment,ExamResult,Exam
-from .forms import StudentForm, TeacherForm
+from .models import Student, Teacher, Classes, Job, StudentClass, AcademiceYear, Degree, Attendance, Assessment, ExamResult, Exam
+from .forms import StudentForm, TeacherForm,ClassForm
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 import jdatetime
 from django.db.models import Q
-
 
 
 # -----------------------------------------------------------------------------
@@ -20,8 +19,10 @@ from django.db.models import Q
 
 
 # is Admin derator
-students_count=Student.objects.all().count()
-teachers_count=Teacher.objects.all().count()
+students_count = Student.objects.all().count()
+teachers_count = Teacher.objects.all().count()
+
+
 def is_admin(func):
     def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated and request.user.is_staff:
@@ -229,6 +230,7 @@ def student_create(request):
 #####
 # ---------------------------------------------------------------------------
 
+
 class TeacherListView(LoginRequiredMixin, ListView):
     model = Teacher
     template_name = "dashboard/workers/workers_list.html"
@@ -295,15 +297,16 @@ def teacher_edite(request, id):
             print(request.POST)
 
     else:
-        return render(request, "dashboard/workers/worker_edite.html", {"teacher": teacher,"classes":classes})
+        return render(request, "dashboard/workers/worker_edite.html", {"teacher": teacher, "classes": classes})
+
+
 @is_admin
-def disable_teacher(request,id) :
-    target=get_object_or_404(Teacher,id=id)
+def disable_teacher(request, id):
+    target = get_object_or_404(Teacher, id=id)
     target.detached_date = jdatetime.date.today()
     target.status_id = 2
     target.save()
     return redirect(reverse("dashboard:worker-list"))
-    
 
 
 @is_admin
@@ -372,26 +375,62 @@ class ClassesListView(LoginRequiredMixin, ListView):
     model = Classes
     template_name = "dashboard/classes/class_list.html"
     context_object_name = "classes"
+
     def get_context_data(self, **kwargs) -> dict[str, object]:
         context = super().get_context_data(**kwargs)
-        context["teachers_count"] =teachers_count 
-        context["students_count"] =students_count 
+        context["teachers_count"] = teachers_count
+        context["students_count"] = students_count
         return context
-    
-class ClassDetailView(LoginRequiredMixin,DetailView):
+
+
+class ClassDetailView(LoginRequiredMixin, DetailView):
     model = Classes
     template_name = "dashboard/classes/class_detail.html"
-    context_object_name="class"
-@is_admin
-def class_create(request,id):
-    return render(request,"dashboard/classes/class_edite.html",{})
-@is_admin
-def class_edite(request,id):
-    return render(request,"dashboard/classes/class_edite.html",{})
+    context_object_name = "class"
 
 
 @is_admin
-def class_disable(request,id):
+def class_create(request):
+    teachers = Teacher.objects.filter(classes__isnull=True)
+    if request.method == "POST":
+        form=ClassForm(request.POST)
+        if form.is_valid():
+            print("form is valid")
+            academice_year = int(form.cleaned_data["academice_year"])
+            academice_year_obj = AcademiceYear.objects.filter(year=academice_year).first()
+            grade,alpha_grade=form.cleaned_data["grade"].split("-")
+            section=form.cleaned_data["section"]
+            capacity=form.cleaned_data["capacity"]
+            guidence_id=form.cleaned_data["guidence"]
+            start_time_hour=form.cleaned_data["start_time_hour"]
+            start_time_minute=form.cleaned_data["start_time_minute"]
+            end_time_hour=form.cleaned_data["end_time_hour"]
+            end_time_minute=form.cleaned_data["end_time_minute"]
+            teacher=teachers.get(id=guidence_id)
+            Classes.objects.create(
+                academice_year=academice_year_obj,
+                grade=int(grade),
+                alpha_grade=alpha_grade,
+                section=section,
+                capacity=capacity,
+                guidence=teacher,
+                start_time=f"{start_time_hour}:{start_time_minute}",
+                end_time=f"{end_time_hour}:{end_time_minute}"
+            )
+            
+        else :
+            print(request.POST)
+            print(form.errors)
+    return render(request, "dashboard/classes/class_edite.html", {"teachers": teachers})
+
+
+@is_admin
+def class_edite(request, id):
+    return render(request, "dashboard/classes/class_edite.html", {})
+
+
+@is_admin
+def class_disable(request, id):
     return redirect(reverse("dashboard:class-list"))
 # -----------------------------------------------------------------------------
 #####
@@ -401,15 +440,20 @@ def class_disable(request,id):
 #####
 # ---------------------------------------------------------------------------
 
-class AttendenceListView(LoginRequiredMixin,ListView):
+
+class AttendenceListView(LoginRequiredMixin, ListView):
     model = Attendance
     template_name = "dashboard/attendence.html"
-    context_object_name="attendences"
-class AssesmentListView(LoginRequiredMixin,ListView):
+    context_object_name = "attendences"
+
+
+class AssesmentListView(LoginRequiredMixin, ListView):
     model = Assessment
     template_name = "dashboard/assesment.html"
-    context_object_name="assesments"
-class ExamListView(LoginRequiredMixin,ListView):
+    context_object_name = "assesments"
+
+
+class ExamListView(LoginRequiredMixin, ListView):
     model = ExamResult
     template_name = "dashboard/exam.html"
-    context_object_name="exams"
+    context_object_name = "exams"

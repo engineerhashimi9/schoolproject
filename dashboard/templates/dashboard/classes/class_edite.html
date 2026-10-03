@@ -80,11 +80,16 @@
             <div class="form-group">
               <label>سال تحصیلی مصوب *</label>
               <div class="input-wrapper">
-                <input
-                  type="text"
+                <select
+                name="academice_year"
                   class="form-control input-icon-left"
                   value="{{class.academic_year}}"
-                />
+                >
+                  <option value="1404">1404</option>
+                  <option value="1405">1405</option>
+                  <option value="1406">1406</option>
+                  
+                </select>
                 <span class="icon-left">📅</span>
               </div>
             </div>
@@ -92,11 +97,25 @@
             <div class="form-group">
               <label>پایه تحصیلی عددی (Grade) *</label>
               <div class="input-wrapper">
-                <input
-                  type="text"
+                <select
+                name="grade"
                   class="form-control input-icon-left"
                   value="{{class.alpha_grade}}"
-                />
+                >
+                  <option value="0-آمادگی">0-آمادگی</option>
+                  <option value="1-اول">1-اول</option>
+                  <option value="2-دوم">2-دوم</option>
+                  <option value="3-سوم">3-سوم</option>
+                  <option value="4-چهارم">4-چهارم</option>
+                  <option value="5-پنجم">5-پنجم</option>
+                  <option value="6-ششم">6-ششم</option>
+                  <option value="7-هفتم">7-هفتم</option>
+                  <option value="8-هشتم">8-هشتم</option>
+                  <option value="9-نهم">9-نهم</option>
+                  <option value="10-دهم">10-دهم</option>
+                  <option value="11-یازدهم">11-یازدهم</option>
+                  <option value="12-دوازدهم">12-دوازدهم</option>
+                </select>
                 <span class="icon-left">#</span>
               </div>
             </div>
@@ -104,11 +123,17 @@
             <div class="form-group">
               <label>شعبه و بخش صنف (Section) *</label>
               <div class="input-wrapper">
-                <input
+                <select
+                name="section"
                   type="text"
                   class="form-control input-icon-left"
                   value="{{class.section}}"
-                />
+                >
+                  <option value="الف">الف</option>
+                  <option value="ب">ب</option>
+                  <option value="ج">ج</option>
+                  <option value="د">د</option>
+                </select>
                 <span class="icon-left">🏢</span>
               </div>
             </div>
@@ -132,17 +157,21 @@
           <div class="form-group" style="margin-bottom: 24px">
             <label>انتخاب استاد راهنما (ناصح صنف) *</label>
             <div class="input-wrapper">
-              <select class="form-control input-icon-left">
-                <option>
-                 {{class.guidence}}
+              <select name="guidence" value="{{class.guidence.id}}" class="form-control input-icon-left">
+              {% for teacher in teachers  %}
+                <option value="{{teacher.id}}" {% if teacher.id == class.guidence.id %}selected{% endif %}>
+                  {{teacher.name}} {{teacher.last_name}}
                 </option>
+              {% endfor %}
               </select>
               <span class="icon-left" style="pointer-events: none">👨‍🏫</span>
             </div>
           </div>
 
           <div class="teacher-box">
+           {% if class %}
             <a href="{% url 'dashboard:worker-detail' pk=class.guidence.id %}" class="teacher-link">❮ مشاهده دوسیه کامل استاد</a>
+           {% endif %}
 
             <div class="worker-details">
               <div class="teacher-info" style="text-align: right">
@@ -175,45 +204,60 @@
           <div class="section-title-wrapper" style="margin-bottom: 20px">
             <div class="blue-indicator"></div>
             <div class="section-title">
-              <h2>ظرفیت و موقعیت صنف</h2>
-              <p>مقررات مکانی و گنجایش شاگردان</p>
+              <h2>ظرفیت و اقات درسی صنف</h2>
             </div>
           </div>
 
           <div class="form-group" style="margin-bottom: 16px">
-            <label>شماره اتاق و موقعیت جغرافیایی</label>
-            <div class="input-wrapper">
-              <input
-                type="text"
-                class="form-control input-icon-right"
-                value="اتاق ۳۰۲ (طبقه دوم - بلاک علوم)"
-              />
-              <span class="icon-right">🚪</span>
-            </div>
-          </div>
+            
 
           <div class="form-group" style="margin-bottom: 16px">
-            <label>نوبت تحصیلی و ساعات فعالیت</label>
+            <label>ساعت شروع درس:</label>
             <div class="input-wrapper">
-              <input
-                type="text"
+               <label class="input-label hour"> ساعت: </label>
+            <input
+            name="start_time_hour"
+                type="number"
                 class="form-control input-icon-right"
-                value="نوبت صبح (۰۸:۰۰ صبح الی ۱۲:۳۰)"
               />
-              <span class="icon-right">⏱</span>
+             <label class="input-label minute"> دقیقه: </label>
+            <input
+              name="start_time_minute"
+                type="number"
+                class="form-control input-icon-right"
+              />
+   
+            </div>
+            <label>ساعت  رخصتی:</label>
+            <div class="input-wrapper">
+               <label class="input-label hour"> ساعت: </label>
+              <input
+              name="end_time_hour"
+                type="number"
+                class="form-control input-icon-right"
+              />
+           
+             <label class="input-label minute"> دقیقه: </label>
+            <input
+                name="end_time_minute"
+                type="number"
+                class="form-control input-icon-right"
+              />
+
             </div>
           </div>
 
           <div class="form-group">
             <label style="display: flex; justify-content: space-between">
               ظرفیت مصوب صنف (سیت)
-              <strong>۳۵ نفر</strong>
+              <strong>{{class.capacity}} نفر</strong>
             </label>
             <div class="input-wrapper">
               <input
-                type="text"
+                type="number"
+                name="capacity"
                 class="form-control input-icon-right"
-                value="35"
+                value="{{class.capacity}}"
                 style="text-align: left; direction: ltr"
               />
               <span class="icon-right">👥</span>
@@ -316,3 +360,5 @@
   </div>
 </div>
 {% endblock content %}
+
+  

@@ -149,7 +149,7 @@ class Classes(models.Model):
     alpha_grade = models.CharField(max_length=50)
     section = models.CharField(max_length=50)
     guidence = models.ForeignKey(
-        Teacher, on_delete=models.DO_NOTHING, null=True, blank=True)
+        Teacher,on_delete=models.DO_NOTHING, null=True, blank=True)
     representative = models.ForeignKey(Student, on_delete=models.DO_NOTHING)
     academice_year = models.ForeignKey(
         AcademiceYear, on_delete=models.DO_NOTHING)
