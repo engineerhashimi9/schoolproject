@@ -83,7 +83,7 @@
                 <select
                 name="academice_year"
                   class="form-control input-icon-left"
-                  value="{{class.academic_year}}"
+                  value="{{class.academice_year}}"
                 >
                   <option value="1404">1404</option>
                   <option value="1405">1405</option>
@@ -100,7 +100,7 @@
                 <select
                 name="grade"
                   class="form-control input-icon-left"
-                  value="{{class.alpha_grade}}"
+                  value="{{class.grade}}-{{class.alpha_grade}}"
                 >
                   <option value="0-آمادگی">0-آمادگی</option>
                   <option value="1-اول">1-اول</option>
@@ -125,11 +125,11 @@
               <div class="input-wrapper">
                 <select
                 name="section"
-                  type="text"
+               
                   class="form-control input-icon-left"
                   value="{{class.section}}"
                 >
-                  <option value="الف">الف</option>
+                  <option  value="الف">الف</option>
                   <option value="ب">ب</option>
                   <option value="ج">ج</option>
                   <option value="د">د</option>
@@ -158,6 +158,9 @@
             <label>انتخاب استاد راهنما (ناصح صنف) *</label>
             <div class="input-wrapper">
               <select name="guidence" value="{{class.guidence.id}}" class="form-control input-icon-left">
+                {% if class %}
+                <option value="{{class.guidence.id}}" selected>{{class.guidence.name}} {{class.guidence.last_name}}</option>
+                {% endif %}
               {% for teacher in teachers  %}
                 <option value="{{teacher.id}}" {% if teacher.id == class.guidence.id %}selected{% endif %}>
                   {{teacher.name}} {{teacher.last_name}}
@@ -169,11 +172,14 @@
           </div>
 
           <div class="teacher-box">
-           {% if class %}
-            <a href="{% url 'dashboard:worker-detail' pk=class.guidence.id %}" class="teacher-link">❮ مشاهده دوسیه کامل استاد</a>
-           {% endif %}
+             <img
+                src="{% static 'dashboard/images/char.png' %}"
+                alt="{{class.guidence.name}} {{class.guidence.last_name}}"
+                class="teacher-avatar"
+              />
 
             <div class="worker-details">
+              
               <div class="teacher-info" style="text-align: right">
                 <h4>{{class.guidence.name}} {{class.guidence.last_name}}<span>استاد رسمی </span></h4>
                 <p style="direction: ltr; justify-content: flex-end">
@@ -184,12 +190,12 @@
                 </p>
                 <p>استاد مضمون: {{class.guidence.teachersubject.subject.name}}</p>
               </div>
-              <img
-                src="https://i.pravatar.cc/150?img=11"
-                alt="{{class.guidence.name}} {{class.guidence.last_name}}"
-                class="teacher-avatar"
-              />
+        
             </div>
+             
+               {% if class %}
+            <a href="{% url 'dashboard:worker-detail' pk=class.guidence.id %}" class="teacher-link">❮ مشاهده دوسیه کامل استاد</a>
+           {% endif %}
           </div>
 
         </div>
@@ -212,18 +218,23 @@
             
 
           <div class="form-group" style="margin-bottom: 16px">
-            <label>ساعت شروع درس:</label>
+            <label>ساعت شروع درس:  
+               </label>
+
             <div class="input-wrapper">
                <label class="input-label hour"> ساعت: </label>
+             
             <input
             name="start_time_hour"
                 type="number"
+                value="{{class.start_time|time:'H'}}"
                 class="form-control input-icon-right"
               />
              <label class="input-label minute"> دقیقه: </label>
             <input
               name="start_time_minute"
                 type="number"
+                value="{{class.start_time|time:'i'}}"
                 class="form-control input-icon-right"
               />
    
@@ -235,6 +246,7 @@
               name="end_time_hour"
                 type="number"
                 class="form-control input-icon-right"
+                value="{{class.end_time|time:'H'}}"
               />
            
              <label class="input-label minute"> دقیقه: </label>
@@ -242,6 +254,7 @@
                 name="end_time_minute"
                 type="number"
                 class="form-control input-icon-right"
+                 value="{{class.end_time|time:'i'}}"
               />
 
             </div>
@@ -328,20 +341,7 @@
               </div>
               <span>❮</span>
             </li>
-            <li>
-              <div class="action-list-left">
-                <span class="action-icon">📊</span>
-                <span>خروجی لایحه و تقویم درسی (PDF)</span>
-              </div>
-              <span>❮</span>
-            </li>
-            <li>
-              <div class="action-list-left">
-                <span class="action-icon">🗄</span>
-                <span>بایگانی و انتقال صنف به پایان سال</span>
-              </div>
-              <span>❮</span>
-            </li>
+        
           </ul>
         </div>
       </div>
@@ -361,4 +361,8 @@
 </div>
 {% endblock content %}
 
-  
+
+{% block js %}
+  <script src="{% static 'dashboard/js/class_edite.js' %}"></script>
+{% endblock js %}
+  o

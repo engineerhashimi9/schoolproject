@@ -150,7 +150,7 @@ class Classes(models.Model):
     section = models.CharField(max_length=50)
     guidence = models.ForeignKey(
         Teacher,on_delete=models.DO_NOTHING, null=True, blank=True)
-    representative = models.ForeignKey(Student, on_delete=models.DO_NOTHING)
+    # representative = models.ForeignKey(Student, on_delete=models.DO_NOTHING)
     academice_year = models.ForeignKey(
         AcademiceYear, on_delete=models.DO_NOTHING)
     registered = models.IntegerField(default=0)
@@ -158,6 +158,8 @@ class Classes(models.Model):
     start_time = models.TimeField(auto_now=False, auto_now_add=False,default="08:00") # type: ignore
     end_time = models.TimeField(auto_now=False, auto_now_add=False,default="16:00") # type: ignore
     turn=models.CharField(max_length=50,default="صبح") # type: ignore
+    status = models.ForeignKey(
+        Status, on_delete=models.DO_NOTHING,default=1)  # type: ignore
     def __str__(self) -> str:
         return f"{self.grade}-{self.section}"
 
@@ -265,6 +267,7 @@ class Fee(models.Model):
     payment_date = models.DateField(auto_now=False, auto_now_add=False)
     academice_year = models.ForeignKey(
         AcademiceYear, on_delete=models.DO_NOTHING)
+"""
 class EducationalDay(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
@@ -276,3 +279,4 @@ class TimeTable(models.Model):
     Subject=models.ForeignKey(Subject,  on_delete=models.DO_NOTHING)
     teacher=models.ForeignKey(Teacher,on_delete=models.DO_NOTHING)
     classs=models.ForeignKey(Classes,on_delete=models.DO_NOTHING)
+"""
