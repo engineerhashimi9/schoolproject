@@ -27,7 +27,7 @@
     <!-- Card 1 -->
     <div class="stat-card">
       <div class="stat-header">
-        <div class="stat-title">میانگین نرخ حضور (Present)<br />(Rate)</div>
+        <div class="stat-title">اوسط نرخ حضور (Present)<br />(Rate)</div>
         <div
           class="stat-icon"
           style="background-color: var(--success-bg); border: 1px solid #a7f3d0"
@@ -115,7 +115,7 @@
       <div class="stat-footer">
         <span style="color: var(--warning)">بررسی شده</span>
         <span style="color: var(--text-muted)"
-          >دارای تصدیق‌نامه و نسخه پزشکی</span
+          >دارای تصدیق‌نامه و نسخه داکتر</span
         >
       </div>
     </div>
@@ -194,7 +194,7 @@
       <div class="table-title">
         <div class="table-icon">📊</div>
         <div class="table-info">
-          <h2>جدول کارنامه جامع حضور و غیاب ماه عقرب ۱۴۰۲</h2>
+          <h2>جدول کارنامه جامع حاضری ماه عقرب ۱۴۰۲</h2>
           <p>صنف دهم ریاضی الف - بر اساس ۲۴ روز رسمی تعلیمی</p>
         </div>
       </div>
@@ -282,12 +282,12 @@
             <div class="progress-cell">
               <div class="progress-header" style="color: var(--success)">
                 <span>{{attendence.present}} از {{attendence.alldays}}</span>
-                <strong>{{attendence.present_percent}}٪</strong>
+                <strong>{{attendence.get_present_percentage}}٪</strong>
               </div>
               <div class="progress-bar-bg">
                 <div
                   class="progress-bar-fill"
-                  style="width: {{attendence.present_percent}}%; background-color: var(--success)"
+                  style="width: {{attendence.get_present_percentage}}%; background-color: var(--success)"
                 ></div>
               </div>
             </div>

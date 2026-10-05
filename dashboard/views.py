@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import ListView, DetailView
 from .models import Student, Teacher, Classes, Job, StudentClass, AcademiceYear, Degree, Attendance, Assessment, ExamResult, Exam
-from .forms import StudentForm, TeacherForm,ClassForm
+from .forms import StudentForm, TeacherForm, ClassForm
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 import jdatetime
@@ -387,35 +387,38 @@ class ClassDetailView(LoginRequiredMixin, DetailView):
     model = Classes
     template_name = "dashboard/classes/class_detail.html"
     context_object_name = "class"
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         class_obj = self.get_object()
         students_count = class_obj.studentclass.count()
         capacity = class_obj.capacity
-        completion_percentage = (students_count / capacity) * 100 if capacity > 0 else 0
+        completion_percentage = (
+            students_count / capacity) * 100 if capacity > 0 else 0
         context['completion_percentage'] = round(completion_percentage, 1)
         context['students_count'] = students_count
         context['remain'] = capacity - students_count
         return context
 
+
 @is_admin
 def class_create(request):
     teachers = Teacher.objects.filter(classes__isnull=True)
     if request.method == "POST":
-        form=ClassForm(request.POST)
+        form = ClassForm(request.POST)
         if form.is_valid():
-        
+
             academice_year = int(form.cleaned_data["academice_year"])
             academice_year_obj = AcademiceYear.objects.get(year=academice_year)
-            grade,alpha_grade=form.cleaned_data["grade"].split("-")
-            section=form.cleaned_data["section"]
-            capacity=form.cleaned_data["capacity"]
-            guidence_id=form.cleaned_data["guidence"]
-            start_time_hour=form.cleaned_data["start_time_hour"]
-            start_time_minute=form.cleaned_data["start_time_minute"]
-            end_time_hour=form.cleaned_data["end_time_hour"]
-            end_time_minute=form.cleaned_data["end_time_minute"]
-            teacher=teachers.get(id=guidence_id)
+            grade, alpha_grade = form.cleaned_data["grade"].split("-")
+            section = form.cleaned_data["section"]
+            capacity = form.cleaned_data["capacity"]
+            guidence_id = form.cleaned_data["guidence"]
+            start_time_hour = form.cleaned_data["start_time_hour"]
+            start_time_minute = form.cleaned_data["start_time_minute"]
+            end_time_hour = form.cleaned_data["end_time_hour"]
+            end_time_minute = form.cleaned_data["end_time_minute"]
+            teacher = teachers.get(id=guidence_id)
             Classes.objects.create(
                 academice_year=academice_year_obj,
                 grade=int(grade),
@@ -427,7 +430,7 @@ def class_create(request):
                 end_time=f"{end_time_hour}:{end_time_minute}"
             )
             return redirect(reverse("dashboard:class-list"))
-        else :
+        else:
             print(form.errors)
     return render(request, "dashboard/classes/class_edite.html", {"teachers": teachers})
 
@@ -438,17 +441,17 @@ def class_edite(request, id):
     class_obj = get_object_or_404(Classes, id=id)
     if request.method == "POST":
         form = ClassForm(request.POST)
-        if form.is_valid():      
+        if form.is_valid():
             academice_year = int(form.cleaned_data["academice_year"])
             academice_year_obj = AcademiceYear.objects.get(year=academice_year)
-            grade,alpha_grade=form.cleaned_data["grade"].split("-")
-            section=form.cleaned_data["section"]
-            capacity=form.cleaned_data["capacity"]
-            guidence_id=form.cleaned_data["guidence"]
-            start_time_hour=form.cleaned_data["start_time_hour"]
-            start_time_minute=form.cleaned_data["start_time_minute"]
-            end_time_hour=form.cleaned_data["end_time_hour"]
-            end_time_minute=form.cleaned_data["end_time_minute"]
+            grade, alpha_grade = form.cleaned_data["grade"].split("-")
+            section = form.cleaned_data["section"]
+            capacity = form.cleaned_data["capacity"]
+            guidence_id = form.cleaned_data["guidence"]
+            start_time_hour = form.cleaned_data["start_time_hour"]
+            start_time_minute = form.cleaned_data["start_time_minute"]
+            end_time_hour = form.cleaned_data["end_time_hour"]
+            end_time_minute = form.cleaned_data["end_time_minute"]
             if class_obj.academice_year != academice_year_obj:
                 class_obj.academice_year = academice_year_obj
             if class_obj.grade != int(grade):
@@ -469,13 +472,14 @@ def class_edite(request, id):
             return redirect(reverse("dashboard:class-list"))
         else:
             print(form.errors)
-    return render(request, "dashboard/classes/class_edite.html", { "teachers": teachers,"class":class_obj})
+    return render(request, "dashboard/classes/class_edite.html", {"teachers": teachers, "class": class_obj})
 
 
 @is_admin
+@is_admin
 def class_disable(request, id):
     class_obj = get_object_or_404(Classes, id=id)
-    class_obj.status_id = 2  # Assuming 2 is the ID for "disabled" status
+    class_obj.status_id = 2
     class_obj.save()
     return redirect(reverse("dashboard:class-list"))
 # -----------------------------------------------------------------------------

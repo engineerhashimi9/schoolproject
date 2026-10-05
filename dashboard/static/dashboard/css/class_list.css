@@ -7,10 +7,13 @@
     --muted: #8a94a6;
     --border: #e8ecf3;
     --green: #22c55e;
+    --red: #ef4444;
+    --red-bg: #feecec;
     --green-bg: #e8f9ef;
     --blue-bg: #e9f0ff;
     --yellow-bg: #fff6e0;
     --shadow: 0 1px 3px rgba(16, 24, 40, .06);
+
 }
 
 
@@ -417,12 +420,29 @@ tbody tr:hover {
     padding: 6px 14px;
     border-radius: 20px;
 }
+.inactive {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--red-bg);
+    color: var(--red);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+}
 
 .status .dot {
     width: 7px;
     height: 7px;
     border-radius: 50%;
     background: var(--green);
+}
+.inactive .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--red);
 }
 
 .actions {

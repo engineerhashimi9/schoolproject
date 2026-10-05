@@ -1,6 +1,46 @@
 {% extends 'dashboard/base.html' %} {% load static %} {% block style %}
 <link rel="stylesheet" href="{% static 'dashboard/css/class_list.css' %}" />
 
+<style>
+  /* Dark backdrop that covers the whole screen */
+  .message-box {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* The actual white alert box */
+  .message-content {
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 400px;
+    width: 80%;
+  }
+
+  /* Style the button inside the box */
+  .option-btn {
+    all: unset;
+    margin: 30px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .message {
+    margin: 20px;
+  }
+</style>
 {% endblock style %} {% block content %}
 <div class="container">
   <!-- Header -->
@@ -176,7 +216,7 @@
       </svg>
     </button>
     <button class="filter-btn">
-      پایه تحصیلی: همه
+      درجه تعلیمی: همه
       <svg
         viewBox="0 0 24 24"
         fill="none"
@@ -209,8 +249,8 @@
       <thead>
         <tr>
           <th># شناسه</th>
-          <th>عنوان صنف </th>
-          <th> درجه تعلیمی(GRADE)</th>
+          <th>عنوان صنف</th>
+          <th>درجه تعلیمی(GRADE)</th>
           <th>شعبه (SECTION)</th>
           <th>استاد راهنما (GUIDANCE)</th>
           <th>سال تعلیمی</th>
@@ -226,42 +266,63 @@
           <td class="row-num">CLS-{{class.id}}</td>
           <td>
             <div class="class-title">
-              {{class.alpha_grade}} {{class.section}} <span class="badge">صنف ۱۰۲ الف</span>
+              {{class.alpha_grade}} {{class.section}}
+              <span class="badge">صنف ۱۰۲ الف</span>
             </div>
             <div class="class-meta">۲۰۴ ساعت • ساختمان اصلی</div>
           </td>
-          <td><span class="grade-badge grade-blue">صنف {{class.alpha_grade}}</span></td>
+          <td>
+            <span class="grade-badge grade-blue"
+              >صنف {{class.alpha_grade}}</span
+            >
+          </td>
           <td>شعبه {{class.section}}</td>
           <td>
             <div class="teacher">
               <span class="t-name"
-                ><span class="avatar">م.ر</span> استاد {{class.guidence}} </span
-              >
-              <span class="t-sub">دبیر ریاضی و هندسه</span>
+                ><span class="avatar">م.ر</span> استاد {{class.guidence}}
+              </span>
+              <span class="t-sub"> استاد مضمون: {{class.guidence.teachersubject.first.subject}} </span>
             </div>
           </td>
           <td>{{class.academice_year.year}}</td>
           <td>
             <div class="enrolled">
-              <span class="count">۳۰ از ۳۲</span>
+              <span class="count">{{class.studentclass.count}} از {{class.capacity}}</span>
               <div class="progress">
-                <span class="fill-blue" style="width: 94%"></span>
+                <span class="fill-blue" style="width: {{class.get_registered_percentage}}%"></span>
               </div>
-              <span class="pct">٪۹۴</span>
+              <span class="pct">٪{{class.get_registered_percentage|floatformat:0}}</span>
             </div>
           </td>
           <td>
-            <span class="status"><span class="dot"></span>فعال</span>
+            {% if class.status.id == 1 %}
+                        <span class="status"><span class="dot"></span>فعال</span>
+            {% else %}
+                        <span class=" inactive"><span class="dot"></span>غیرفعال</span>
+            {% endif %}
           </td>
           <td>
             <div class="actions">
-              <a class="icon-btn danger" title="حذف">
+              <a
+                onclick="disevent(event, {{class.id}})"
+                class="icon-btn danger"
+                title="حذف"
+              >
                 <i class="fa-solid fa-trash"></i>
               </a>
-              <a href="{% url 'dashboard:class-edite' class.id %}" class="icon-btn" title="ویرایش">
+              <a
+                href="{% url 'dashboard:class-edite' class.id %}"
+                class="icon-btn"
+                title="ویرایش"
+              >
                 <i class="fa-solid fa-pen"></i>
               </a>
-              <a href="{% url 'dashboard:class-detail' pk=class.id %}"  class="icon-btn" title="مشاهده">
+              <a
+                href="{% url 'dashboard:class-detail' pk=class.id %}"
+                class="icon-btn"
+                title="مشاهده"
+              >
                 <i class="fa-solid fa-eye"></i>
               </a>
             </div>
@@ -272,5 +333,41 @@
       </tbody>
     </table>
   </div>
+  <div id="msgBoxModal" class="message-box">
+    <!-- The actual message window -->
+  </div>
 </div>
-{% endblock content %}
+{% endblock content %} {% block js %}
+
+<script>
+  const modal = document.getElementById("msgBoxModal");
+
+  function closeModal() {
+    modal.style.display = "none";
+    modal.innerHTML = "";
+  }
+
+  function disevent(event, id) {
+    if (event) event.stopPropagation();
+
+    modal.innerHTML = `
+        <div class="message-content">
+          <h3>اخطار</h3>
+          <p class="message">این صنف غیرفعال شود؟</p>
+          <a href="/dashboard/class/${id}/disable" class="option-btn">بله</a>
+          <button type="button" class="option-btn" id="closeBoxBtn">خیر</button>
+        </div>`;
+    modal.style.display = "flex";
+  }
+
+  window.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+    if (e.target && e.target.id === "closeBoxBtn") {
+      closeModal();
+    }
+  });
+</script>
+
+{% endblock js %}

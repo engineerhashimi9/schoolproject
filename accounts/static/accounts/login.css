@@ -6,6 +6,20 @@
     font-family: 'Vazirmatn', sans-serif;
 }
 
+@font-face {
+    font-family: "Vazirmatn";
+    src: url("./fonts/Vazirmatn-Regular.woff2") format("woff2");
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Vazirmatn";
+    src: url("./fonts/Vazirmatn-Bold.woff2") format("woff2");
+    font-weight: 700;
+    font-display: swap;
+}
+
 body {
     background: linear-gradient(135deg, #f0f4fa 0%, #d9e2ef 100%);
     min-height: 100vh;
@@ -254,5 +268,5 @@ body {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    
+
 }

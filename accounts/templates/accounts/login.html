@@ -1,22 +1,11 @@
 {% load static %}
 <!doctype html>
-<html lang="fa" >
+<html lang="fa">
   <head>
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login Page</title>
-
-    <!-- Google Font for Persian text -->
-    <link
-      href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/misc/Farsi-Digits/font-face.css"
-      rel="stylesheet"
-      type="text/css"
-    />
-    <!-- FontAwesome for icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
 
     <link rel="stylesheet" href="{% static 'accounts/login.css' %}" />
   </head>
@@ -33,17 +22,17 @@
         </div>
         <h1 class="main-title">لیسه عالی خصوصی اهل بیت رسوالله (ص)</h1>
         <p class="subtitle">دسترسی به پورتال مدیریت</p>
-       
       </div>
 
       <!-- Main Card -->
       <div class="login-card">
-         <p class="error">{{error}}</p>
+        <p class="error">{{error}}</p>
         <form action="{% url 'accounts:login' %}" method="post">
           {% csrf_token %}
           <div class="form-group">
             <label for="email">آدرس ایمیل</label>
             <div class="input-wrapper">
+              <i class="fa-regular fa-envelope icon-left"></i>
               <input
                 type="email"
                 name="email"
@@ -51,7 +40,6 @@
                 placeholder="example@domain.com"
                 value="sadat@x.com"
               />
-              <i class="fa-regular fa-envelope icon-right"></i>
             </div>
           </div>
 
@@ -61,6 +49,7 @@
               <a href="#" class="forgot-pass">رمز عبور را فراموش کرده‌اید؟</a>
             </div>
             <div class="input-wrapper">
+              <i class="fa-solid fa-lock icon-left"></i>
               <input
                 type="password"
                 id="password"
@@ -68,8 +57,8 @@
                 value="sadat"
                 placeholder="••••••••"
               />
-              <i class="fa-solid fa-lock icon-right"></i>
-              <i class="fa-regular fa-eye icon-left toggle-password"></i>
+
+              <i class="fa-regular fa-eye icon-right toggle-password"></i>
             </div>
           </div>
 
