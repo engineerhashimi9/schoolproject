@@ -493,14 +493,34 @@ def class_disable(request, id):
 
 class AttendenceListView(LoginRequiredMixin, ListView):
     model = Attendance
-    template_name = "dashboard/attendence.html"
+    template_name = "dashboard/attendence/attendence.html"
     context_object_name = "attendences"
+@is_admin
+def attendence_edite(request):
+    return render(request,"dashboard/attendence/attendence_edite.html",{})
+
+# -----------------------------------------------------------------------------
+#####
+#####
+######### -------------- Assesment SECTION --------------###
+#####
+#####
+# ---------------------------------------------------------------------------
 
 
 class AssesmentListView(LoginRequiredMixin, ListView):
     model = Assessment
     template_name = "dashboard/assesment.html"
     context_object_name = "assesments"
+
+# -----------------------------------------------------------------------------
+#####
+#####
+######### -------------- Exam SECTION --------------###
+#####
+#####
+# ---------------------------------------------------------------------------
+
 
 
 class ExamListView(LoginRequiredMixin, ListView):

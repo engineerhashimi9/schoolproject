@@ -30,6 +30,7 @@ urlpatterns = [
     # attendence urls
     path("attendence/", views.AttendenceListView.as_view(
     ), name="attendence-list"),
+    path("attendence/edite", views.attendence_edite, name="attendence-edite"),
 
     # assesment urls
     path("assesment/", views.AssesmentListView.as_view(

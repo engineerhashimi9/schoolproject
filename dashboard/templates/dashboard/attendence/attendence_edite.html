@@ -1,0 +1,928 @@
+{% extends 'dashboard/base.html' %} {% load static %} {% block style %}
+<link
+  rel="stylesheet"
+  href="{% static 'dashboard/css/attendence_edite.css' %}"
+/>
+{% endblock style %} {% block content %}
+
+
+
+  <main class="container">
+    <!-- Hero Banner -->
+    <div class="card hero-banner">
+      <div class="hero-blob-1"></div>
+      <div class="hero-blob-2"></div>
+
+      <div
+        class="flex flex-col flex-wrap justify-between gap-lg"
+        style="flex-direction: row; align-items: center; position: relative"
+      >
+        <div class="flex flex-col gap-xs" style="max-width: 48rem">
+          <div class="flex items-center gap-xs flex-wrap mb-2">
+            <span class="badge badge-primary-light text-label-sm">
+              <span
+                class="fas fa-verified material-symbols-outlined text-secondary"
+                style="font-size: 15px"
+                ></span
+              >
+              فرم رسمی ثبت کارنامه حاضری ماهانه - مصوب وزارت معارف
+            </span>
+            <span class="badge badge-secondary-fixed text-label-sm">
+              نظام آموزش مکاتب عالی و مسلکی
+            </span>
+          </div>
+          <h1 class="text-headline-xl text-primary">
+            ثبت و ورود حاضری و غیاب ماهانه شاگردان
+          </h1>
+          <p class="text-body-md text-muted mt-2">
+            ثبت، تفکیک و اعتبارسنجی مجموع ایام حاضر، غیرحاضر، مریضی و رخصتی
+            مطابق با مفردات تعلیمی صنف به انضمام محاسبه بلادرنگ درصد حضور و
+            محرومیت شاگردان.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-sm shrink-0 flex-wrap">
+          <button class="btn btn-surface text-label-md" id="autofill-btn">
+            <span
+              class="fas fa-check-circle material-symbols-outlined text-secondary"
+              style="font-size: 20px"
+              ></span
+            >
+            <span>تنظیم پیش‌فرض همه حاضر</span>
+          </button>
+          <button class="btn btn-ghost text-label-md">
+            <span class="fas fa-download material-symbols-outlined" style="font-size: 20px"
+              ></span
+            >
+            <span>دریافت قالب اکسل حاضری</span>
+          </button>
+          <button class="btn btn-primary text-label-md" id="save-main-btn">
+            <span class="material-symbols-outlined" style="font-size: 20px"
+              ><span class="fas fa-save "></span></span
+            >
+            <span>ذخیره و ثبت نهایی حاضری</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card card-p-md">
+      <div class="form-grid">
+        <div class="flex flex-col gap-xs">
+          <label class="text-label-md text-muted flex items-center gap-xs">
+            <span
+              class="fas fa-calendar-alt material-symbols-outlined text-secondary"
+              style="font-size: 16px"
+              ></span
+            >
+            سال تعلیمی (academic_year)
+          </label>
+          <div class="input-group">
+            <select
+              class="input-control input-with-icon-left text-body-md"
+              id="academic-year"
+            >
+              <option selected value="1402">۱۴۰۲ - ۱۴۰۳ (جاری)</option>
+              <option value="1401">۱۴۰۱ - ۱۴۰۲</option>
+              <option value="1400">۱۴۰۰ - ۱۴۰۱</option>
+            </select>
+            <span
+              class="material-symbols-outlined input-icon-left"
+              style="font-size: 20px"
+              ><span class="fas fa-chevron-down"></span></span
+            >
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-xs">
+          <label class="text-label-md text-muted flex items-center gap-xs">
+            <span
+              class="material-symbols-outlined text-secondary"
+              style="font-size: 16px"
+              ><span class="fas fa-chevron-down"></span></span
+            >
+            صنف و شعبه (classs)
+          </label>
+          <div class="input-group">
+            <select
+              class="input-control input-with-icon-left text-body-md"
+              id="class-select"
+            >
+              <option selected value="10-a">
+                صنف دهم عالی - الف (۳۲ شاگرد)
+              </option>
+              <option value="10-b">صنف دهم عالی - ب (۲۹ شاگرد)</option>
+              <option value="11-a">صنف یازدهم ساینس - الف (۳۵ شاگرد)</option>
+            </select>
+            <span
+              class="material-symbols-outlined input-icon-left"
+              style="font-size: 20px"
+              ><span class="fas fa-chevron-down"></span></span
+            >
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-xs">
+          <label class="text-label-md text-muted flex items-center gap-xs">
+            <span
+              class="material-symbols-outlined text-secondary"
+              style="font-size: 16px"
+              ><span class="fas fa-chevron-down"></span></span
+            >
+            ماه تعلیمی (month)
+          </label>
+          <div class="input-group">
+            <select
+              class="input-control input-with-icon-left text-body-md"
+              id="month-select"
+            >
+              <option value="mizan">میزان (مهر)</option>
+              <option value="aqrab">عقرب (آبان)</option>
+              <option selected value="qaws">قوس (آذر)</option>
+            </select>
+            <span
+              class="material-symbols-outlined input-icon-left"
+              style="font-size: 20px"
+              ><span class="fas fa-chevron-down"></span></span
+            >
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-xs">
+          <div class="flex justify-between items-center text-muted">
+            <label class="text-label-md flex items-center gap-xs">
+              <span
+                class="material-symbols-outlined text-secondary"
+                style="font-size: 16px"
+                ><span class="fas fa-chevron-down"></span></span
+              >
+              روزهای کاری
+            </label>
+            <span class="text-label-sm">رسمی: ۲۴ روز</span>
+          </div>
+          <div class="input-group">
+            <input
+              class="input-control text-headline-md text-center input-with-icon-left"
+              style="font-weight: 700"
+              id="all-days-input"
+              max="31"
+              min="1"
+              type="number"
+              value="24"
+            />
+            <span class="text-label-sm input-icon-left text-muted">روز</span>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-xs">
+          <label class="text-label-md text-muted flex items-center gap-xs">
+            <span
+              class="material-symbols-outlined text-secondary"
+              style="font-size: 16px"
+              ><span class="fas fa-search"></span></span
+            >
+            فیلتر سریع شاگردان
+          </label>
+          <div class="input-group">
+            <input
+              class="input-control text-body-sm input-with-icon-right"
+              id="search-input"
+              placeholder="نام، ولد، کد اساس..."
+              type="text"
+            />
+            <span
+              class="material-symbols-outlined input-icon-right"
+              style="font-size: 18px"
+              ><span class="fas fa-search"></span></span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-label-md text-muted">میانگین حاضری صنف</span>
+            <div class="kpi-icon-wrapper bg-icon-secondary">
+              <span class="material-symbols-outlined" style="font-size: 20px"
+                ><span class="fas fa-chart-line"></span></span
+              >
+            </div>
+          </div>
+          <div class="flex items-baseline gap-xs">
+            <span class="text-headline-xl text-primary" id="kpi-rate"
+              >۹۴.۲٪</span
+            >
+            <span class="text-label-sm text-secondary font-bold"
+              >هدف صنف: ۹۰٪</span
+            >
+          </div>
+        </div>
+        <div class="progress-track">
+          <div
+            class="progress-bar bg-secondary"
+            id="kpi-bar"
+            style="width: 94.2%"
+          ></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-label-md text-muted">مجموع روزهای تعلیمی</span>
+            <div class="kpi-icon-wrapper bg-icon-primary">
+              <span class="material-symbols-outlined" style="font-size: 20px"
+                ><span class="fas fa-calendar-alt"></span></span
+              >
+            </div>
+          </div>
+          <div class="flex items-baseline gap-xs">
+            <span class="text-headline-xl text-primary" id="kpi-total-days"
+              >۲۴</span
+            >
+            <span class="text-label-sm text-muted">روز کاری مصوب</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-xs text-label-sm text-muted mt-2">
+          <span
+            class="material-symbols-outlined text-secondary"
+            style="font-size: 15px"
+            ><span class="fas fa-check-circle"></span></span
+          >
+          <span>تقویم آموزشی رسمی نوبت صبح</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-label-md text-muted">مجموع غیرحاضری</span>
+            <div class="kpi-icon-wrapper bg-icon-error">
+              <span class="material-symbols-outlined" style="font-size: 20px"
+                ><span class="fas fa-user-times"></span></span
+              >
+            </div>
+          </div>
+          <div class="flex items-baseline gap-xs">
+            <span class="text-headline-xl text-error" id="kpi-absent">۳۴</span>
+            <span class="text-label-sm text-muted">نفر-روز در تمام صنف</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-xs text-label-sm text-error mt-2">
+          <span class="material-symbols-outlined" style="font-size: 16px"
+            ><span class="fas fa-exclamation-triangle"></span></span
+          >
+          <span>۲ شاگرد در آستانه محرومیت قطعی</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-label-md text-muted">رخصتی و مریضی</span>
+            <div class="kpi-icon-wrapper bg-icon-sick">
+              <span class="material-symbols-outlined" style="font-size: 20px"
+                ><span class="fas fa-heartbeat"></span></span
+              >
+            </div>
+          </div>
+          <div class="flex items-baseline gap-xs">
+            <span class="text-headline-xl text-primary" id="kpi-sick-excused"
+              >۱۸</span
+            >
+            <span class="text-label-sm text-muted">مورد دارای عذرنامه</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-xs text-label-sm text-muted mt-2">
+          <span
+            class="material-symbols-outlined text-secondary"
+            style="font-size: 15px"
+            ><span class="fas fa-description"></span></span
+          >
+          <span>تمام مدارک پزشکی ضمیمه شد</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+      <div class="table-toolbar">
+        <div class="flex items-center gap-sm">
+          <div
+            style="
+              width: 10px;
+              height: 24px;
+              border-radius: 99px;
+              background-color: var(--color-secondary);
+            "
+          ></div>
+          <h2 class="text-headline-md text-primary">
+            جدول محاسبه و درج حاضری صنف ۱۰-الف
+          </h2>
+          <span class="badge badge-surface text-label-sm"
+            >۶ نفر از ۳۲ شاگرد</span
+          >
+        </div>
+        <div class="flex items-center gap-md">
+          <div class="flex items-center gap-xs text-label-sm text-muted">
+            <span
+              class="dot"
+              style="background-color: var(--color-secondary)"
+            ></span
+            >حاضر (P)
+          </div>
+          <div class="flex items-center gap-xs text-label-sm text-muted">
+            <span
+              class="dot"
+              style="background-color: var(--color-error)"
+            ></span
+            >غیرحاضر (A)
+          </div>
+          <div class="flex items-center gap-xs text-label-sm text-muted">
+            <span
+              class="dot"
+              style="background-color: var(--color-primary-container)"
+            ></span
+            >مریضی (S)
+          </div>
+          <div class="flex items-center gap-xs text-label-sm text-muted">
+            <span
+              class="dot"
+              style="background-color: var(--color-outline)"
+            ></span
+            >رخصت (E)
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="table" id="attendance-table">
+          <thead>
+            <tr class="text-label-md">
+              <th style="width: 48px; text-align: center">#</th>
+              <th>مشخصات شاگرد (Student)</th>
+              <th style="text-align: center">کل ایام</th>
+              <th style="text-align: center; width: 112px">حاضر</th>
+              <th style="text-align: center; width: 112px">غیرحاضر</th>
+              <th style="text-align: center; width: 96px">مریض</th>
+              <th style="text-align: center; width: 96px">رخصت</th>
+              <th style="text-align: center; width: 160px">فیصدی حضور</th>
+              <th style="text-align: center">وضعیت ماهانه</th>
+              <th style="min-width: 200px">ملاحظات و عذرنامه</th>
+            </tr>
+          </thead>
+          <tbody class="text-body-sm text-primary">
+            <!-- Row 1 -->
+            <tr
+              class="student-row"
+              data-code="CRD-89401"
+              data-name="احمد پوپلزی"
+              data-parent="محمد عظیم"
+            >
+              <td class="text-center text-muted font-bold text-label-md">۱</td>
+              <td>
+                <div class="flex items-center gap-sm">
+                  <img
+                    class="avatar"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyhwmg3ZbmrNkQiuKSTE7RByXFK4t3ayMAjIE32twHbzELC0CK7mtRktcfoGVFJtN6_KKAHsv7FIdRgbu5iFKpwb-vfanSlBTcL0HiZN8qyZOiJP853I046KlFuMnbkAtU4oTRFb_er0fO9SdesukPbbYsoTx0wamZgbSYIqtVqrwAj_pFpm4PSAdNXgeQOeusgpVvEb83F0L8Z7-lwBARgzOPyEUIwHZAS_MELPD8"
+                  />
+                  <div class="flex flex-col">
+                    <span class="text-body-md font-bold">احمد پوپلزی</span>
+                    <span class="text-label-sm text-muted"
+                      >ولد: محمد عظیم | اساس:
+                      <span dir="ltr">CRD-89401</span></span
+                    >
+                  </div>
+                </div>
+              </td>
+              <td class="text-center">
+                <span class="badge badge-surface text-primary row-alldays"
+                  >۲۴</span
+                >
+              </td>
+              <td class="text-center">
+                <input
+                  class="input-control input-number input-present"
+                  type="number"
+                  value="22"
+                  max="24"
+                  min="0"
+                />
+              </td>
+              <td class="text-center">
+                <input
+                  class="input-control input-number input-absent"
+                  type="number"
+                  value="0"
+                  max="24"
+                  min="0"
+                />
+              </td>
+              <td class="text-center">
+                <input
+                  class="input-control input-number input-sick"
+                  type="number"
+                  value="1"
+                  max="24"
+                  min="0"
+                />
+              </td>
+              <td class="text-center">
+                <input
+                  class="input-control input-number input-excused"
+                  type="number"
+                  value="1"
+                  max="24"
+                  min="0"
+                />
+              </td>
+              <td>
+                <div class="flex flex-col items-center gap-xs">
+                  <span class="text-label-md text-secondary font-bold pct-label"
+                    >۹۱.۷٪</span
+                  >
+                  <div
+                    class="progress-track"
+                    style="margin-top: 0; width: 96px; height: 6px"
+                  >
+                    <div
+                      class="progress-bar bg-secondary pct-bar"
+                      style="width: 91.7%"
+                    ></div>
+                  </div>
+                </div>
+              </td>
+              <td class="text-center">
+                <span
+                  class="badge badge-secondary-fixed text-label-sm status-badge"
+                  >حاضری عالی</span
+                >
+              </td>
+              <td>
+                <input
+                  class="input-control table-note-input text-body-sm"
+                  type="text"
+                  value="گواهی کلینیک مرکزی ضمیمه شد"
+                />
+              </td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr
+              class="student-row"
+              data-code="CRD-89402"
+              data-name="مریم محمدی"
+              data-parent="غلام نبی"
+            >
+              <td class="text-center text-muted font-bold text-label-md">۲</td>
+              <td>
+                <div class="flex items-center gap-sm">
+                  <img
+                    class="avatar"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuABmGlxzSn8IE0j15m57NrJtSYlnR0JY2tjv7E6wbYYxLcIK9gmDVXSnxUlMYJg10S2kjN45ShTz9h-xtLRPV3HpaZqToMDlQJPbbs2g_Xm8JQNI3T787QJy7N82sRHuRMNyb1lmvuPY6mwL9QOZRp1P7kRQSUk4GWAPs0qilEj8KzjCdQ40FRnorXYSSrwD9i0BlJIA7Yjmf8g245BmRdcx941FkVUZiyL1KX6o2Dj"
+                  />
+                  <div class="flex flex-col">
+                    <span class="text-body-md font-bold">مریم محمدی</span>
+                    <span class="text-label-sm text-muted"
+                      >ولد: غلام نبی | اساس:
+                      <span dir="ltr">CRD-89402</span></span
+                    >
+                  </div>
+                </div>
+              </td>
+              <td class="text-center">
+                <span class="badge badge-surface text-primary row-alldays"
+                  >۲۴</span
+                >
+              </td>
+              <td class="text-center">
+                <input
+                  class="input-control input-number input-present"
+                  type="number"
+                  value="24"
+                  max="24"
+                  min="0"
+                />
+              </td>
+              <td class="text-center">
+                <input
+                  class="input-control input-number input-absent"
+                  type="number"
+                  value="0"
+                  max="24"
+                  min="0"
+                />
+              </td>
+              <td class="text-center">
+                <input
+                  class="input-control input-number input-sick"
+                  type="number"
+                  value="0"
+                  max="24"
+                  min="0"
+                />
+              </td>
+              <td class="text-center">
+                <input
+                  class="input-control input-number input-excused"
+                  type="number"
+                  value="0"
+                  max="24"
+                  min="0"
+                />
+              </td>
+              <td>
+                <div class="flex flex-col items-center gap-xs">
+                  <span class="text-label-md text-secondary font-bold pct-label"
+                    >۱۰۰٪</span
+                  >
+                  <div
+                    class="progress-track"
+                    style="margin-top: 0; width: 96px; height: 6px"
+                  >
+                    <div
+                      class="progress-bar bg-secondary pct-bar"
+                      style="width: 100%"
+                    ></div>
+                  </div>
+                </div>
+              </td>
+              <td class="text-center">
+                <span
+                  class="badge badge-secondary-fixed text-label-sm status-badge"
+                  >حاضری کامل (نمونه)</span
+                >
+              </td>
+              <td>
+                <input
+                  class="input-control table-note-input text-body-sm"
+                  type="text"
+                  value="بدون هیچ‌گونه تأخیر و غیبت"
+                />
+              </td>
+            </tr>
+
+            <!-- Row 3 -->
+            <tr
+              class="student-row"
+              data-code="CRD-89405"
+              data-name="سهراب نعیمی"
+              data-parent="محمد قاسم"
+            >
+              <td class="text-center text-muted font-bold text-label-md">۳</td>
+              <td>
+                <div class="flex items-center gap-sm">
+                  <img
+                    class="avatar"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3Crhs3Xxvl9iT7udlJGbNs3aqzGTa4dQlVNGx5VS3Cv29Q_7DYdVIei3fm4zKsOk2qnSkOpNtryY3zYVMmUffXl1jPxNVLBKvQONHc1ttWdylYK6u9sw9-xaPG8pBS2-n826aFmb3P-FPO6y4gry3CzrxmFQbuirh8FK9WuVfBuoCpLcidQYwGr_9yk4pMTHLVzVltCML8pGj9a7yvdbLW2SnZZPihLLte3_W8qmi"
+                  />
+                  <div class="flex flex-col">
+                    <span class="text-body-md font-bold">سهراب نعیمی</span>
+                    <span class="text-label-sm text-muted"
+                      >ولد: محمد قاسم | اساس:
+                      <span dir="ltr">CRD-89405</span></span
+                    >
+                  </div>
+                </div>
+              </td>
+              <td class="text-center">
+                <span class="badge badge-surface text-primary row-alldays"
+                  >۲۴</span
+                >
+              </td>
+              <td class="text-center">
+                <input
+                  class="input-control input-number input-present"
+                  type="number"
+                  value="17"
+                  max="24"
+                  min="0"
+                />
+              </td>
+              <td class="text-center">
+                <input
+                  class="input-control input-number input-absent"
+                  type="number"
+                  value="5"
+                  max="24"
+                  min="0"
+                />
+              </td>
+              <td class="text-center">
+                <input
+                  class="input-control input-number input-sick"
+                  type="number"
+                  value="1"
+                  max="24"
+                  min="0"
+                />
+              </td>
+              <td class="text-center">
+                <input
+                  class="input-control input-number input-excused"
+                  type="number"
+                  value="1"
+                  max="24"
+                  min="0"
+                />
+              </td>
+              <td>
+                <div class="flex flex-col items-center gap-xs">
+                  <span class="text-label-md text-error font-bold pct-label"
+                    >۷۰.۸٪</span
+                  >
+                  <div
+                    class="progress-track"
+                    style="margin-top: 0; width: 96px; height: 6px"
+                  >
+                    <div
+                      class="progress-bar pct-bar"
+                      style="width: 70.8%; background-color: var(--color-error)"
+                    ></div>
+                  </div>
+                </div>
+              </td>
+              <td class="text-center">
+                <span class="badge badge-error text-label-sm status-badge"
+                  >اخطار محرومی تعلیمی</span
+                >
+              </td>
+              <td>
+                <input
+                  class="input-control table-note-input text-body-sm"
+                  type="text"
+                  value="ارسال اخطاریه اول به اولیا شاگرد"
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div
+        class="table-toolbar"
+        style="
+          flex-direction: row;
+          justify-content: space-between;
+          border-top: 1px solid var(--color-surface-container);
+        "
+      >
+        <div class="flex items-center gap-xs text-label-sm text-muted">
+          <span
+            class="material-symbols-outlined text-secondary"
+            style="font-size: 18px"
+            ><span class="fas fa-info-circle"></span></span
+          >
+          <span
+            >فرمول محاسبه:
+            <span
+              dir="ltr"
+              style="
+                font-family: monospace;
+                background: var(--color-surface-container);
+                padding: 2px 4px;
+                border-radius: 4px;
+              "
+              >(حاضری + رخصتی موجه) ÷ روزهای کاری</span
+            ></span
+          >
+        </div>
+        <div class="flex items-center gap-sm text-label-sm text-muted">
+          <span>نمایش ۱ تا ۶ از ۳۲ شاگرد</span>
+          <div class="flex items-center gap-xs">
+            <button
+              class="btn btn-ghost btn-icon"
+              disabled
+              style="opacity: 0.5"
+            >
+              <span class="fas fa-chevron-right"></span>
+            </button>
+            <span
+              class="badge badge-primary text-on-secondary"
+              style="background-color: var(--color-secondary)"
+              >۱</span
+            >
+            <button class="btn btn-ghost btn-icon">
+              <span class="fas fa-chevron-left"></span>
+                >chevron_left</span
+              >
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Action Bar -->
+    <div class="bottom-action-bar">
+      <div class="flex items-center gap-md flex-wrap">
+        <div class="flex items-center gap-xs">
+          <div
+            class="kpi-icon-wrapper"
+            style="
+              background: var(--color-secondary-fixed);
+              color: var(--color-secondary);
+              border-radius: 50%;
+            "
+          >
+            <span class="material-symbols-outlined" style="font-size: 18px"
+              ><span class="fas fa-users"></span></span
+            >
+          </div>
+          <div class="flex flex-col">
+            <span class="text-label-md text-primary font-bold"
+              >۳۲ شاگرد در صنف دهم الف</span
+            >
+            <span class="text-label-sm text-muted"
+              >۷۲۸ نفر-روز حاضر | ۳۲ روز غایب</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-sm shrink-0">
+        <button class="btn btn-surface text-label-md">انصراف و بازگشت</button>
+        <button class="btn btn-ghost text-label-md" id="save-draft-btn">
+          <span class="fas fa-edit"></span>
+          <span>ذخیره پیش‌نویس موقت</span>
+        </button>
+        <button class="btn btn-primary text-label-md" id="submit-confirm-btn">
+          <span class="fas fa-check-circle"></span>
+          <span>تأیید و ذخیره کارنامه ماهانه</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+      <span
+        class="material-symbols-outlined text-secondary-fixed"
+        id="toast-icon"
+        ><span class="fas fa-check-circle"></span></span
+      >
+      <span class="text-label-md" id="toast-msg"
+        >تغییرات با موفقیت ذخیره شد</span
+      >
+    </div>
+  </main>
+
+{% endblock content %} {% block js %}
+
+<script>
+  (function initAttendanceManager() {
+    const allDaysInput = document.getElementById("all-days-input");
+    const table = document.getElementById("attendance-table");
+    const searchInput = document.getElementById("search-input");
+    const autofillBtn = document.getElementById("autofill-btn");
+    const saveMainBtn = document.getElementById("save-main-btn");
+    const saveDraftBtn = document.getElementById("save-draft-btn");
+    const submitConfirmBtn = document.getElementById("submit-confirm-btn");
+    const toast = document.getElementById("toast");
+    const toastMsg = document.getElementById("toast-msg");
+
+    function showToast(message) {
+      if (!toast) return;
+      toastMsg.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000);
+    }
+
+    function recalculateRow(row) {
+      const allDays = parseInt(allDaysInput.value, 10) || 24;
+      const inpPresent = row.querySelector(".input-present");
+      const inpAbsent = row.querySelector(".input-absent");
+      const inpSick = row.querySelector(".input-sick");
+      const inpExcused = row.querySelector(".input-excused");
+      const pctLabel = row.querySelector(".pct-label");
+      const pctBar = row.querySelector(".pct-bar");
+      const statusBadge = row.querySelector(".status-badge");
+      const rowAllDays = row.querySelector(".row-alldays");
+
+      if (rowAllDays) rowAllDays.textContent = allDays;
+
+      const p = parseInt(inpPresent.value, 10) || 0;
+      const a = parseInt(inpAbsent.value, 10) || 0;
+      const s = parseInt(inpSick.value, 10) || 0;
+      const e = parseInt(inpExcused.value, 10) || 0;
+
+      const pct = Math.min(
+        100,
+        Math.max(0, Math.round((p / allDays) * 1000) / 10),
+      );
+
+      pctLabel.textContent = pct + "٪";
+      pctBar.style.width = pct + "%";
+
+      if (pct >= 90) {
+        pctLabel.className = "text-label-md text-secondary font-bold pct-label";
+        pctBar.style.backgroundColor = "var(--color-secondary)";
+        statusBadge.className =
+          "badge badge-secondary-fixed text-label-sm status-badge";
+        statusBadge.textContent = "حاضری عالی";
+      } else if (pct >= 75) {
+        pctLabel.className = "text-label-md text-muted font-bold pct-label";
+        pctBar.style.backgroundColor = "var(--color-primary-container)";
+        statusBadge.className =
+          "badge badge-surface text-label-sm status-badge";
+        statusBadge.textContent = "حاضری منظم";
+      } else {
+        pctLabel.className = "text-label-md text-error font-bold pct-label";
+        pctBar.style.backgroundColor = "var(--color-error)";
+        statusBadge.className = "badge badge-error text-label-sm status-badge";
+        statusBadge.textContent = "اخطار محرومی تعلیمی";
+      }
+    }
+
+    function recalculateAll() {
+      const rows = table.querySelectorAll(".student-row");
+      rows.forEach(recalculateRow);
+    }
+
+    if (allDaysInput) {
+      allDaysInput.addEventListener("input", () => {
+        const val = parseInt(allDaysInput.value, 10) || 24;
+        const kpiTotalDays = document.getElementById("kpi-total-days");
+        if (kpiTotalDays) kpiTotalDays.textContent = val;
+        recalculateAll();
+      });
+    }
+
+    if (table) {
+      table.addEventListener("input", (e) => {
+        if (
+          e.target.matches(
+            ".input-present, .input-absent, .input-sick, .input-excused",
+          )
+        ) {
+          const row = e.target.closest(".student-row");
+          if (row) recalculateRow(row);
+        }
+      });
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener("input", () => {
+        const query = searchInput.value.trim().toLowerCase();
+        const rows = table.querySelectorAll(".student-row");
+        rows.forEach((row) => {
+          const name = (row.dataset.name || "").toLowerCase();
+          const parent = (row.dataset.parent || "").toLowerCase();
+          const code = (row.dataset.code || "").toLowerCase();
+          if (
+            name.includes(query) ||
+            parent.includes(query) ||
+            code.includes(query)
+          ) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      });
+    }
+
+    if (autofillBtn) {
+      autofillBtn.addEventListener("click", () => {
+        const allDays = parseInt(allDaysInput.value, 10) || 24;
+        const rows = table.querySelectorAll(".student-row");
+        rows.forEach((row) => {
+          row.querySelector(".input-present").value = allDays;
+          row.querySelector(".input-absent").value = 0;
+          row.querySelector(".input-sick").value = 0;
+          row.querySelector(".input-excused").value = 0;
+          recalculateRow(row);
+        });
+        showToast(
+          "حاضری تمام شاگردان صنف به حداکثر (" + allDays + " روز) تنظیم شد",
+        );
+      });
+    }
+
+    if (saveMainBtn) {
+      saveMainBtn.addEventListener("click", () => {
+        showToast("اطلاعات حاضری ماهانه با موفقیت در پایگاه داده ثبت گردید");
+      });
+    }
+
+    if (saveDraftBtn) {
+      saveDraftBtn.addEventListener("click", () => {
+        showToast("پیش‌نویس موقت با موفقیت ذخیره شد");
+      });
+    }
+
+    if (submitConfirmBtn) {
+      submitConfirmBtn.addEventListener("click", () => {
+        showToast(
+          "کارنامه حاضری صنف ۱۰-الف نهایی و برای اداره مکتب ارسال گردید",
+        );
+      });
+    }
+  })();
+</script>
+{% endblock js %}
