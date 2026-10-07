@@ -495,6 +495,20 @@ class AttendenceListView(LoginRequiredMixin, ListView):
     model = Attendance
     template_name = "dashboard/attendence/attendence.html"
     context_object_name = "attendences"
+
+
+class AttendenceEditeListView(ListView):
+    model = Attendance
+    template_name = "dashboard/attendence/attendence_edite.html"
+    context_object_name = "attendences"
+    def get_queryset(self):
+        queryset= super().get_queryset()
+        academice_year=self.kwargs.get("academice_year") # type: ignore
+        class_section=self.kwargs.get("class_section") # type: ignore
+        month=self.kwargs.get("month") # type: ignore
+        return queryset
+
+
 @is_admin
 def attendence_edite(request):
     return render(request,"dashboard/attendence/attendence_edite.html",{})
