@@ -1,0 +1,323 @@
+{% extends 'dashboard/base.html' %} {% load static %} {% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/finance.css' %}" />
+{% endblock style %} {% block content %}
+
+<div class="container">
+  <!-- Content -->
+  <main class="content-area">
+    <!-- Top Context Bar -->
+    <div class="context-bar">
+      <div class="breadcrumb">
+        <span class="material-symbols-outlined icon-sm">account_balance</span>
+        <span>آموزش و امور مالی</span>
+        <span class="material-symbols-outlined icon-sm">chevron_left</span>
+        <span>حسابداری و شهریه</span>
+        <span class="material-symbols-outlined icon-sm">chevron_left</span>
+        <span class="badge badge-surface active">تسویه و اقساط ماهانه</span>
+      </div>
+      <div class="status-badges">
+        <div class="badge badge-white shadow-sm">
+          <span class="dot bg-success pulse"></span>
+          <span class="text-muted">درگاه شاپرک:</span>
+          <span class="text-primary font-bold">متصل و برخط</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero Banner (Financial Gradient) -->
+    <section class="hero-financial">
+      <div class="hero-content">
+        <div class="hero-text">
+          <div class="badge badge-glass">
+            <span class="material-symbols-outlined icon-sm"
+              >account_balance_wallet</span
+            >
+            سامانه هوشمند مدیریت شهریه و عواید
+          </div>
+          <h1>مدیریت و وصول شهریه شاگردان</h1>
+          <p>
+            ثبت اقساط ماهانه، صدور رسید پرداخت رسمی، پیگیری مانده بدهی و گزارش
+            عواید مالی.
+          </p>
+
+          <div class="hero-meta">
+            <span
+              ><span class="material-symbols-outlined icon-sm"
+                >calendar_today</span
+              >
+              سال: ۱۴۰۲-۱۴۰۳</span
+            >
+            <span>•</span>
+            <span
+              ><span class="material-symbols-outlined icon-sm">payments</span>
+              ارز: افغانی</span
+            >
+            <span>•</span>
+            <span
+              ><span class="material-symbols-outlined icon-sm"
+                >receipt_long</span
+              >
+              سیکل: ماه قوس</span
+            >
+          </div>
+        </div>
+        <div class="hero-actions">
+          <button class="btn btn-white" id="openModalBtn">
+            <span class="material-symbols-outlined">add_circle</span> ثبت شهریه
+            جدید
+          </button>
+          <button class="btn btn-glass">
+            <span class="material-symbols-outlined">file_download</span> خروجی
+            PDF
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="card kpi-card">
+        <div class="kpi-header">
+          <span class="text-muted">کل عواید مصوب ماهانه</span>
+          <div class="kpi-icon bg-icon-primary">
+            <span class="material-symbols-outlined">account_balance</span>
+          </div>
+        </div>
+        <div class="kpi-value">۲,۴۵۰,۰۰۰ <span class="currency">AFN</span></div>
+        <div class="kpi-footer bg-light-primary text-primary">
+          مجموع تعهد ماه قوس (۱۰۰٪)
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-header">
+          <span class="text-muted">مجموع وصول‌شده</span>
+          <div class="kpi-icon bg-icon-success">
+            <span class="material-symbols-outlined">check_circle</span>
+          </div>
+        </div>
+        <div class="kpi-value text-success">
+          ۲,۱۰۰,۰۰۰ <span class="currency">AFN</span>
+        </div>
+        <div class="kpi-footer bg-light-success text-success">
+          +۴.۵٪ نسبت به ماه قبل
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-header">
+          <span class="text-muted">مانده طلب (بدهی)</span>
+          <div class="kpi-icon bg-icon-error">
+            <span class="material-symbols-outlined">pending_actions</span>
+          </div>
+        </div>
+        <div class="kpi-value text-error">
+          ۳۵۰,۰۰۰ <span class="currency">AFN</span>
+        </div>
+        <div class="kpi-footer bg-light-error text-error">
+          ۵ پرونده معوقه فعال
+        </div>
+      </div>
+
+      <div class="card kpi-card">
+        <div class="kpi-header">
+          <span class="text-muted">وضعیت تسویه صنف</span>
+          <div class="kpi-icon bg-icon-primary">
+            <span class="material-symbols-outlined">verified</span>
+          </div>
+        </div>
+        <div class="kpi-value">
+          ۲۷ <span class="currency text-muted">/ ۳۲ شاگرد</span>
+        </div>
+        <div class="kpi-progress">
+          <div class="progress-track">
+            <div class="progress-bar bg-primary" style="width: 84%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card p-md">
+      <div class="filter-bar">
+        <div class="input-group flex-1">
+          <span class="material-symbols-outlined input-icon">search</span>
+          <input
+            class="input-control w-full"
+            type="text"
+            placeholder="جستجوی سریع دانش‌آموز، اساس..."
+          />
+        </div>
+        <div class="filter-actions">
+          <select class="input-control">
+            <option>همه صنف‌ها</option>
+          </select>
+          <select class="input-control">
+            <option>ماه قوس (آذر)</option>
+          </select>
+          <select class="input-control">
+            <option>وضعیت پرداخت: همگی</option>
+          </select>
+          <button class="btn-icon bg-surface">
+            <span class="material-symbols-outlined">refresh</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card table-card">
+      <div class="table-header">
+        <div class="title-group">
+          <span class="material-symbols-outlined text-secondary"
+            >format_list_bulleted</span
+          >
+          <h2>دفتر روزنامه و فاکتورها</h2>
+          <span class="badge badge-secondary">صنف دهم الف</span>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>مشخصات دانش‌آموز</th>
+              <th>مبلغ کل</th>
+              <th>پرداخت‌شده</th>
+              <th>مانده بدهی</th>
+              <th>وضعیت تسویه</th>
+              <th>عملیات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Paid Student -->
+            <tr>
+              <td>۱</td>
+              <td>
+                <div class="student-info">
+                  <div class="avatar-sm"></div>
+                  <div>
+                    <strong>احمد پوپلزی</strong>
+                    <div class="text-muted text-sm">اساس: ۵۴۲۰</div>
+                  </div>
+                </div>
+              </td>
+              <td>۵,۰۰۰</td>
+              <td class="text-success font-bold">۵,۰۰۰</td>
+              <td>۰</td>
+              <td><span class="badge badge-success">تسویه کامل</span></td>
+              <td>
+                <button class="btn-icon">
+                  <span class="material-symbols-outlined">receipt_long</span>
+                </button>
+              </td>
+            </tr>
+
+            <!-- Partial Paid Student -->
+            <tr>
+              <td>۲</td>
+              <td>
+                <div class="student-info">
+                  <div class="avatar-sm"></div>
+                  <div>
+                    <strong>مریم محمدی</strong>
+                    <div class="text-muted text-sm">اساس: ۵۴۸۸</div>
+                  </div>
+                </div>
+              </td>
+              <td>۵,۰۰۰</td>
+              <td class="text-primary font-bold">۳,۰۰۰</td>
+              <td class="text-warning font-bold">۲,۰۰۰</td>
+              <td><span class="badge badge-warning">پرداخت قسطی</span></td>
+              <td>
+                <button class="btn-icon">
+                  <span class="material-symbols-outlined">add</span>
+                </button>
+              </td>
+            </tr>
+
+            <!-- Unpaid Student -->
+            <tr class="bg-light-error">
+              <td>۳</td>
+              <td>
+                <div class="student-info">
+                  <div class="avatar-sm"></div>
+                  <div>
+                    <strong>سهراب نعیمی</strong>
+                    <div class="text-muted text-sm">اساس: ۵۳۹۱</div>
+                  </div>
+                </div>
+              </td>
+              <td>۵,۰۰۰</td>
+              <td class="text-error font-bold">۰</td>
+              <td class="text-error font-bold">۵,۰۰۰</td>
+              <td><span class="badge badge-error">معوقه</span></td>
+              <td>
+                <button class="btn-icon text-error">
+                  <span class="material-symbols-outlined"
+                    >notification_important</span
+                  >
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+  <!-- Modal (Add Payment) -->
+  <div class="modal-overlay" id="paymentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="title-group">
+          <div class="modal-icon">
+            <span class="material-symbols-outlined">payments</span>
+          </div>
+          <div>
+            <h3>ثبت قبض و پرداخت شهریه جدید</h3>
+            <p class="text-muted text-sm">ثبت اطلاعات مالی در سیستم</p>
+          </div>
+        </div>
+        <button class="btn-icon" id="closeModalBtn">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <form class="modal-form">
+        <div class="input-group">
+          <label>دانش‌آموز *</label>
+          <select class="input-control">
+            <option>سهراب نعیمی (معوقه: ۵۰۰۰)</option>
+          </select>
+        </div>
+
+        <div class="grid-2">
+          <div class="input-group">
+            <label>مبلغ کل مصوب *</label>
+            <input class="input-control" type="number" value="5000" disabled />
+          </div>
+          <div class="input-group">
+            <label>مبلغ پرداختی این قسط *</label>
+            <input
+              class="input-control"
+              type="number"
+              placeholder="مبلغ را وارد کنید"
+            />
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="cancelModalBtn">
+            انصراف
+          </button>
+          <button type="button" class="btn btn-primary">
+            <span class="material-symbols-outlined">check</span> ثبت نهایی
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %} {% block js %}
+<script src="{% static 'dashboard/js/finance' %}"></script>
+{% endblock js %}
