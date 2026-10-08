@@ -69,7 +69,7 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
 @is_admin
 def disable_student(request, id):
     target = get_object_or_404(Student, id=id)
-    target.detached_date = jdatetime.date.today()
+    # target.detached_date = jdatetime.date.today()
     target.status_id = 2
     target.save()
     return redirect(reverse("dashboard:student-list"))
@@ -220,7 +220,7 @@ def student_create(request):
         else:
             print(form.errors)
 
-    return render(request, "dashboard/student_edite.html", {"classes": classes})
+    return render(request, "dashboard/students/student_edite.html", {"classes": classes})
 
 # -----------------------------------------------------------------------------
 #####
