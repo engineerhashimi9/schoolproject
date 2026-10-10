@@ -19,7 +19,7 @@ urlpatterns = [
     path("worker/create", views.teacher_create, name="worker-register"),
     path("worker/<int:pk>", views.TeacherDetailView.as_view(), name="worker-detail"),
     path("worker/<int:id>/edite", views.teacher_edite, name="worker-edite"),
-    path("woreker/<int:id>/disable", views.disable_teacher, name="worker-disable"),
+    path("worker/<int:id>/disable", views.disable_teacher, name="worker-disable"),
 
     # classes urls
     path("class/", views.ClassesListView.as_view(), name="class-list"),
@@ -30,7 +30,8 @@ urlpatterns = [
     # attendence urls
     path("attendence/", views.AttendenceListView.as_view(
     ), name="attendence-list"),
-    path("attendence/edite", views.AttendenceEditeListView.as_view(), name="attendence-edite"),
+    path("attendence/edite", views.attendence_edite, name="attendence-edite"),
+    path("attendence/edite", views.attendence_create, name="attendence-create"),
 
     # assesment urls
     path("assesment/", views.AssesmentListView.as_view(

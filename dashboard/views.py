@@ -21,7 +21,8 @@ from django.db.models import Q
 # is Admin derator
 students_count = Student.objects.all().count()
 teachers_count = Teacher.objects.all().count()
-
+academice_years=AcademiceYear.objects.all()
+classes=Classes.objects.all()
 
 def is_admin(func):
     def wrapper(request, *args, **kwargs):
@@ -69,7 +70,7 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
 @is_admin
 def disable_student(request, id):
     target = get_object_or_404(Student, id=id)
-    # target.detached_date = jdatetime.date.today()
+    target.detached_date = str(jdatetime.date.today())
     target.status_id = 2
     target.save()
     return redirect(reverse("dashboard:student-list"))
@@ -303,9 +304,10 @@ def teacher_edite(request, id):
 @is_admin
 def disable_teacher(request, id):
     target = get_object_or_404(Teacher, id=id)
-    target.detached_date = jdatetime.date.today()
+    target.detached_date = str(jdatetime.date.today())
     target.status_id = 2
     target.save()
+    print("Hi")
     return redirect(reverse("dashboard:worker-list"))
 
 
@@ -497,21 +499,18 @@ class AttendenceListView(LoginRequiredMixin, ListView):
     context_object_name = "attendences"
 
 
-class AttendenceEditeListView(ListView):
-    model = Attendance
-    template_name = "dashboard/attendence/attendence_edite.html"
-    context_object_name = "attendences"
-    def get_queryset(self):
-        queryset= super().get_queryset()
-        academice_year=self.kwargs.get("academice_year") # type: ignore
-        class_section=self.kwargs.get("class_section") # type: ignore
-        month=self.kwargs.get("month") # type: ignore
-        return queryset
-
+def attendence_create(request,academic_year=None,class_section=None) :
+    if academic_year==None and class_section==None :  
+        academice_years=AcademiceYear.objects.all()
+        classes=Classes.objects.all()
+    if request.method=="POST" :
+        pass
+    else :
+        return render(request,"dashboard/attendence/attendence_edite.html",{})
 
 @is_admin
 def attendence_edite(request):
-    return render(request,"dashboard/attendence/attendence_edite.html",{})
+    return render(request, "dashboard/attendence/attendence_edite.html", {})
 
 # -----------------------------------------------------------------------------
 #####
@@ -534,7 +533,6 @@ class AssesmentListView(LoginRequiredMixin, ListView):
 #####
 #####
 # ---------------------------------------------------------------------------
-
 
 
 class ExamListView(LoginRequiredMixin, ListView):

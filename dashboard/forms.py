@@ -59,3 +59,4 @@ class ClassForm(forms.Form) :
     end_time_hour=forms.IntegerField(required=True)
     end_time_minute=forms.IntegerField(required=True)
     capacity=forms.IntegerField(required=True)
+

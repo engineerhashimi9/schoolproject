@@ -149,31 +149,33 @@ class Classes(models.Model):
     alpha_grade = models.CharField(max_length=50)
     section = models.CharField(max_length=50)
     guidence = models.ForeignKey(
-        Teacher,on_delete=models.DO_NOTHING, null=True, blank=True)
+        Teacher, on_delete=models.DO_NOTHING, null=True, blank=True)
     # representative = models.ForeignKey(Student, on_delete=models.DO_NOTHING)
     academice_year = models.ForeignKey(
         AcademiceYear, on_delete=models.DO_NOTHING)
     # registered = models.IntegerField(default=0)
     capacity = models.IntegerField(default=30)
-    start_time = models.TimeField(auto_now=False, auto_now_add=False,default="08:00") # type: ignore
-    end_time = models.TimeField(auto_now=False, auto_now_add=False,default="16:00") # type: ignore
-    turn=models.CharField(max_length=50,default="صبح") # type: ignore
+    start_time = models.TimeField(
+        auto_now=False, auto_now_add=False, default="08:00")  # type: ignore
+    end_time = models.TimeField(
+        auto_now=False, auto_now_add=False, default="16:00")  # type: ignore
+    turn = models.CharField(max_length=50, default="صبح")  # type: ignore
     status = models.ForeignKey(
-        Status, on_delete=models.DO_NOTHING,default=1)  # type: ignore
+        Status, on_delete=models.DO_NOTHING, default=1)  # type: ignore
+
     def __str__(self) -> str:
         return f"{self.grade}-{self.section}"
+
     def get_registered_count(self):
         return self.studentclass.count()
+
     def get_remaining_capacity(self):
         return self.capacity - self.get_registered_count()
+
     def get_registered_percentage(self):
         if self.capacity == 0:
             return 0
         return (self.get_registered_count() / self.capacity) * 100
-
-
-
-
 
 
 class TeacherSubject(models.Model):
@@ -209,32 +211,37 @@ class Attendance(models.Model):
     month = models.ForeignKey(
         Month, on_delete=models.DO_NOTHING)
     present = models.IntegerField()
+
     absent = models.IntegerField()
     sick = models.IntegerField()
     excused = models.IntegerField()
     alldays = models.IntegerField()
     academice_year = models.ForeignKey(
         AcademiceYear, on_delete=models.DO_NOTHING)
- 
 
     def __str__(self) -> str:
         return f"{self.student}-{self.classs}-{self.month}"
+
     def get_present_average(self):
         if self.alldays == 0:
             return 0
         return int((self.present / self.alldays) * 100)
+
     def get_absent_average(self):
         if self.alldays == 0:
             return 0
         return int((self.absent / self.alldays) * 100)
+
     def get_sick_average(self):
         if self.alldays == 0:
             return 0
         return int((self.sick / self.alldays) * 100)
+
     def get_excused_average(self):
         if self.alldays == 0:
             return 0
         return int((self.excused / self.alldays) * 100)
+
     def get_present_percentage(self):
         if self.alldays == 0:
             return 0
@@ -256,9 +263,10 @@ class Assessment(models.Model):
 
     def __str__(self) -> str:
         return f"{self.student}-{self.teacher}-{self.subject}-{self.classs}-{self.month}"
-    def getPercentage(self) :
+
+    def getPercentage(self):
         return int((self.score/self.max_score)*100)
-        
+
     def get_rank(self):
         # Get all assessments for the same subject, class, month, and academic year
         assessments = Assessment.objects.filter(
@@ -275,18 +283,21 @@ class Assessment(models.Model):
         rank = scores.index(self.score) + 1  # +1 because index starts at 0
 
         return rank
+
     def get_student_rank(self):
-        p=self.getPercentage()
-        if p==100 :
+        p = self.getPercentage()
+        if p == 100:
             return "نمره کامل"
-        elif 90<=p<100 :
+        elif 90 <= p < 100:
             return "عالی"
-        elif 80<=p<90 :
+        elif 80 <= p < 90:
             return "خوب"
-        elif 60<=p<80 :
+        elif 60 <= p < 80:
             return "متوسط"
-        else :
+        else:
             return "ضعیف"
+
+
 class Exam(models.Model):
     id = models.AutoField(primary_key=True)
     teacher = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING)
@@ -324,6 +335,8 @@ class Fee(models.Model):
     payment_date = models.DateField(auto_now=False, auto_now_add=False)
     academice_year = models.ForeignKey(
         AcademiceYear, on_delete=models.DO_NOTHING)
+
+
 """
 class EducationalDay(models.Model):
     id = models.AutoField(primary_key=True)

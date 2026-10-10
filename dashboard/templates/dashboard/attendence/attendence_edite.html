@@ -26,13 +26,14 @@
           با مفردات تعلیمی.
         </p>
       </div>
-
+        <form action="" method="post">
+          {% csrf_token %}
       <div class="hero-actions">
-        <button class="btn btn-surface" id="autofill-btn">
+        <a href="#" class="btn btn-surface" id="autofill-btn">
           <i class="fas fa-check-circle text-secondary"></i>
           <span>پیش‌فرض همه حاضر</span>
-        </button>
-        <button class="btn btn-primary" id="save-main-btn">
+        </a>
+        <button type="submit" class="btn btn-primary" id="save-main-btn">
           <i class="fas fa-save"></i>
           <span>ذخیره و ثبت نهایی</span>
         </button>
@@ -45,7 +46,7 @@
     <div class="form-grid">
       <div class="input-group">
         <label>سال تعلیمی</label>
-        <select class="input-control" id="academic-year">
+        <select name="academic_year" class="input-control" id="academic-year">
           <option value="1402">۱۴۰۲ - ۱۴۰۳ (جاری)</option>
           <option value="1401">۱۴۰۱ - ۱۴۰۲</option>
         </select>
@@ -53,7 +54,7 @@
 
       <div class="input-group">
         <label>صنف و شعبه</label>
-        <select class="input-control" id="class-select">
+        <select name="class" class="input-control" id="class-select">
           <option value="10-a">صنف دهم عالی - الف</option>
           <option value="10-b">صنف دهم عالی - ب</option>
         </select>
@@ -63,6 +64,7 @@
         <label>روزهای کاری در ماه</label>
         <input
           class="input-control text-center font-bold"
+          name="all_days"
           id="all-days-input"
           type="number"
           value="24"
@@ -75,6 +77,7 @@
         <label>فیلتر سریع شاگردان</label>
         <input
           class="input-control"
+          name="search"
           id="search-input"
           type="text"
           placeholder="نام، ولد، کد اساس..."
@@ -136,9 +139,10 @@
             <th class="text-center">کل ایام</th>
             <th class="text-center">حاضر</th>
             <th class="text-center">غیرحاضر</th>
-            <th class="text-center">مریض/رخصت</th>
+            <th class="text-center">مریض</th>
+            <th class="text-center">رخصت</th>
             <th class="text-center">فیصدی حضور</th>
-            <th>ملاحظات</th>
+            
           </tr>
         </thead>
         <tbody>
@@ -151,6 +155,7 @@
             data-parent="{{ attendence.student.fname }}"
             data-code="{{ attendence.student.school_id }}"
           >
+          <input class="st-detail" type="text" name="student_detail" value={{attendence.student.school_id}}>
             <td class="text-center font-bold">۱</td>
             <td>
               <div class="student-info">
@@ -169,6 +174,7 @@
               <input
                 class="input-control input-number input-present"
                 type="number"
+                name="present"
                 value="22"
                 max="24"
                 min="0"
@@ -178,6 +184,7 @@
               <input
                 class="input-control input-number input-absent"
                 type="number"
+                name="absent"
                 value="0"
                 max="24"
                 min="0"
@@ -188,8 +195,17 @@
                 class="input-control input-number input-excused"
                 type="number"
                 value="2"
+                name="sick"
                 max="24"
                 min="0"
+              />
+            </td>
+                <td>
+              <input
+                class="input-control"
+                type="number"
+                name="excused"
+                value="0"
               />
             </td>
             <td>
@@ -202,13 +218,6 @@
                   ></div>
                 </div>
               </div>
-            </td>
-            <td>
-              <input
-                class="input-control"
-                type="text"
-                value="گواهی کلینیک ضمیمه شد"
-              />
             </td>
           </tr>
 
@@ -224,13 +233,13 @@
       <strong>۳۲ شاگرد در صنف دهم الف</strong>
     </div>
     <div class="action-buttons">
-      <button class="btn btn-ghost" id="save-draft-btn">پیش‌نویس موقت</button>
-      <button class="btn btn-primary" id="submit-confirm-btn">
+      <a href="#" class="btn btn-ghost" id="save-draft-btn">پیش‌نویس موقت</a>
+      <button type="submit" class="btn btn-primary" id="submit-confirm-btn">
         تأیید و ذخیره کارنامه
       </button>
     </div>
   </div>
-
+</form>
   <!-- Toast Notification -->
   <div class="toast" id="toast">
     <i class="fas fa-check-circle text-secondary"></i>
