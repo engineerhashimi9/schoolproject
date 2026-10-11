@@ -28,10 +28,10 @@ urlpatterns = [
     path("class/create", views.class_create, name="class-register"),
     path("class/<int:id>/disable", views.class_disable, name="class-disable"),
     # attendence urls
-    path("attendence/", views.AttendenceListView.as_view(
-    ), name="attendence-list"),
-    path("attendence/edite", views.attendence_edite, name="attendence-edite"),
-    path("attendence/edite", views.attendence_create, name="attendence-create"),
+    path("attendence/", views.AttendenceListView.as_view(), name="attendence-list"),
+    path("attendence/create/", views.attendence_create, name="attendence-create"),
+    path("attendence/edite/", views.attendence_edite, name="attendence-edite"),
+    path("attendence/edite/<int:class_id>/<int:month_id>/<int:academic_year_id>/", views.attendence_edite, name="attendence-edite-specific"),
 
     # assesment urls
     path("assesment/", views.AssesmentListView.as_view(

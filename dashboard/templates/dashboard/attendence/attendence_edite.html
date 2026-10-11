@@ -1,83 +1,106 @@
-{% extends 'dashboard/base.html' %} {% load static %} {% block style %}
-<link
-  rel="stylesheet"
-  href="{% static 'dashboard/css/attendence_edite.css' %}"
-/>
-{% endblock style %} {% block content %}
+{% extends 'dashboard/base.html' %}
+{% load static %}
 
-<!-- Main Content -->
+{% block title %}ثبت و ویرایش کارنامه حاضری صنف | لیسه عالی اهل بیت (ص){% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/attendence_edite.css' %}" />
+{% endblock style %}
+
+{% block content %}
 <main class="container">
   <!-- Hero Banner -->
-  <div class="card hero-banner">
-    <div class="hero-blob blob-1"></div>
-    <div class="hero-blob blob-2"></div>
-
+  <div class="card hero-banner" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border: 1px solid #e2e8f0;">
     <div class="hero-content">
       <div class="hero-text">
-        <div class="tags">
-          <span class="badge badge-primary-light">
-            <i class="fas fa-clipboard-list text-secondary icon-sm"></i>
-            فرم رسمی ثبت کارنامه حاضری
+        <div class="tags" style="margin-bottom: 8px;">
+          {% if has_existing_records %}
+          <span class="badge" style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; font-weight: 700;">
+            <i class="fa-solid fa-pen-to-square"></i> در حال ویرایش کارنامه ثبت‌شده
           </span>
+          {% else %}
+          <span class="badge" style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-weight: 700;">
+            <i class="fa-solid fa-plus-circle"></i> ثبت کارنامه جدید حاضری
+          </span>
+          {% endif %}
         </div>
-        <h1 class="page-title">ثبت و ورود حاضری و غیاب ماهانه شاگردان</h1>
+        <h1 class="page-title">
+          ثبت و ویرایش کارنامه حاضری صنف {{ selected_class.grade }} - {{ selected_class.section }}
+        </h1>
         <p class="page-subtitle">
-          ثبت، تفکیک و اعتبارسنجی مجموع ایام حاضر، غیرحاضر، مریضی و رخصتی مطابق
-          با مفردات تعلیمی.
+          ماه تعلیمی: <strong>{{ selected_month.name }}</strong> | سال تحصیلی: <strong>{{ selected_year.year }}</strong> | تفکیک دقیق ایام حاضر، غیرحاضر، مریضی و رخصتی.
         </p>
       </div>
-        <form action="" method="post">
-          {% csrf_token %}
-      <div class="hero-actions">
-        <a href="#" class="btn btn-surface" id="autofill-btn">
-          <i class="fas fa-check-circle text-secondary"></i>
+
+      <div class="hero-actions" style="display: flex; gap: 10px;">
+        <button type="button" class="btn btn-surface" id="autofill-btn" title="تنظیم همه دانش‌آموزان به عنوان حاضر">
+          <i class="fa-solid fa-circle-check text-secondary" style="color: #059669;"></i>
           <span>پیش‌فرض همه حاضر</span>
-        </a>
-        <button type="submit" class="btn btn-primary" id="save-main-btn">
-          <i class="fas fa-save"></i>
-          <span>ذخیره و ثبت نهایی</span>
         </button>
+        <button type="submit" form="attendance-form" class="btn btn-primary" id="save-main-btn">
+          <i class="fa-solid fa-floppy-disk"></i>
+          <span>ذخیره و ثبت کارنامه</span>
+        </button>
+        <a href="{% url 'dashboard:attendence-list' %}?class_id={{ selected_class.id }}&month_id={{ selected_month.id }}" class="btn btn-surface">
+          <i class="fa-solid fa-arrow-right"></i>
+          <span>بازگشت</span>
+        </a>
       </div>
     </div>
   </div>
 
-  <!-- Configuration Filters -->
-  <div class="card p-md">
+  <!-- Class & Month Selector Filter Bar -->
+  <div class="card p-md" style="border: 1px solid #e2e8f0; background: #ffffff;">
     <div class="form-grid">
       <div class="input-group">
-        <label>سال تعلیمی</label>
-        <select name="academic_year" class="input-control" id="academic-year">
-          <option value="1402">۱۴۰۲ - ۱۴۰۳ (جاری)</option>
-          <option value="1401">۱۴۰۱ - ۱۴۰۲</option>
+        <label><i class="fa-solid fa-calendar"></i> سال تعلیمی</label>
+        <select id="academic-year-select" class="input-control" onchange="reloadClassRoster()">
+          {% for y in academic_years %}
+          <option value="{{ y.id }}" {% if selected_year.id == y.id %}selected{% endif %}>
+            {{ y.year }} {% if forloop.first %}(جاری){% endif %}
+          </option>
+          {% endfor %}
         </select>
       </div>
 
       <div class="input-group">
-        <label>صنف و شعبه</label>
-        <select name="class" class="input-control" id="class-select">
-          <option value="10-a">صنف دهم عالی - الف</option>
-          <option value="10-b">صنف دهم عالی - ب</option>
+        <label><i class="fa-solid fa-school"></i> صنف و شعبه</label>
+        <select id="class-select" class="input-control" onchange="reloadClassRoster()">
+          {% for c in classes %}
+          <option value="{{ c.id }}" {% if selected_class.id == c.id %}selected{% endif %}>
+            صنف {{ c.grade }} - شعبۀ {{ c.section }} ({{ c.turn }})
+          </option>
+          {% endfor %}
         </select>
       </div>
 
       <div class="input-group">
-        <label>روزهای کاری در ماه</label>
+        <label><i class="fa-solid fa-moon"></i> ماه تعلیمی</label>
+        <select id="month-select" class="input-control" onchange="reloadClassRoster()">
+          {% for m in months %}
+          <option value="{{ m.id }}" {% if selected_month.id == m.id %}selected{% endif %}>
+            {{ m.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label><i class="fa-regular fa-calendar-days"></i> کل روزهای تعلیمی در ماه</label>
         <input
           class="input-control text-center font-bold"
-          name="all_days"
           id="all-days-input"
           type="number"
-          value="24"
+          value="{{ all_days }}"
           min="1"
           max="31"
         />
       </div>
 
       <div class="input-group">
-        <label>فیلتر سریع شاگردان</label>
+        <label><i class="fa-solid fa-magnifying-glass"></i> جستجوی سریع شاگرد</label>
         <input
           class="input-control"
-          name="search"
           id="search-input"
           type="text"
           placeholder="نام، ولد، کد اساس..."
@@ -88,165 +111,226 @@
 
   <!-- KPI Statistics Grid -->
   <div class="kpi-grid">
-    <div class="kpi-card">
+    <div class="kpi-card" style="border: 1px solid #e2e8f0;">
       <div class="kpi-header">
-        <span>میانگین حاضری صنف</span>
-        <div class="kpi-icon bg-icon-secondary">
-          <i class="fas fa-percent"></i>
+        <span>اوسط حاضری صنف</span>
+        <div class="kpi-icon" style="color: #059669; font-size: 20px;">
+          <i class="fa-solid fa-percent"></i>
         </div>
       </div>
-      <div class="kpi-value text-primary" id="kpi-rate">۹۴.۲٪</div>
+      <div class="kpi-value text-primary" id="kpi-rate" style="color: #1e3a8a;">{{ class_avg_rate }}٪</div>
       <div class="progress-track">
         <div
-          class="progress-bar bg-secondary"
+          class="progress-bar"
           id="kpi-bar"
-          style="width: 94.2%"
+          style="width: {{ class_avg_rate }}%; background-color: #059669;"
         ></div>
       </div>
     </div>
 
-    <div class="kpi-card">
+    <div class="kpi-card" style="border: 1px solid #e2e8f0;">
+      <div class="kpi-header">
+        <span>تعداد شاگردان صنف</span>
+        <div class="kpi-icon" style="color: #2563eb; font-size: 20px;">
+          <i class="fa-solid fa-user-graduate"></i>
+        </div>
+      </div>
+      <div class="kpi-value" style="color: #1e293b;" id="kpi-student-count">{{ student_count }} نفر</div>
+      <div class="kpi-footer" style="color: #64748b; font-size: 12px; margin-top: 6px;">
+        ثبت‌نام رسمی در این صنف
+      </div>
+    </div>
+
+    <div class="kpi-card" style="border: 1px solid #e2e8f0;">
       <div class="kpi-header">
         <span>مجموع روزهای تعلیمی</span>
-        <div class="kpi-icon bg-icon-primary">
-          <i class="fas fa-calendar-alt"></i>
+        <div class="kpi-icon" style="color: #3b82f6; font-size: 20px;">
+          <i class="fa-solid fa-calendar-day"></i>
         </div>
       </div>
-      <div class="kpi-value text-primary" id="kpi-total-days">۲۴</div>
-      <div class="kpi-footer">تقویم آموزشی رسمی</div>
+      <div class="kpi-value text-primary" id="kpi-total-days" style="color: #1e3a8a;">{{ all_days }}</div>
+      <div class="kpi-footer" style="color: #64748b; font-size: 12px; margin-top: 6px;">روز رسمی طبق تقویم معارف</div>
     </div>
 
-    <div class="kpi-card">
+    <div class="kpi-card" style="border: 1px solid #e2e8f0;">
       <div class="kpi-header">
-        <span>مجموع غیرحاضری</span>
-        <div class="kpi-icon bg-icon-error">
-          <i class="fas fa-user-slash"></i>
+        <span>مجموع غیرحاضری صنف</span>
+        <div class="kpi-icon" style="color: #dc2626; font-size: 20px;">
+          <i class="fa-solid fa-user-xmark"></i>
         </div>
       </div>
-      <div class="kpi-value text-error" id="kpi-absent">۳۴</div>
-      <div class="kpi-footer text-error">۲ شاگرد در آستانه محرومیت</div>
+      <div class="kpi-value text-error" id="kpi-absent" style="color: #dc2626;">{{ total_absent_sum }}</div>
+      <div class="kpi-footer text-error" style="color: #dc2626; font-size: 12px; margin-top: 6px;">مجموع ایام غیرموجه</div>
     </div>
   </div>
 
-  <!-- Students Data Table -->
-  <div class="card table-card">
-    <div class="table-wrapper">
-      <table class="data-table" id="attendance-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>مشخصات شاگرد</th>
-            <th class="text-center">کل ایام</th>
-            <th class="text-center">حاضر</th>
-            <th class="text-center">غیرحاضر</th>
-            <th class="text-center">مریض</th>
-            <th class="text-center">رخصت</th>
-            <th class="text-center">فیصدی حضور</th>
-            
-          </tr>
-        </thead>
-        <tbody>
-          {% for attendence in attendences %}
+  <!-- Form for Batch Updating Attendance -->
+  <form method="POST" id="attendance-form" action="">
+    {% csrf_token %}
+    <input type="hidden" name="academic_year" value="{{ selected_year.id }}">
+    <input type="hidden" name="class" value="{{ selected_class.id }}">
+    <input type="hidden" name="month" value="{{ selected_month.id }}">
+    <input type="hidden" name="all_days" id="hidden-all-days" value="{{ all_days }}">
 
-          <!-- Student 1: Excellent -->
-          <tr
-            class="student-row"
-            data-name="{{ attendence.student.name }}"
-            data-parent="{{ attendence.student.fname }}"
-            data-code="{{ attendence.student.school_id }}"
-          >
-          <input class="st-detail" type="text" name="student_detail" value={{attendence.student.school_id}}>
-            <td class="text-center font-bold">۱</td>
-            <td>
-              <div class="student-info">
-                <div class="student-details">
-                  <strong>{{ attendence.student.name }}</strong>
-                  <span class="text-muted"
-                    >ولد: {{ attendence.student.fname  }} | اساس: {{ attendence.student.school_id }}</span
-                  >
+    <!-- Students Data Table -->
+    <div class="card table-card" style="border: 1px solid #e2e8f0;">
+      <div class="table-wrapper">
+        <table class="data-table" id="attendance-table">
+          <thead>
+            <tr>
+              <th style="width: 40px; text-align: center;">#</th>
+              <th>مشخصات شاگرد</th>
+              <th class="text-center" style="width: 90px;">کل ایام</th>
+              <th class="text-center" style="width: 100px; color: #059669;">حاضر</th>
+              <th class="text-center" style="width: 100px; color: #dc2626;">غیرحاضر</th>
+              <th class="text-center" style="width: 100px; color: #d97706;">مریض</th>
+              <th class="text-center" style="width: 100px; color: #2563eb;">رخصت</th>
+              <th class="text-center" style="width: 130px;">فیصدی حضور</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if student_rows %}
+            {% for item in student_rows %}
+            <tr
+              class="student-row"
+              data-name="{{ item.student.name }}"
+              data-parent="{{ item.student.fname }}"
+              data-code="{{ item.student.school_id }}"
+            >
+              <td class="text-center font-bold" style="color: #64748b;">
+                {{ forloop.counter }}
+              </td>
+              <td>
+                <div class="student-info" style="display: flex; align-items: center; gap: 10px;">
+                  <i class="fa-solid fa-circle-user" style="font-size: 28px; color: #94a3b8;"></i>
+                  <div class="student-details">
+                    <strong style="color: #0f172a; font-size: 14.5px;">{{ item.student.name }}</strong>
+                    <span class="text-muted" style="display: block; font-size: 12px; color: #64748b;">
+                      ولد: {{ item.student.fname }} | شماره اساس: {{ item.student.school_id }}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </td>
-            <td class="text-center">
-              <span class="badge badge-surface row-alldays">۲۴</span>
-            </td>
-            <td class="text-center">
-              <input
-                class="input-control input-number input-present"
-                type="number"
-                name="present"
-                value="22"
-                max="24"
-                min="0"
-              />
-            </td>
-            <td class="text-center">
-              <input
-                class="input-control input-number input-absent"
-                type="number"
-                name="absent"
-                value="0"
-                max="24"
-                min="0"
-              />
-            </td>
-            <td class="text-center">
-              <input
-                class="input-control input-number input-excused"
-                type="number"
-                value="2"
-                name="sick"
-                max="24"
-                min="0"
-              />
-            </td>
-                <td>
-              <input
-                class="input-control"
-                type="number"
-                name="excused"
-                value="0"
-              />
-            </td>
-            <td>
-              <div class="pct-container">
-                <span class="pct-label text-secondary font-bold">۹۱.۷٪</span>
-                <div class="progress-track">
-                  <div
-                    class="progress-bar bg-secondary pct-bar"
-                    style="width: 91.7%"
-                  ></div>
+              </td>
+              <td class="text-center">
+                <span class="badge row-alldays" style="background: #f1f5f9; color: #334155; font-weight: bold;">
+                  {{ all_days }}
+                </span>
+              </td>
+              <td class="text-center">
+                <input
+                  class="input-control input-number input-present"
+                  type="number"
+                  name="present_{{ item.student.id }}"
+                  value="{{ item.present }}"
+                  min="0"
+                  max="31"
+                  required
+                />
+              </td>
+              <td class="text-center">
+                <input
+                  class="input-control input-number input-absent"
+                  type="number"
+                  name="absent_{{ item.student.id }}"
+                  value="{{ item.absent }}"
+                  min="0"
+                  max="31"
+                  required
+                />
+              </td>
+              <td class="text-center">
+                <input
+                  class="input-control input-number input-sick"
+                  type="number"
+                  name="sick_{{ item.student.id }}"
+                  value="{{ item.sick }}"
+                  min="0"
+                  max="31"
+                  required
+                />
+              </td>
+              <td class="text-center">
+                <input
+                  class="input-control input-number input-excused"
+                  type="number"
+                  name="excused_{{ item.student.id }}"
+                  value="{{ item.excused }}"
+                  min="0"
+                  max="31"
+                  required
+                />
+              </td>
+              <td>
+                <div class="pct-container" style="display: flex; flex-direction: column; gap: 4px;">
+                  <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                    <span class="pct-label font-bold" style="color: {% if item.percentage >= 85 %}#059669{% elif item.percentage >= 70 %}#d97706{% else %}#dc2626{% endif %};">
+                      {{ item.percentage }}٪
+                    </span>
+                  </div>
+                  <div class="progress-track" style="height: 6px; background: #e2e8f0; border-radius: 4px;">
+                    <div
+                      class="progress-bar pct-bar"
+                      style="width: {{ item.percentage }}%; height: 100%; border-radius: 4px; background-color: {% if item.percentage >= 85 %}#059669{% elif item.percentage >= 70 %}#d97706{% else %}#dc2626{% endif %};"
+                    ></div>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
+              </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+              <td colspan="8" style="text-align: center; padding: 40px; color: #94a3b8;">
+                <i class="fa-solid fa-users-slash" style="font-size: 36px; margin-bottom: 12px; display: block; color: #cbd5e1;"></i>
+                هیچ دانش‌آموزی در صنف {{ selected_class.grade }} - {{ selected_class.section }} ثبت‌نام نگردیده است.
+              </td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-          {% endfor %}
-        </tbody>
-      </table>
+    <!-- Bottom Sticky Action Bar -->
+    <div class="bottom-action-bar">
+      <div class="summary-info" style="display: flex; align-items: center; gap: 16px;">
+        <strong style="color: #1e3a8a; font-size: 15px;">
+          <i class="fa-solid fa-graduation-cap"></i>
+          {{ student_count }} دانش‌آموز در صنف {{ selected_class.grade }} - شعبۀ {{ selected_class.section }}
+        </strong>
+        <span style="color: #64748b; font-size: 13px;">
+          (ماه {{ selected_month.name }} | {{ all_days }} روز کاری)
+        </span>
+      </div>
+      <div class="action-buttons" style="display: flex; gap: 12px;">
+        <button type="button" class="btn btn-surface" id="autofill-btn-bottom">
+          <i class="fa-solid fa-check-double text-secondary" style="color: #059669;"></i>
+          <span>پیش‌فرض همه حاضر</span>
+        </button>
+        <button type="submit" class="btn btn-primary" id="submit-confirm-btn">
+          <i class="fa-solid fa-floppy-disk"></i>
+          <span>تأیید و ذخیره کارنامه نهایی</span>
+        </button>
+      </div>
     </div>
-  </div>
+  </form>
 
-  <!-- Bottom Sticky Action Bar -->
-  <div class="bottom-action-bar">
-    <div class="summary-info">
-      <strong>۳۲ شاگرد در صنف دهم الف</strong>
-    </div>
-    <div class="action-buttons">
-      <a href="#" class="btn btn-ghost" id="save-draft-btn">پیش‌نویس موقت</a>
-      <button type="submit" class="btn btn-primary" id="submit-confirm-btn">
-        تأیید و ذخیره کارنامه
-      </button>
-    </div>
-  </div>
-</form>
   <!-- Toast Notification -->
   <div class="toast" id="toast">
-    <i class="fas fa-check-circle text-secondary"></i>
-    <span id="toast-msg">تغییرات ذخیره شد</span>
+    <i class="fa-solid fa-circle-check text-secondary" style="color: #10b981;"></i>
+    <span id="toast-msg">تغییرات با موفقیت اعمال گردید</span>
   </div>
 </main>
+{% endblock content %}
 
-{% endblock content %} {% block js %}
+{% block js %}
+<script>
+  function reloadClassRoster() {
+    const yr = document.getElementById('academic-year-select').value;
+    const cls = document.getElementById('class-select').value;
+    const mth = document.getElementById('month-select').value;
+    const days = document.getElementById('all-days-input').value;
+    window.location.href = `{% url 'dashboard:attendence-edite' %}?academic_year=${yr}&class=${cls}&month=${mth}&all_days=${days}`;
+  }
+</script>
 <script src="{% static 'dashboard/js/attendence_edite.js' %}"></script>
 {% endblock js %}

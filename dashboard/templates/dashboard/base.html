@@ -4,11 +4,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>داشبورد</title>
+    <title>{% block title %}پورتال مدیریت آموزشی | لیسه عالی اهل بیت (ص){% endblock title %}</title>
+
+    <!-- Google Font Vazirmatn for crisp Persian typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- FontAwesome -->
     <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}" />
-
     <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}" />
 
     {% block style %} {% endblock style %}
@@ -22,56 +26,56 @@
             <img
               class="side-logo"
               src="{% static 'accounts/logo.png' %}"
-              alt=""
+              alt="لوگوی مکتب"
             />
           </div>
           <div class="brand-text">
-            <h4>لیسه عالی خصوصی اهل بیت رسوالله (ص)</h4>
-            <span>پورتال مدیریت</span>
+            <h4>لیسه عالی خصوصی اهل بیت رسول‌الله (ص)</h4>
+            <span>سامانه جامع مدیریت و نظارت تعلیمی</span>
           </div>
         </div>
 
         <nav class="sidebar-nav">
           <ul>
-            <li
-              id="dasboard"
-              class="{% if request.resolver_match.url_name == 'admin-dashboard' %}active{% endif %}"
-            >
-              <a href="{% url 'dashboard:admin-dashboard' %}"
-                ><i class="fa-solid fa-table-columns"></i> داشبورد</a
-              >
+            <li class="{% if request.resolver_match.url_name == 'admin-dashboard' %}active{% endif %}">
+              <a href="{% url 'dashboard:admin-dashboard' %}">
+                <i class="fa-solid fa-table-columns"></i> داشبورد
+              </a>
             </li>
-            <li id="teachers"
-            class="{% if request.resolver_match.url_name == 'worker-list' %}active{% endif %}">
-              <a href="{% url 'dashboard:worker-list' %}"><i class="fa-solid fa-users"></i> کارمندان و اساتید</a>
+            <li class="{% if 'worker' in request.resolver_match.url_name %}active{% endif %}">
+              <a href="{% url 'dashboard:worker-list' %}">
+                <i class="fa-solid fa-users"></i> کارمندان و اساتید
+              </a>
             </li>
-            <li
-              id="students"
-              class="{% if request.resolver_match.url_name == 'student-list' %}active{% endif %}"
-            >
-              <a href="{% url 'dashboard:student-list' %}"
-                ><i class="fa-solid fa-user-graduate"></i> دانش‌آموزان</a
-              >
+            <li class="{% if 'student' in request.resolver_match.url_name %}active{% endif %}">
+              <a href="{% url 'dashboard:student-list' %}">
+                <i class="fa-solid fa-user-graduate"></i> دانش‌آموزان
+              </a>
             </li>
-
-            <li>
-              <a href="{% url 'dashboard:class-list' %}"
-                ><i class="fa-solid fa-chalkboard-user"></i> صنف ها</a
-              >
+            <li class="{% if 'class' in request.resolver_match.url_name %}active{% endif %}">
+              <a href="{% url 'dashboard:class-list' %}">
+                <i class="fa-solid fa-chalkboard-user"></i> صنف‌ها
+              </a>
             </li>
-            <li>
-              <a href="{% url 'dashboard:attendence-list' %}"
-                ><i class="fa-solid fa-calendar-check"></i> حاضری</a
-              >
+            <li class="{% if 'attendence' in request.resolver_match.url_name %}active{% endif %}">
+              <a href="{% url 'dashboard:attendence-list' %}">
+                <i class="fa-solid fa-calendar-check"></i> حاضری و غیاب
+              </a>
             </li>
-            <li>
-              <a href="{% url 'dashboard:assesment-list' %}"><i class="fa-regular fa-file-lines"></i> ارزیابی های ماهوار</a>
+            <li class="{% if 'assesment' in request.resolver_match.url_name %}active{% endif %}">
+              <a href="{% url 'dashboard:assesment-list' %}">
+                <i class="fa-regular fa-file-lines"></i> ارزیابی‌های ماهوار
+              </a>
             </li>
-            <li>
-              <a href="{% url 'dashboard:exam-list' %}"><i class="fa-solid fa-trophy"></i> امتحانات</a>
+            <li class="{% if 'exam' in request.resolver_match.url_name %}active{% endif %}">
+              <a href="{% url 'dashboard:exam-list' %}">
+                <i class="fa-solid fa-trophy"></i> امتحانات
+              </a>
             </li>
             <li>
-              <a href="#"><i class="fa-solid fa-gear"></i> تنظیمات</a>
+              <a href="{% url 'dashboard:admin-dashboard' %}">
+                <i class="fa-solid fa-gear"></i> تنظیمات سیستم
+              </a>
             </li>
           </ul>
         </nav>
@@ -80,9 +84,9 @@
           <div class="user-card">
             <div class="user-info">
               <i class="fa-solid fa-user-circle"></i>
-              <span>کاربر مدیر</span>
+              <span>{% if request.user.name %}{{ request.user.name }} {{ request.user.last_name }}{% else %}مدیر سیستم{% endif %}</span>
             </div>
-            <span class="badge">مدیر</span>
+            <span class="badge">مدیریت</span>
           </div>
         </div>
       </aside>
@@ -94,15 +98,41 @@
               <i class="fa-solid fa-magnifying-glass"></i>
               <input type="text" placeholder="جستجو در سوابق سیستم..." />
             </div>
-            <a href="#" class="icon-btn"><i class="fa-regular fa-bell"></i></a>
-            <a href="#" class="icon-btn"
-              ><i class="fa-regular fa-circle-question"></i
-            ></a>
+            {% if jalali_date_str %}
+            <div class="academic-date-pill">
+              <i class="fa-regular fa-calendar-days"></i>
+              <span>امروز: {{ jalali_date_str }}</span>
+            </div>
+            {% endif %}
+            <a href="#" class="icon-btn" title="اعلان‌ها"><i class="fa-regular fa-bell"></i></a>
+            <a href="#" class="icon-btn" title="راهنما"><i class="fa-regular fa-circle-question"></i></a>
           </div>
           <a href="{% url 'accounts:logout' %}" class="btn-logout">
             خروج <i class="fa-solid fa-arrow-right-from-bracket"></i>
-        </a>
+          </a>
         </header>
+
+        {% if messages %}
+        <div class="messages-container">
+          {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }}">
+            <div class="alert-icon">
+              {% if message.tags == 'success' %}
+                <i class="fa-solid fa-circle-check"></i>
+              {% elif message.tags == 'error' or message.tags == 'danger' %}
+                <i class="fa-solid fa-circle-exclamation"></i>
+              {% elif message.tags == 'warning' %}
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              {% else %}
+                <i class="fa-solid fa-circle-info"></i>
+              {% endif %}
+              <span>{{ message }}</span>
+            </div>
+            <button type="button" class="alert-close" onclick="this.closest('.alert').remove()">&times;</button>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
 
         {% block content %} {% endblock content %}
       </main>

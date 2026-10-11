@@ -1,147 +1,184 @@
 document.addEventListener('DOMContentLoaded', () => {
-    
     // ==========================================
     // 1. DOM Elements
     // ==========================================
     const allDaysInput = document.getElementById('all-days-input');
+    const hiddenAllDays = document.getElementById('hidden-all-days');
     const table = document.getElementById('attendance-table');
     const searchInput = document.getElementById('search-input');
     const autofillBtn = document.getElementById('autofill-btn');
-    const saveDraftBtn = document.getElementById('save-draft-btn');
-    const submitConfirmBtn = document.getElementById('submit-confirm-btn');
+    const autofillBtnBottom = document.getElementById('autofill-btn-bottom');
     const toast = document.getElementById('toast');
     const toastMsg = document.getElementById('toast-msg');
 
+    const kpiRate = document.getElementById('kpi-rate');
+    const kpiBar = document.getElementById('kpi-bar');
+    const kpiTotalDays = document.getElementById('kpi-total-days');
+    const kpiAbsent = document.getElementById('kpi-absent');
+
     // ==========================================
-    // 2. UI Feedback Functions
+    // 2. Feedback Notification Toast
     // ==========================================
     function showToast(message) {
-        if (!toast) return;
+        if (!toast || !toastMsg) return;
         toastMsg.textContent = message;
         toast.classList.add('show');
-        
         setTimeout(() => {
             toast.classList.remove('show');
-        }, 3000);
+        }, 3200);
     }
 
     // ==========================================
-    // 3. Core Logic Functions
+    // 3. Calculation Logic
     // ==========================================
-    
-    // Calculates attendance percentage for a single row
     function recalculateRow(row) {
-        const allDays = parseInt(allDaysInput.value, 10) || 24;
+        const allDays = parseInt(allDaysInput ? allDaysInput.value : 24, 10) || 24;
         const presentInput = row.querySelector('.input-present');
         const absentInput = row.querySelector('.input-absent');
+        const sickInput = row.querySelector('.input-sick');
         const excusedInput = row.querySelector('.input-excused');
-        
+
         const pctLabel = row.querySelector('.pct-label');
         const pctBar = row.querySelector('.pct-bar');
         const rowAllDaysLabel = row.querySelector('.row-alldays');
 
-        // Update the display for 'Total Days' in this specific row
         if (rowAllDaysLabel) rowAllDaysLabel.textContent = allDays;
 
-        const presentDays = parseInt(presentInput.value, 10) || 0;
-        const excusedDays = parseInt(excusedInput.value, 10) || 0;
-        
-        // Math: (Present / AllDays) * 100
-        const percentage = Math.min(100, Math.max(0, Math.round((presentDays / allDays) * 1000) / 10));
+        const presentDays = parseInt(presentInput ? presentInput.value : 0, 10) || 0;
 
-        // Update UI
-        pctLabel.textContent = percentage + '٪';
-        pctBar.style.width = percentage + '%';
+        const percentage = allDays > 0
+            ? Math.min(100, Math.max(0, Math.round((presentDays / allDays) * 1000) / 10))
+            : 0;
 
-        // Apply colors based on health of attendance
-        if (percentage >= 90) {
-            pctLabel.className = 'pct-label text-secondary font-bold';
-            pctBar.className = 'progress-bar bg-secondary pct-bar';
-        } else if (percentage >= 75) {
-            pctLabel.className = 'pct-label font-bold text-muted';
-            pctBar.className = 'progress-bar bg-primary pct-bar';
-        } else {
-            pctLabel.className = 'pct-label text-error font-bold';
-            pctBar.className = 'progress-bar bg-error pct-bar';
+        if (pctLabel) pctLabel.textContent = percentage + '٪';
+        if (pctBar) pctBar.style.width = percentage + '%';
+
+        // Health color coding
+        let color = '#dc2626';
+        if (percentage >= 85) {
+            color = '#059669';
+        } else if (percentage >= 70) {
+            color = '#d97706';
+        }
+
+        if (pctLabel) pctLabel.style.color = color;
+        if (pctBar) pctBar.style.backgroundColor = color;
+    }
+
+    function recalculateOverallKPIs() {
+        if (!table) return;
+        const rows = table.querySelectorAll('.student-row');
+        const allDays = parseInt(allDaysInput ? allDaysInput.value : 24, 10) || 24;
+
+        let totalPresent = 0;
+        let totalAbsent = 0;
+        let totalStudents = rows.length;
+
+        rows.forEach(row => {
+            const p = parseInt(row.querySelector('.input-present')?.value || 0, 10) || 0;
+            const a = parseInt(row.querySelector('.input-absent')?.value || 0, 10) || 0;
+            totalPresent += p;
+            totalAbsent += a;
+        });
+
+        if (kpiAbsent) kpiAbsent.textContent = totalAbsent;
+
+        const maxPossibleDays = totalStudents * allDays;
+        const avgPercentage = maxPossibleDays > 0
+            ? Math.min(100, Math.max(0, Math.round((totalPresent / maxPossibleDays) * 1000) / 10))
+            : 0;
+
+        if (kpiRate) kpiRate.textContent = avgPercentage + '٪';
+        if (kpiBar) {
+            kpiBar.style.width = avgPercentage + '%';
+            kpiBar.style.backgroundColor = avgPercentage >= 85 ? '#059669' : (avgPercentage >= 70 ? '#d97706' : '#dc2626');
         }
     }
 
-    // Loops through all students to recalculate
-    function recalculateAllRows() {
+    function recalculateAll() {
+        if (!table) return;
         const rows = table.querySelectorAll('.student-row');
         rows.forEach(row => recalculateRow(row));
+        recalculateOverallKPIs();
     }
 
     // ==========================================
-    // 4. Event Listeners
+    // 4. Auto-Fill All Present Handler
     // ==========================================
-    
-    // When the global "Total Days" input changes
+    function triggerAutofill() {
+        const allDays = parseInt(allDaysInput ? allDaysInput.value : 24, 10) || 24;
+        if (!table) return;
+        const rows = table.querySelectorAll('.student-row');
+
+        rows.forEach(row => {
+            const presentInput = row.querySelector('.input-present');
+            const absentInput = row.querySelector('.input-absent');
+            const sickInput = row.querySelector('.input-sick');
+            const excusedInput = row.querySelector('.input-excused');
+
+            if (presentInput) presentInput.value = allDays;
+            if (absentInput) absentInput.value = 0;
+            if (sickInput) sickInput.value = 0;
+            if (excusedInput) excusedInput.value = 0;
+            recalculateRow(row);
+        });
+
+        recalculateOverallKPIs();
+        showToast(`حاضری تمام شاگردان روی ${allDays} روز حاضر تنظیم شد.`);
+    }
+
+    if (autofillBtn) autofillBtn.addEventListener('click', triggerAutofill);
+    if (autofillBtnBottom) autofillBtnBottom.addEventListener('click', triggerAutofill);
+
+    // ==========================================
+    // 5. Total Days Change Event
+    // ==========================================
     if (allDaysInput) {
         allDaysInput.addEventListener('input', () => {
             const newTotal = parseInt(allDaysInput.value, 10) || 24;
-            const kpiTotalDays = document.getElementById('kpi-total-days');
+            if (hiddenAllDays) hiddenAllDays.value = newTotal;
             if (kpiTotalDays) kpiTotalDays.textContent = newTotal;
-            
-            recalculateAllRows();
+            recalculateAll();
         });
     }
 
-    // When any number input inside the table changes (Event Delegation)
+    // ==========================================
+    // 6. Table Number Inputs Delegation
+    // ==========================================
     if (table) {
         table.addEventListener('input', (event) => {
-            if (event.target.matches('.input-present, .input-absent, .input-excused')) {
+            if (event.target.matches('.input-present, .input-absent, .input-sick, .input-excused')) {
                 const parentRow = event.target.closest('.student-row');
-                if (parentRow) recalculateRow(parentRow);
+                if (parentRow) {
+                    recalculateRow(parentRow);
+                    recalculateOverallKPIs();
+                }
             }
         });
     }
 
-    // Search / Filter functionality
-    if (searchInput) {
+    // ==========================================
+    // 7. Instant Search Filter
+    // ==========================================
+    if (searchInput && table) {
         searchInput.addEventListener('input', () => {
             const query = searchInput.value.trim().toLowerCase();
             const rows = table.querySelectorAll('.student-row');
-            
+
             rows.forEach(row => {
                 const name = (row.dataset.name || '').toLowerCase();
                 const parent = (row.dataset.parent || '').toLowerCase();
                 const code = (row.dataset.code || '').toLowerCase();
-                
+
                 if (name.includes(query) || parent.includes(query) || code.includes(query)) {
-                    row.style.display = ''; // Show
+                    row.style.display = '';
                 } else {
-                    row.style.display = 'none'; // Hide
+                    row.style.display = 'none';
                 }
             });
         });
     }
 
-    // Auto-fill button: Sets all students to perfect attendance
-    if (autofillBtn) {
-        autofillBtn.addEventListener('click', () => {
-            const allDays = parseInt(allDaysInput.value, 10) || 24;
-            const rows = table.querySelectorAll('.student-row');
-            
-            rows.forEach(row => {
-                row.querySelector('.input-present').value = allDays;
-                row.querySelector('.input-absent').value = 0;
-                row.querySelector('.input-excused').value = 0;
-                recalculateRow(row);
-            });
-            showToast(`حاضری تمام شاگردان روی ${allDays} روز تنظیم شد`);
-        });
-    }
-
-    // Action Buttons
-    if (saveDraftBtn) {
-        saveDraftBtn.addEventListener('click', () => showToast('پیش‌نویس موقت با موفقیت ذخیره شد'));
-    }
-
-    if (submitConfirmBtn) {
-        submitConfirmBtn.addEventListener('click', () => showToast('کارنامه حاضری نهایی و ارسال گردید'));
-    }
-
-    // Initialize the math on page load
-    recalculateAllRows();
+    // Initialize calculations on initial page render
+    recalculateAll();
 });

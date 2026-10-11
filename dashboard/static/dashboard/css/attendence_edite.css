@@ -49,44 +49,31 @@ button {
 /* =========================================
    3. Layout
    ========================================= */
-.app-layout {
-    padding-right: 280px;
-    /* Sidebar width */
-}
-
-.header {
-    position: fixed;
-    top: 0;
-    right: 280px;
-    left: 0;
-    height: 64px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 24px;
-    z-index: 40;
-    border-bottom: 1px solid var(--color-surface-border);
-}
-
-.main-content {
-    padding: 88px 24px 120px 24px;
-    min-height: 100vh;
+.container {
+    padding: 24px;
+    padding-bottom: 90px;
 }
 
 .bottom-action-bar {
     position: fixed;
     bottom: 0;
-    right: 280px;
+    right: 260px;
     left: 0;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 16px 24px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid #e2e8f0;
+    padding: 14px 28px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: var(--shadow-float);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
     z-index: 30;
+}
+
+@media (max-width: 768px) {
+    .bottom-action-bar {
+        right: 0;
+    }
 }
 
 /* =========================================

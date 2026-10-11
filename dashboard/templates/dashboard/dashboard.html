@@ -1,68 +1,96 @@
-{% extends 'dashboard/base.html' %} {% load static %} {% block content %}
+{% extends 'dashboard/base.html' %}
+{% load static %}
 
+{% block title %}داشبورد مدیریت آموزشی | لیسه عالی اهل بیت (ص){% endblock title %}
+
+{% block content %}
 <!-- Dashboard Content Area -->
 <div class="content-body">
   <!-- Greeting & Action Bar -->
   <div class="greeting-area">
     <div>
-      <h1>خوش آمدید، مدیر</h1>
-      <span class="date">۱۴۰۲ آبان ۲</span>
+      <h1>خوش آمدید، {% if request.user.name %}{{ request.user.name }} {{ request.user.last_name }}{% else %}مدیر محترم{% endif %}</h1>
+      <span class="date">
+        <i class="fa-regular fa-calendar-check"></i> تقویم هجری شمسی: {{ jalali_date_str }}
+      </span>
     </div>
     <div class="action-buttons">
-      <button class="btn-outline">
-        <i class="fa-regular fa-file-lines"></i> چاپ گزارش روزانه
-      </button>
-      <button class="btn-primary">
-        <i class="fa-solid fa-plus"></i> افزودن دانش‌آموز جدید
-      </button>
+      <a href="{% url 'dashboard:attendence-create' %}" class="btn-primary">
+        <i class="fa-solid fa-calendar-plus"></i> ثبت حاضری جدید
+      </a>
+      <a href="{% url 'dashboard:student-register' %}" class="btn-outline">
+        <i class="fa-solid fa-user-plus"></i> ثبت‌نام دانش‌آموز جدید
+      </a>
     </div>
   </div>
 
   <!-- Stat Cards Row -->
   <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-icon red">
-        <i class="fa-regular fa-clock"></i>
-      </div>
-      <div class="stat-info">
-        <span class="stat-label">امتحانات پیش رو</span>
-        <span class="stat-number">۱۲</span>
-      </div>
-      <div class="stat-footer">فردی: فیزیک (ساعت ۱۰ - ۱۲)</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon yellow">
-        <i class="fa-regular fa-calendar"></i>
-      </div>
-      <div class="stat-info">
-        <span class="stat-label"
-          >نرخ حاضری <span class="tag tag-today">امروز</span></span
-        >
-        <span class="stat-number">۹۴.۲٪</span>
-      </div>
-      <div class="stat-progress">
-        <div class="progress-bar" style="width: 94.2%"></div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon blue">
-        <i class="fa-solid fa-users"></i>
-      </div>
-      <div class="stat-info">
-        <span class="stat-label">کل کارکنان</span>
-        <span class="stat-number">۸۴</span>
-      </div>
-      <div class="stat-footer">آموزشی: ۶۳، اداری: ۲۱</div>
-    </div>
+    <!-- Card 1: Students -->
     <div class="stat-card">
       <div class="stat-icon green">
         <i class="fa-solid fa-user-graduate"></i>
       </div>
       <div class="stat-info">
         <span class="stat-label">کل دانش‌آموزان</span>
-        <span class="stat-number">۱،۲۴۰</span>
+        <span class="stat-number">{{ students_count }}</span>
       </div>
-      <div class="stat-footer">بت‌نام شده در ۴۸ س</div>
+      <div class="stat-footer">
+        <a href="{% url 'dashboard:student-list' %}" style="color: inherit; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+          <span>مشاهده لیست شاگردان</span>
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Card 2: Attendance Rate -->
+    <div class="stat-card">
+      <div class="stat-icon yellow">
+        <i class="fa-solid fa-chart-pie"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">
+          میانگین حاضری مکتب <span class="tag tag-today">سالیانه</span>
+        </span>
+        <span class="stat-number">{{ overall_attendance_rate }}٪</span>
+      </div>
+      <div class="stat-progress">
+        <div class="progress-bar" style="width: {{ overall_attendance_rate }}%; background-color: #10b981;"></div>
+      </div>
+    </div>
+
+    <!-- Card 3: Teachers & Staff -->
+    <div class="stat-card">
+      <div class="stat-icon blue">
+        <i class="fa-solid fa-chalkboard-user"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">اساتید و کارمندان</span>
+        <span class="stat-number">{{ teachers_count }}</span>
+      </div>
+      <div class="stat-footer">
+        <a href="{% url 'dashboard:worker-list' %}" style="color: inherit; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+          <span>کادر علمی و اداری</span>
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Card 4: Classes -->
+    <div class="stat-card">
+      <div class="stat-icon red">
+        <i class="fa-solid fa-school"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">صنف‌های فعال</span>
+        <span class="stat-number">{{ classes_count }}</span>
+      </div>
+      <div class="stat-footer">
+        <a href="{% url 'dashboard:class-list' %}" style="color: inherit; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+          <span>تمام شعبات و پایه‌ها</span>
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+      </div>
     </div>
   </div>
 
@@ -72,114 +100,128 @@
     <div class="col-left">
       <div class="card">
         <div class="card-header">
-          <h3>دسترسی سریع</h3>
+          <h3><i class="fa-solid fa-bolt text-warning" style="margin-left: 8px;"></i> دسترسی سریع عملیاتی</h3>
         </div>
         <div class="quick-access-list">
-          <a href="#" class="qa-item"
-            ><i href="{% url 'dashboard:student-register' %}" class="fa-solid fa-user-plus blue-icon"></i> افزودن دانش‌آموز
-            جدید <span>ثبت‌نام و ویرایش</span></a
-          >
-          <a href="#" class="qa-item"
-            ><i class="fa-solid fa-chart-simple green-icon"></i> مشاهده گزارش‌ها
-            <span>داده‌های آموزشی و مالی</span></a
-          >
-          <a href="#" class="qa-item"
-            ><i class="fa-regular fa-calendar-plus orange-icon"></i> زمان‌بندی
-            امتحان <span>مدیریت زمان و سالن‌ها</span></a
-          >
+          <a href="{% url 'dashboard:attendence-create' %}" class="qa-item">
+            <i class="fa-solid fa-clipboard-check green-icon"></i>
+            <div>
+              <strong>ثبت کارنامه حاضری</strong>
+              <span>ورود و ویرایش روزهای حضور و غیاب ماهوار</span>
+            </div>
+          </a>
+          <a href="{% url 'dashboard:student-register' %}" class="qa-item">
+            <i class="fa-solid fa-user-plus blue-icon"></i>
+            <div>
+              <strong>ثبت‌نام دانش‌آموز جدید</strong>
+              <span>فرم پذیرش و ثبت مشخصات هویتی و سکونت</span>
+            </div>
+          </a>
+          <a href="{% url 'dashboard:class-list' %}" class="qa-item">
+            <i class="fa-solid fa-chalkboard-user orange-icon"></i>
+            <div>
+              <strong>مدیریت صنف‌ها و ظرفیت</strong>
+              <span>تعیین اساتید راهنما و برنامه‌ریزی اوقات درسی</span>
+            </div>
+          </a>
+          <a href="{% url 'dashboard:exam-list' %}" class="qa-item">
+            <i class="fa-solid fa-trophy blue-icon"></i>
+            <div>
+              <strong>امتحانات و نمرات</strong>
+              <span>مدیریت نتایج و ثبت ارزیابی‌های چهارونیم ماهه</span>
+            </div>
+          </a>
         </div>
       </div>
 
       <div class="card status-card">
         <div class="status-header">
-          <span>وضعیت سیستم</span>
-          <div class="status-badge"><span class="dot"></span> فعال</div>
+          <span>وضعیت سامانه لیسه</span>
+          <div class="status-badge"><span class="dot"></span> برخط و آماده به کار</div>
         </div>
         <p class="status-desc">
-          تمام بخش‌های دیجیتال همگام‌سازی شده‌اند. پشتیبان‌گیری خودکار بعدی در ۴
-          ساعت.
+          پایگاه داده مکتب، کارنامه‌های حاضری، و پرونده‌های شاگردان همگام‌سازی شده و فعال می‌باشند.
         </p>
       </div>
     </div>
 
-    <!-- Recent Activities -->
+    <!-- Recent Students Table / Activity -->
     <div class="col-right">
       <div class="card">
-        <div class="card-header border-bottom">
-          <h3>فعالیت‌های اخیر</h3>
-          <a href="#" class="view-all">مشاهده همه سوابق</a>
+        <div class="card-header border-bottom" style="display: flex; justify-content: space-between; align-items: center;">
+          <h3><i class="fa-solid fa-user-graduate text-primary" style="margin-left: 8px;"></i> آخرین دانش‌آموزان ثبت‌شده</h3>
+          <a href="{% url 'dashboard:student-list' %}" class="view-all">مشاهده همه شاگردان ❮</a>
         </div>
-        <div class="activity-feed">
-          <div class="activity-item">
-            <div class="act-icon blue-bg">
-              <i class="fa-solid fa-user-plus"></i>
-            </div>
-            <div class="act-content">
-              <p>
-                <strong>دانش‌آموز جدید</strong> ثبـت‌نام کـاربر در صنف نهم-ج
-                ثبت‌نام شد.
-              </p>
-              <span class="act-time">۴ دقیقه پیش • توسط مسئول ثبت‌نام آقا</span>
-            </div>
-          </div>
-          <div class="activity-item">
-            <div class="act-icon green-bg">
-              <i class="fa-regular fa-calendar-check"></i>
-            </div>
-            <div class="act-content">
-              <p>
-                <strong>گزارش حاضری ماهانه</strong> (مهر) با موفقیت ایجاد
-                شد.
-              </p>
-              <span class="act-time">۲۶ دقیقه پیش • توسط سیستم خودکار</span>
-            </div>
-          </div>
-          <div class="activity-item">
-            <div class="act-icon yellow-bg">
-              <i class="fa-regular fa-bell"></i>
-            </div>
-            <div class="act-content">
-              <p>
-                <strong>هشدار برنامه:</strong> جلسه کارکنان ساعت ۱۵:۰۰ امروز.
-              </p>
-              <span class="act-time">۲ ساعت پیش • توسط دفتر مدیریت</span>
-            </div>
-          </div>
-          <div class="activity-item">
-            <div class="act-icon purple-bg">
-              <i class="fa-solid fa-graduation-cap"></i>
-            </div>
-            
-          </div>
+        <div style="padding: 16px 20px;">
+          {% if recent_students %}
+          <table style="width: 100%; border-collapse: collapse; font-size: 13.5px;">
+            <thead>
+              <tr style="border-bottom: 2px solid #f1f5f9; text-align: right; color: #64748b;">
+                <th style="padding: 10px 8px;">نام و تخلص</th>
+                <th style="padding: 10px 8px;">نام پدر</th>
+                <th style="padding: 10px 8px; text-align: center;">کد اساس</th>
+                <th style="padding: 10px 8px; text-align: center;">شماره تماس</th>
+                <th style="padding: 10px 8px; text-align: center;">عملیات</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for student in recent_students %}
+              <tr style="border-bottom: 1px solid #f8fafc; transition: background 0.2s;">
+                <td style="padding: 12px 8px; font-weight: 600; color: #1e293b;">
+                  <i class="fa-solid fa-circle-user" style="color: #3b82f6; margin-left: 6px;"></i>
+                  {{ student.name }}
+                </td>
+                <td style="padding: 12px 8px; color: #475569;">{{ student.fname }}</td>
+                <td style="padding: 12px 8px; text-align: center;">
+                  <span style="background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 6px; font-weight: 600; font-size: 12px;">
+                    {{ student.school_id }}
+                  </span>
+                </td>
+                <td style="padding: 12px 8px; text-align: center; color: #64748b; direction: ltr;">
+                  {{ student.phone }}
+                </td>
+                <td style="padding: 12px 8px; text-align: center;">
+                  <a href="{% url 'dashboard:student-detail' student.id %}" style="color: #2563eb; font-weight: 600; font-size: 12px;">
+                    مشاهده پرونده
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <p style="color: #94a3b8; text-align: center; padding: 20px;">هیچ دانش‌آموزی در سیستم ثبت نشده است.</p>
+          {% endif %}
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Bottom Row: Academic Calendar -->
-  <div class="calendar-row">
+  <!-- Bottom Row: Classes Overview -->
+  <div class="calendar-row" style="margin-top: 24px;">
     <div class="card">
-      <div class="card-header">
-        <h3>تقویم آموزشی</h3>
+      <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <h3><i class="fa-solid fa-chalkboard text-info" style="margin-left: 8px;"></i> مروری بر صنف‌ها و ظرفیت آموزشی</h3>
+        <a href="{% url 'dashboard:class-list' %}" class="view-all">مدیریت صنف‌ها ❮</a>
       </div>
-      <div class="calendar-list">
-        <div class="cal-item">
-          <div class="cal-date orange">
-            <span>میزان</span>
-            <strong>۰۶</strong>
+      <div style="padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px;">
+        {% for c in recent_classes %}
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <strong style="font-size: 15px; color: #0f172a;">صنف {{ c.grade }} - شعبۀ {{ c.section }}</strong>
+            <span style="background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold;">
+              {{ c.turn }}
+            </span>
           </div>
-         
+          <div style="font-size: 13px; color: #64748b; margin-bottom: 8px;">
+            استاد رهنما: {% if c.guidence %}{{ c.guidence.name }} {{ c.guidence.last_name }}{% else %}<span style="color: #f59e0b;">تعیین‌نشده</span>{% endif %}
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; color: #475569; margin-top: 10px; border-top: 1px dashed #e2e8f0; paddingTop: 8px;">
+            <span>ظرفیت: {{ c.capacity }} نفر</span>
+            <a href="{% url 'dashboard:class-detail' c.id %}" style="color: #2563eb; font-weight: bold;">جزئیات ❮</a>
+          </div>
         </div>
-        <div class="cal-item">
-          <div class="cal-date blue">
-            <span>میزان</span>
-            <strong>۱۴</strong>
-          </div>
-          <div class="cal-info">
-            <h4>روز ورزش سالانه</h4>
-            <p>استادیوم مرکزی، ساعت ۰۸:۰۰</p>
-          </div>
-        </div>
+        {% endfor %}
       </div>
     </div>
   </div>
@@ -189,13 +231,9 @@
 <footer class="app-footer">
   <div class="footer-links">
     <a href="#">سیاست حریم خصوصی</a>
-    <a href="#">پورتال پشتیبانی</a>
+    <a href="#">پورتال پشتیبانی و فنی</a>
   </div>
-  <span
-    >© ۲۰۲۶ سیستم‌های لیسه عالی خصوصی اهل بیت رسوالله (ص). تمامی حقوق محفوظ
-    است.</span
-  >
-  <span class="version">v2.4.12-Stable</span>
+  <span>© سیستم جامع مدیریت تعلیمی لیسه عالی خصوصی اهل بیت رسول‌الله (ص)</span>
+  <span class="version">نسخه آموزشی ۲.۵</span>
 </footer>
-
 {% endblock content %}

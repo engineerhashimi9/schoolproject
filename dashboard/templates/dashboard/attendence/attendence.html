@@ -1,24 +1,33 @@
-{% extends 'dashboard/base.html' %} {% load static %} {% block style %}
-<link rel="stylesheet" href="{% static 'dashboard/css/attendence.css' %}" />
-{% endblock style %} {% block content %}
+{% extends 'dashboard/base.html' %}
+{% load static %}
 
-<div class="container">
+{% block title %}مدیریت کارنامه حاضری و غیاب | لیسه عالی اهل بیت (ص){% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/attendence.css' %}" />
+{% endblock style %}
+
+{% block content %}
+<div class="container" style="padding: 24px;">
   <!-- Hero Header -->
   <div class="hero-header">
     <div class="hero-title-area">
       <div class="system-badge">
         <span class="dot" style="background-color: #60a5fa"></span>
-        سیستم نظارت انضباطی و حاضری دیجیتال
+        سامانه نظارت انضباطی و حاضری ماهوار شاگردان
       </div>
       <h1>مدیریت و کارنامه جامع حاضری و غیاب</h1>
       <p>
-        نظارت روزانه، ثبت کارکرد انضباطی، و پایش درصد حضور دانش‌آموزان صنف به
-        تفکیک رخصتی‌های موجه و غیرموجه.
+        پایش فیصدی حضور، ثبت کارکرد انضباطی ماهانه و تفکیک ایام حاضر، غیرحاضر، رخصتی و مریضی صنف‌ها.
       </p>
     </div>
     <div class="hero-actions">
-      <button class="btn btn-outline-dark">خروجی اکسل و PDF</button>
-      <a href="{% url 'dashboard:attendence-create' %}" class="btn btn-primary">+ ثبت حاضری این ماه</a>
+      <button type="button" class="btn btn-outline-dark" onclick="window.print()">
+        <i class="fa-solid fa-print"></i> چاپ کارنامه رسمی (PDF)
+      </button>
+      <a href="{% url 'dashboard:attendence-create' %}" class="btn btn-primary">
+        <i class="fa-solid fa-plus-circle"></i> + ثبت حاضری جدید
+      </a>
     </div>
   </div>
 
@@ -27,7 +36,7 @@
     <!-- Card 1 -->
     <div class="stat-card">
       <div class="stat-header">
-        <div class="stat-title">اوسط نرخ حضور (Present)<br />(Rate)</div>
+        <div class="stat-title">اوسط نرخ حضور صنف<br />(Present Rate)</div>
         <div
           class="stat-icon"
           style="background-color: var(--success-bg); border: 1px solid #a7f3d0"
@@ -35,19 +44,17 @@
           <span style="color: var(--success)">✔</span>
         </div>
       </div>
-      <div class="stat-value" style="color: var(--text-main)">۹۴.۰۸٪</div>
+      <div class="stat-value" style="color: var(--text-main)">{{ avg_rate }}٪</div>
       <div class="stat-footer">
-        <span style="color: var(--success)">پایدار ⬆</span>
-        <span style="color: var(--text-muted)"
-          >نسبت به ماه قبل (ثبات بالا)</span
-        >
+        <span style="color: var(--success)">شاخص کیفی تعلیمی</span>
+        <span style="color: var(--text-muted)">({{ total_records }} سابقه فعال)</span>
       </div>
     </div>
 
     <!-- Card 2 -->
     <div class="stat-card">
       <div class="stat-header">
-        <div class="stat-title">کل روزهای آموزشی تقویم<br />(All days)</div>
+        <div class="stat-title">کل روزهای تعلیمی تقویم<br />(All Days)</div>
         <div
           class="stat-icon"
           style="background-color: var(--primary-bg); border: 1px solid #bfdbfe"
@@ -55,17 +62,17 @@
           <span style="color: var(--primary)">📅</span>
         </div>
       </div>
-      <div class="stat-value" style="color: var(--text-main)">۲۴</div>
+      <div class="stat-value" style="color: var(--text-main)">{{ sample_alldays }}</div>
       <div class="stat-footer">
-        <span style="color: var(--primary)">تأییدشده</span>
-        <span style="color: var(--text-muted)">تقویم ماه عقرب ۱۴۰۲</span>
+        <span style="color: var(--primary)">رسمی و مصوب</span>
+        <span style="color: var(--text-muted)">تقویم وزارت معارف</span>
       </div>
     </div>
 
     <!-- Card 3 -->
     <div class="stat-card">
       <div class="stat-header">
-        <div class="stat-title">غیر حاضری ها<br />(Absent)</div>
+        <div class="stat-title">مجموع غیرحاضری‌ها<br />(Total Absent)</div>
         <div
           class="stat-icon"
           style="background-color: var(--danger-bg); border: 1px solid #fecaca"
@@ -73,20 +80,9 @@
           <span style="color: var(--danger)">✖</span>
         </div>
       </div>
-      <div class="stat-value" style="color: var(--danger)">۱۸</div>
-      <div
-        class="stat-footer"
-        style="flex-direction: column; align-items: flex-start; gap: 8px"
-      >
-        <span class="badge badge-danger" style="background-color: #fee2e2"
-          >هشدار انضباطی</span
-        >
-        <div style="display: flex; justify-content: space-between; width: 100%">
-          <span style="color: var(--danger)">۳ مورد حاد</span>
-          <span style="color: var(--text-muted)"
-            >نیازمند اخطاریه و تماس با اولیا</span
-          >
-        </div>
+      <div class="stat-value" style="color: var(--danger)">{{ total_absent }}</div>
+      <div class="stat-footer">
+        <span class="badge badge-danger">مجموع ایام غیرموجه</span>
       </div>
     </div>
 
@@ -101,90 +97,94 @@
           <span style="color: var(--warning)">⏺</span>
         </div>
       </div>
-      <div class="stat-value" style="color: var(--warning)">
-        ۳۲
-        <span
-          style="
-            font-size: 0.9rem;
-            font-weight: normal;
-            color: var(--text-muted);
-          "
-          >مورد ثبت‌شده</span
-        >
-      </div>
+      <div class="stat-value" style="color: var(--warning)">{{ total_sick_excused }}</div>
       <div class="stat-footer">
-        <span style="color: var(--warning)">بررسی شده</span>
-        <span style="color: var(--text-muted)"
-          >دارای تصدیق‌نامه و نسخه داکتر</span
-        >
+        <span style="color: var(--warning)">مریضی و رخصتی رسمی</span>
       </div>
     </div>
   </div>
 
   <!-- Filters Section -->
   <div class="filters-section">
-    <div class="filter-row">
+    <form method="GET" action="{% url 'dashboard:attendence-list' %}" class="filter-row">
       <div class="input-group">
-        <label>صنف و درجه آموزشی</label>
-        <select class="input-control">
-          <option>صنف دهم - شعبه الف</option>
+        <label>صنف و شعبه</label>
+        <select name="class_id" class="input-control">
+          <option value="">همه صنف‌ها</option>
+          {% for c in classes %}
+          <option value="{{ c.id }}" {% if selected_class_id|stringformat:"s" == c.id|stringformat:"s" %}selected{% endif %}>
+            صنف {{ c.grade }} - شعبۀ {{ c.section }} ({{ c.turn }})
+          </option>
+          {% endfor %}
         </select>
       </div>
+
       <div class="input-group">
-        <label>ماه آموزشی</label>
-        <select class="input-control">
-          <option>عقرب</option>
+        <label>ماه تعلیمی</label>
+        <select name="month_id" class="input-control">
+          <option value="">همه ماه‌ها</option>
+          {% for m in months %}
+          <option value="{{ m.id }}" {% if selected_month_id|stringformat:"s" == m.id|stringformat:"s" %}selected{% endif %}>
+            {{ m.name }}
+          </option>
+          {% endfor %}
         </select>
       </div>
+
       <div class="input-group">
         <label>سال تحصیلی</label>
-        <select class="input-control">
-          <option>1405</option>
+        <select name="academic_year_id" class="input-control">
+          <option value="">همه سال‌ها</option>
+          {% for y in academic_years %}
+          <option value="{{ y.id }}" {% if selected_year_id|stringformat:"s" == y.id|stringformat:"s" %}selected{% endif %}>
+            سال {{ y.year }}
+          </option>
+          {% endfor %}
         </select>
       </div>
+
       <div class="input-group">
-        <label>وضعیت حضور</label>
-        <select class="input-control">
-          <option>همه وضعیت‌ها</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label>جستجوی دانش‌آموز</label>
+        <label>جستجوی شاگرد</label>
         <input
           type="text"
+          name="search"
+          value="{{ search_query }}"
           class="input-control"
-          placeholder="نام یا شماره تذکره..."
+          placeholder="نام، ولد، کد اساس..."
         />
       </div>
-    </div>
+
+      <div class="filter-actions">
+        <button type="submit" class="btn btn-primary" style="height: 42px;">
+          <i class="fa-solid fa-filter"></i> فیلتر
+        </button>
+        <a href="{% url 'dashboard:attendence-list' %}" class="btn btn-outline-dark" style="color: #475569; border-color: #cbd5e1; height: 42px;">
+          حذف فیلتر
+        </a>
+      </div>
+    </form>
+
     <div class="legend-row">
-      <span>راهنمای رنگی:</span>
+      <span>راهنمای رنگی انضباطی:</span>
       <div class="legend-item">
         <span class="dot" style="background-color: var(--success)"></span>
         <span style="color: var(--success)">حاضر (Present)</span>
       </div>
       <div class="legend-item">
         <span class="dot" style="background-color: var(--danger)"></span>
-        <span style="color: var(--danger)">غیرحاضر/غیرموجه (Absent)</span>
+        <span style="color: var(--danger)">غیرحاضر (Absent)</span>
       </div>
       <div class="legend-item">
         <span class="dot" style="background-color: var(--warning)"></span>
-        <span style="color: var(--warning)">مریض با نسخه (Sick)</span>
+        <span style="color: var(--warning)">مریض (Sick)</span>
       </div>
       <div class="legend-item">
         <span class="dot" style="background-color: var(--primary)"></span>
-        <span style="color: var(--primary)">رخصتی موجه (Excused)</span>
+        <span style="color: var(--primary)">رخصت موجه (Excused)</span>
       </div>
-      <span
-        style="
-          margin-right: auto;
-          background-color: var(--bg-body);
-          padding: 4px 12px;
-          border-radius: 12px;
-        "
-        >نمایش <strong style="color: var(--primary)">۳۲</strong> دانش‌آموز صنف
-        دهم ریاضی</span
-      >
+      <span style="margin-right: auto; background-color: var(--bg-body); padding: 4px 12px; border-radius: 12px; font-size: 13px;">
+        نمایش <strong style="color: var(--primary)">{{ total_records }}</strong> سابقه حاضری
+      </span>
     </div>
   </div>
 
@@ -194,136 +194,141 @@
       <div class="table-title">
         <div class="table-icon">📊</div>
         <div class="table-info">
-          <h2>جدول کارنامه جامع حاضری ماه عقرب ۱۴۰۲</h2>
-          <p>صنف دهم ریاضی الف - بر اساس ۲۴ روز رسمی تعلیمی</p>
+          <h2>کارنامه رسمی و ثبت حاضری صنف‌ها</h2>
+          <p>اطلاعات حضور و غیاب بر اساس روزهای ثبت‌شده تعلیمی</p>
         </div>
       </div>
       <div style="display: flex; gap: 12px; align-items: center">
-        <div class="last-update">
-          <span class="dot" style="background-color: var(--success)"></span>
-          آخرین ثبت داده: امروز ساعت ۱۱:۴۵
-        </div>
-        <button class="page-btn">↻</button>
+        <a href="{% url 'dashboard:attendence-edite' %}" class="btn btn-outline-dark" style="color: #1e3a8a; border-color: #bfdbfe; font-size: 13px;">
+          <i class="fa-solid fa-pen-to-square"></i> ورود به بخش ویرایش گروهی
+        </a>
       </div>
     </div>
 
+    {% if attendences %}
     <table>
       <thead>
         <tr>
-          <th style="width: 40px"></th>
           <th># شناسه</th>
           <th>مشخصات و عکس دانش‌آموز</th>
           <th style="text-align: center">صنف و دوره</th>
+          <th style="text-align: center">ماه تعلیمی</th>
           <th style="text-align: center">کل روزها</th>
           <th style="text-align: center; color: var(--success)">حاضر</th>
           <th style="text-align: center; color: var(--danger)">غیرحاضر</th>
           <th style="text-align: center; color: var(--warning)">بیمار</th>
           <th style="text-align: center; color: var(--primary)">رخصتی</th>
-          <th>درصد حضور ماهانه</th>
+          <th>فیصدی حضور</th>
           <th>وضعیت انضباطی</th>
+          <th style="text-align: center">عملیات</th>
         </tr>
       </thead>
       <tbody>
-        {% for attendence in attendences  %}
-        
-        <!-- Row 1 -->
+        {% for attendence in attendences %}
         <tr>
-          <td><input type="radio" name="student" /></td>
-          <td style="color: var(--text-muted); font-size: 0.8rem">
-            ATN-#<br />{{attendence.id}}
+          <td style="color: var(--text-muted); font-size: 0.8rem; font-weight: bold;">
+            #{{ attendence.id }}
           </td>
           <td>
             <div class="student-cell">
-              <img
-                src="https://i.pravatar.cc/100?img=11"
-                alt="Avatar"
-                class="avatar"
-              />
+              <i class="fa-solid fa-circle-user" style="font-size: 32px; color: #94a3b8;"></i>
               <div class="student-info">
-                <strong>{{attendence.student.name}}</strong>
-                <span>فرزند: {{attendence.student.fname}} - تذکره: {{attendence.student.card_id}}</span>
+                <strong>{{ attendence.student.name }}</strong>
+                <span>فرزند: {{ attendence.student.fname }} | اساس: {{ attendence.student.school_id }}</span>
               </div>
             </div>
           </td>
           <td style="text-align: center">
-            <div
-              class="badge badge-gray"
-              style="display: block; font-size: 0.7rem"
-            >
-              {{attendence.student.studentclass.first.classs.alpha_grade}}<br />
-              {{attendence.student.studentclass.first.classs.section}}
-            </div>
+            <span class="badge badge-gray" style="font-weight: 600;">
+              صنف {{ attendence.classs.grade }} - {{ attendence.classs.section }}
+            </span>
           </td>
-          <td style="text-align: center">{{attendence.alldays}}</td>
+          <td style="text-align: center; font-weight: 600; color: #1e40af;">
+            {{ attendence.month.name }}
+          </td>
+          <td style="text-align: center; font-weight: bold;">{{ attendence.alldays }}</td>
           <td style="text-align: center">
-            <div
-              class="badge badge-success"
-              style="
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-                display: inline-flex;
-                justify-content: center;
-                flex-direction: column;
-                line-height: 1.2;
-              "
-            >
-              {{attendence.present}}<br /><span style="font-size: 0.6rem">روز</span>
-            </div>
+            <span class="badge badge-success" style="font-weight: bold; font-size: 13px;">
+              {{ attendence.present }}
+            </span>
           </td>
-          <td style="text-align: center; color: var(--text-muted)">{{attendence.absent}}</td>
           <td style="text-align: center">
-            <div class="badge badge-warning-light">
-              {{attendence.sick}}<br /><span style="font-size: 0.6rem">روز</span>
-            </div>
+            <span class="badge {% if attendence.absent > 0 %}badge-danger{% else %}badge-gray{% endif %}" style="font-weight: bold;">
+              {{ attendence.absent }}
+            </span>
           </td>
-          <td style="text-align: center; color: var(--text-muted)">{{attendence.excused}}</td>
+          <td style="text-align: center; color: #d97706; font-weight: bold;">
+            {{ attendence.sick }}
+          </td>
+          <td style="text-align: center; color: #2563eb; font-weight: bold;">
+            {{ attendence.excused }}
+          </td>
           <td>
             <div class="progress-cell">
-              <div class="progress-header" style="color: var(--success)">
-                <span>{{attendence.present}} از {{attendence.alldays}}</span>
-                <strong>{{attendence.get_present_percentage}}٪</strong>
+              <div class="progress-header" style="color: {% if attendence.get_present_percentage >= 85 %}var(--success){% elif attendence.get_present_percentage >= 70 %}#d97706{% else %}var(--danger){% endif %}">
+                <span>{{ attendence.present }} از {{ attendence.alldays }}</span>
+                <strong>{{ attendence.get_present_percentage }}٪</strong>
               </div>
               <div class="progress-bar-bg">
                 <div
                   class="progress-bar-fill"
-                  style="width: {{attendence.get_present_percentage}}%; background-color: var(--success)"
+                  style="width: {{ attendence.get_present_percentage }}%; background-color: {% if attendence.get_present_percentage >= 85 %}var(--success){% elif attendence.get_present_percentage >= 70 %}#f59e0b{% else %}var(--danger){% endif %};"
                 ></div>
               </div>
             </div>
           </td>
           <td>
-            <span
-              class="badge badge-success"
-              style="border: 1px solid var(--success)"
-              >✔ عالی</span
+            {% if attendence.get_present_percentage >= 90 %}
+              <span class="badge badge-success">✔ عالی</span>
+            {% elif attendence.get_present_percentage >= 75 %}
+              <span class="badge badge-primary">رضایت‌بخش</span>
+            {% else %}
+              <span class="badge badge-danger">⚠ هشدار انضباطی</span>
+            {% endif %}
+          </td>
+          <td style="text-align: center">
+            <a
+              href="{% url 'dashboard:attendence-edite-specific' class_id=attendence.classs.id month_id=attendence.month.id academic_year_id=attendence.academice_year.id %}"
+              class="btn-edit-sm"
+              title="ویرایش حاضری صنف"
             >
+              <i class="fa-solid fa-pen-to-square"></i> ویرایش
+            </a>
           </td>
         </tr>
-        
         {% endfor %}
-
-
       </tbody>
     </table>
 
-    <!-- Pagination -->
+    {% if is_paginated %}
     <div class="pagination">
-      <div>نمایش ۱ تا ۵ از کل ۳۲ دانش‌آموز صنف دهم ریاضی الف</div>
+      <div>نمایش صفحه {{ page_obj.number }} از {{ paginator.num_pages }}</div>
       <div class="page-numbers">
-        <button class="page-btn" style="width: auto; padding: 0 12px">
-          قبلی ❮
-        </button>
-        <button class="page-btn active">۱</button>
-        <button class="page-btn">۲</button>
-        <button class="page-btn">۳</button>
-        <button class="page-btn" style="width: auto; padding: 0 12px">
-          ❯ بعدی
-        </button>
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if selected_class_id %}&class_id={{ selected_class_id }}{% endif %}{% if selected_month_id %}&month_id={{ selected_month_id }}{% endif %}{% if selected_year_id %}&academic_year_id={{ selected_year_id }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" class="page-btn" style="width: auto; padding: 0 12px;">
+          ❮ قبلی
+        </a>
+        {% endif %}
+        <span class="page-btn active">{{ page_obj.number }}</span>
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if selected_class_id %}&class_id={{ selected_class_id }}{% endif %}{% if selected_month_id %}&month_id={{ selected_month_id }}{% endif %}{% if selected_year_id %}&academic_year_id={{ selected_year_id }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}" class="page-btn" style="width: auto; padding: 0 12px;">
+          بعدی ❯
+        </a>
+        {% endif %}
       </div>
     </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+      <i class="fa-solid fa-calendar-xmark"></i>
+      <h3>هیچ سابقه حاضری یافت نشد</h3>
+      <p>برای صنف و فیلترهای انتخابی هنوز حاضری ثبت نگردیده است یا معیاری یافت نشد.</p>
+      <a href="{% url 'dashboard:attendence-create' %}" class="btn btn-primary" style="display: inline-flex;">
+        <i class="fa-solid fa-plus-circle"></i> ثبت کارنامه حاضری برای این صنف
+      </a>
+    </div>
+    {% endif %}
   </div>
 </div>
-{% endblock %} {% block js %}
-
-{% endblock %}
+{% endblock content %}

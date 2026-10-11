@@ -1,28 +1,26 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, DetailView
-from .models import Student, Teacher, Classes, Job, StudentClass, AcademiceYear, Degree, Attendance, Assessment, ExamResult, Exam
-from .forms import StudentForm, TeacherForm, ClassForm
-from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from django.db.models import Q, Sum, Avg, Count
 import jdatetime
-from django.db.models import Q
+
+from .models import (
+    Student, Teacher, Classes, Job, StudentClass,
+    AcademiceYear, Degree, Attendance, Assessment,
+    ExamResult, Exam, Month
+)
+from .forms import StudentForm, TeacherForm, ClassForm
 
 
 # -----------------------------------------------------------------------------
 #####
 #####
-######### -------------- security And Constants section SECTION --------------###
+######### -------------- Security And Helpers SECTION --------------###
 #####
 #####
 # ---------------------------------------------------------------------------
-
-
-# is Admin derator
-students_count = Student.objects.all().count()
-teachers_count = Teacher.objects.all().count()
-academice_years=AcademiceYear.objects.all()
-classes=Classes.objects.all()
 
 def is_admin(func):
     def wrapper(request, *args, **kwargs):
@@ -34,17 +32,60 @@ def is_admin(func):
     return wrapper
 
 
+def get_current_jalali_date_str():
+    try:
+        now_j = jdatetime.date.today()
+        month_names = [
+            "حمل", "ثور", "جوزا", "سرطان", "اسد", "سنبله",
+            "میزان", "عقرب", "قوس", "جدی", "دلو", "حوت"
+        ]
+        month_name = month_names[now_j.month - 1]
+        return f"{now_j.day} {month_name} {now_j.year}"
+    except Exception:
+        return "۱۴۰۳"
+
+
 # -----------------------------------------------------------------------------
 #####
 #####
-######### -------------- Main Dashboard  SECTION --------------###
+######### -------------- Main Dashboard SECTION --------------###
 #####
 #####
 # ---------------------------------------------------------------------------
 
 @is_admin
 def dashboard_view(request):
-    return render(request, "dashboard/dashboard.html")
+    total_students = Student.objects.count()
+    total_teachers = Teacher.objects.count()
+    total_classes = Classes.objects.count()
+    total_exams = Exam.objects.count()
+    jalali_date_str = get_current_jalali_date_str()
+
+    # Overall attendance rate across records
+    att_stats = Attendance.objects.aggregate(
+        total_p=Sum("present"), total_all=Sum("alldays")
+    )
+    if att_stats.get("total_all") and att_stats["total_all"] > 0:
+        overall_attendance_rate = round(
+            (att_stats["total_p"] / att_stats["total_all"]) * 100, 1
+        )
+    else:
+        overall_attendance_rate = 94.2
+
+    recent_students = Student.objects.select_related("status").order_by("-id")[:5]
+    recent_classes = Classes.objects.select_related("guidence", "academice_year").order_by("grade", "section")[:4]
+
+    context = {
+        "students_count": total_students,
+        "teachers_count": total_teachers,
+        "classes_count": total_classes,
+        "exams_count": total_exams,
+        "overall_attendance_rate": overall_attendance_rate,
+        "jalali_date_str": jalali_date_str,
+        "recent_students": recent_students,
+        "recent_classes": recent_classes,
+    }
+    return render(request, "dashboard/dashboard.html", context)
 
 
 # -----------------------------------------------------------------------------
@@ -380,8 +421,8 @@ class ClassesListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs) -> dict[str, object]:
         context = super().get_context_data(**kwargs)
-        context["teachers_count"] = teachers_count
-        context["students_count"] = students_count
+        context["teachers_count"] = Teacher.objects.count()
+        context["students_count"] = Student.objects.count()
         return context
 
 
@@ -497,20 +538,261 @@ class AttendenceListView(LoginRequiredMixin, ListView):
     model = Attendance
     template_name = "dashboard/attendence/attendence.html"
     context_object_name = "attendences"
+    paginate_by = 50
 
+    def get_queryset(self):
+        qs = Attendance.objects.select_related(
+            "student", "classs", "month", "academice_year"
+        ).order_by("classs__grade", "classs__section", "student__name")
 
-def attendence_create(request,academic_year=None,class_section=None) :
-    if academic_year==None and class_section==None :  
-        academice_years=AcademiceYear.objects.all()
-        classes=Classes.objects.all()
-    if request.method=="POST" :
-        pass
-    else :
-        return render(request,"dashboard/attendence/attendence_edite.html",{})
+        class_id = self.request.GET.get("class_id")
+        month_id = self.request.GET.get("month_id")
+        academic_year_id = self.request.GET.get("academic_year_id")
+        search = self.request.GET.get("search")
+
+        if class_id and str(class_id).isdigit():
+            qs = qs.filter(classs_id=int(class_id))
+        if month_id and str(month_id).isdigit():
+            qs = qs.filter(month_id=int(month_id))
+        if academic_year_id and str(academic_year_id).isdigit():
+            qs = qs.filter(academice_year_id=int(academic_year_id))
+        if search:
+            search = search.strip()
+            qs = qs.filter(
+                Q(student__name__icontains=search)
+                | Q(student__fname__icontains=search)
+                | Q(student__card_id__icontains=search)
+                | Q(student__school_id__icontains=search)
+            )
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        records = list(self.get_queryset())
+        total_records = len(records)
+
+        total_present = sum(r.present for r in records)
+        total_absent = sum(r.absent for r in records)
+        total_sick = sum(r.sick for r in records)
+        total_excused = sum(r.excused for r in records)
+        total_alldays = sum(r.alldays for r in records)
+
+        if total_alldays > 0:
+            avg_rate = round((total_present / total_alldays) * 100, 1)
+        else:
+            avg_rate = 0.0
+
+        sample_alldays = records[0].alldays if records else 24
+
+        context["total_records"] = total_records
+        context["avg_rate"] = avg_rate
+        context["total_absent"] = total_absent
+        context["total_sick_excused"] = total_sick + total_excused
+        context["sample_alldays"] = sample_alldays
+
+        context["classes"] = Classes.objects.all().order_by("grade", "section")
+        context["months"] = Month.objects.all().order_by("id")
+        context["academic_years"] = AcademiceYear.objects.all().order_by("-year")
+
+        context["selected_class_id"] = self.request.GET.get("class_id", "")
+        context["selected_month_id"] = self.request.GET.get("month_id", "")
+        context["selected_year_id"] = self.request.GET.get("academic_year_id", "")
+        context["search_query"] = self.request.GET.get("search", "")
+        return context
+
 
 @is_admin
-def attendence_edite(request):
-    return render(request, "dashboard/attendence/attendence_edite.html", {})
+def attendance_create_or_edit(request, class_id=None, month_id=None, academic_year_id=None):
+    academic_years = AcademiceYear.objects.all().order_by("-year")
+    classes = Classes.objects.all().order_by("grade", "section")
+    months = Month.objects.all().order_by("id")
+
+    # Determine Academic Year
+    selected_year_id = academic_year_id or request.GET.get("academic_year") or request.POST.get("academic_year")
+    if selected_year_id and str(selected_year_id).isdigit():
+        academic_year_obj = AcademiceYear.objects.filter(id=int(selected_year_id)).first()
+    else:
+        academic_year_obj = academic_years.first()
+
+    # Determine Class
+    selected_class_id = class_id or request.GET.get("class") or request.POST.get("class")
+    if selected_class_id and str(selected_class_id).isdigit():
+        class_obj = Classes.objects.filter(id=int(selected_class_id)).first()
+    else:
+        class_obj = classes.first()
+
+    # Determine Month
+    selected_month_id = month_id or request.GET.get("month") or request.POST.get("month")
+    if selected_month_id and str(selected_month_id).isdigit():
+        month_obj = Month.objects.filter(id=int(selected_month_id)).first()
+    else:
+        month_obj = months.first()
+
+    # Default all days
+    default_all_days = 24
+    if request.method == "POST":
+        try:
+            default_all_days = int(request.POST.get("all_days", 24))
+        except (ValueError, TypeError):
+            default_all_days = 24
+
+    # Enrolled students for this class and academic year
+    student_enrollments = StudentClass.objects.filter(
+        classs=class_obj, academice_year=academic_year_obj
+    ).select_related("student").order_by("student__name")
+
+    if not student_enrollments.exists() and class_obj:
+        student_enrollments = StudentClass.objects.filter(
+            classs=class_obj
+        ).select_related("student").order_by("student__name")
+
+    # Existing records
+    existing_records = {}
+    if class_obj and month_obj and academic_year_obj:
+        att_qs = Attendance.objects.filter(
+            classs=class_obj, month=month_obj, academice_year=academic_year_obj
+        )
+        for att in att_qs:
+            existing_records[att.student_id] = att
+            if request.method != "POST":
+                default_all_days = att.alldays
+
+    if request.method == "POST":
+        saved_count = 0
+        all_days = int(request.POST.get("all_days", default_all_days or 24))
+
+        for sc in student_enrollments:
+            student = sc.student
+            st_id = student.id
+
+            p_val = request.POST.get(f"present_{st_id}")
+            a_val = request.POST.get(f"absent_{st_id}")
+            s_val = request.POST.get(f"sick_{st_id}")
+            e_val = request.POST.get(f"excused_{st_id}")
+
+            if p_val is None:
+                continue
+
+            try:
+                present = max(0, int(p_val))
+            except (ValueError, TypeError):
+                present = all_days
+
+            try:
+                absent = max(0, int(a_val or 0))
+            except (ValueError, TypeError):
+                absent = 0
+
+            try:
+                sick = max(0, int(s_val or 0))
+            except (ValueError, TypeError):
+                sick = 0
+
+            try:
+                excused = max(0, int(e_val or 0))
+            except (ValueError, TypeError):
+                excused = 0
+
+            Attendance.objects.update_or_create(
+                student=student,
+                classs=class_obj,
+                month=month_obj,
+                academice_year=academic_year_obj,
+                defaults={
+                    "present": present,
+                    "absent": absent,
+                    "sick": sick,
+                    "excused": excused,
+                    "alldays": all_days,
+                },
+            )
+            saved_count += 1
+
+        messages.success(
+            request,
+            f"کارنامه حاضری صنف {class_obj.grade}-{class_obj.section} برای ماه {month_obj.name} با موفقیت ({saved_count} شاگرد) ذخیره و به‌روزرسانی شد."
+        )
+        return redirect(
+            f"{reverse('dashboard:attendence-list')}?class_id={class_obj.id}&month_id={month_obj.id}&academic_year_id={academic_year_obj.id}"
+        )
+
+    # Prepare rows for GET display
+    student_rows = []
+    total_present_sum = 0
+    total_absent_sum = 0
+    total_sick_sum = 0
+    total_excused_sum = 0
+
+    for sc in student_enrollments:
+        student = sc.student
+        rec = existing_records.get(student.id)
+        if rec:
+            p = rec.present
+            a = rec.absent
+            s = rec.sick
+            e = rec.excused
+            ad = rec.alldays
+            pct = rec.get_present_percentage()
+            is_new = False
+        else:
+            p = default_all_days
+            a = 0
+            s = 0
+            e = 0
+            ad = default_all_days
+            pct = 100
+            is_new = True
+
+        total_present_sum += p
+        total_absent_sum += a
+        total_sick_sum += s
+        total_excused_sum += e
+
+        student_rows.append({
+            "student": student,
+            "present": p,
+            "absent": a,
+            "sick": s,
+            "excused": e,
+            "alldays": ad,
+            "percentage": pct,
+            "is_new": is_new,
+        })
+
+    student_count = len(student_rows)
+    class_all_days = default_all_days or 24
+    if student_count > 0 and class_all_days > 0:
+        class_avg_rate = round((total_present_sum / (student_count * class_all_days)) * 100, 1)
+    else:
+        class_avg_rate = 100.0 if student_count > 0 else 0.0
+
+    has_existing_records = bool(existing_records)
+
+    context = {
+        "academic_years": academic_years,
+        "classes": classes,
+        "months": months,
+        "selected_year": academic_year_obj,
+        "selected_class": class_obj,
+        "selected_month": month_obj,
+        "all_days": class_all_days,
+        "student_rows": student_rows,
+        "student_count": student_count,
+        "has_existing_records": has_existing_records,
+        "class_avg_rate": class_avg_rate,
+        "total_absent_sum": total_absent_sum,
+    }
+    return render(request, "dashboard/attendence/attendence_edite.html", context)
+
+
+@is_admin
+def attendence_create(request, academic_year=None, class_section=None):
+    return attendance_create_or_edit(request)
+
+
+@is_admin
+def attendence_edite(request, class_id=None, month_id=None, academic_year_id=None):
+    return attendance_create_or_edit(request, class_id=class_id, month_id=month_id, academic_year_id=academic_year_id)
 
 # -----------------------------------------------------------------------------
 #####

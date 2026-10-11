@@ -413,3 +413,108 @@ td {
     color: white;
     border-color: var(--primary);
 }
+
+/* Action buttons & Empty State */
+.btn-edit-sm {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background-color: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.btn-edit-sm:hover {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: #64748b;
+}
+
+.empty-state i {
+    font-size: 48px;
+    color: #cbd5e1;
+    margin-bottom: 16px;
+}
+
+.empty-state h3 {
+    font-size: 18px;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+}
+
+/* Print Stylesheet for Official Attendance Sheet */
+@media print {
+    .sidebar, .top-header, .hero-actions, .filters-section, .pagination, .app-footer, .btn-edit-sm {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+        color: black !important;
+    }
+
+    .app-container {
+        display: block !important;
+        height: auto !important;
+    }
+
+    .base-container {
+        padding: 0 !important;
+    }
+
+    .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+
+    .hero-header {
+        background: none !important;
+        color: black !important;
+        box-shadow: none !important;
+        border-bottom: 2px solid #000;
+        padding: 10px 0 !important;
+    }
+
+    .hero-title-area h1 {
+        font-size: 18pt !important;
+        color: black !important;
+    }
+
+    .table-section {
+        box-shadow: none !important;
+        border: 1px solid #000 !important;
+    }
+
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+
+    th, td {
+        border: 1px solid #000 !important;
+        padding: 6px !important;
+        color: black !important;
+    }
+}
