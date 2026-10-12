@@ -39,6 +39,9 @@ urlpatterns = [
     # exam urls
     path("exam/", views.ExamListView.as_view(
     ), name="exam-list"),
+    # finance urls
+    path("finance/", views.finance_view, name="finance-list"),
+
     # register urls
     # path("register/province", views.register_pro, name="register-province"),
 

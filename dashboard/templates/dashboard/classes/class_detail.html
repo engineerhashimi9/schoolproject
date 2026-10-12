@@ -1,365 +1,237 @@
-{% extends 'dashboard/base.html' %} {% load static %} {% block style %}
+{% extends 'dashboard/base.html' %}
+{% load static %}
 
-<link rel="stylesheet" href="{% static 'dashboard/css/class_detail.css' %}" />
-{% endblock style %} {% block content %}
+{% block title %}مشخصات صنف {{ class.grade }}-{{ class.section }} | سامانه مدیریت آموزشی{% endblock title %}
 
+{% block content %}
 <div class="container">
-  <!-- ==========================================
-         SECTION 1: Class Meta Data (Dark Theme)
-         ========================================== -->
-  <section>
-    <div class="section-header">
-      <div class="status-text"><span>✔</span> دیتابیس به‌روزرسانی شده</div>
-      <div class="section-title-wrapper">
-        <span class="meta-pill">Class Model Meta</span>
-        <h2>بخش اول: اطلاعات صنف و کادر راهنما</h2>
-        <div class="blue-bar"></div>
+  <!-- Class Hero Header -->
+  <div class="hero-header">
+    <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+      <div style="width: 76px; height: 76px; border-radius: 50%; background: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 38px; color: #1e3a8a; border: 3px solid rgba(255, 255, 255, 0.4); flex-shrink: 0;">
+        <i class="fa-solid fa-chalkboard"></i>
+      </div>
+      <div>
+        <div class="system-badge" style="margin-bottom: 6px;">
+          <span class="dot" style="background-color: #38bdf8"></span>
+          کد شناسایی صنف #CLS-{{ class.id }} | پایه {{ class.grade }}
+        </div>
+        <h1 style="font-size: 1.8rem; margin: 0 0 6px 0; color: #ffffff;">
+          صنف {{ class.grade }} ({{ class.alpha_grade }}) - شعبۀ {{ class.section }}
+        </h1>
+        <p style="margin: 0; color: #cbd5e1; font-size: 0.9rem;">
+          استاد رهنما: <strong>{% if class.guidence %}{{ class.guidence.name }} {{ class.guidence.last_name }}{% else %}تعیین‌نشده{% endif %}</strong> | سال تحصیلی: <strong>{{ class.academice_year.year }}</strong> | نوبت: <strong>{{ class.turn }}</strong>
+        </p>
       </div>
     </div>
 
-    <div class="dark-dashboard">
-      <div class="dark-top">
-        <div class="dark-top-content">
-          <div class="tags-row">
-            <div class="dark-tag tag-blue"># کد صنف: CLS-{{class.id}}}</div>
-            <div class="dark-tag tag-blue">
-              🎓 پایه: {{class.grade}} (Grade {{class.grade}})
-            </div>
-            <div class="dark-tag tag-blue">
-              {{class.alpha_grade}} - {{class.section}}
-            </div>
-            <div class="dark-tag tag-gold">
-              🌅 شعبه: {{class.section}} (نوبت صبحانه)
-            </div>
-            <div class="dark-tag tag-green">
-              📅 سال تعلیمی: {{class.academice_year.year}}-
-            </div>
-          </div>
-
-          <div class="dark-title">
-            {% if class.status == 1 %}
-             <div class="dark-tag tag-active">● برحال و در حال تدریس</div>
-             {% else %}
-              <div class="dark-tag tag-disactive">●  غیر فعال و غیر تدریس</div>  
-            {% endif %}
-           
-            <h1>
-              صنف {{class.alpha_grade}} - شعبه {{class.section}}
-              ({{class.grade}}-{{class.section}} عالی)
-            </h1>
-          </div>
-
-        </div>
-
-        <div class="dark-top-actions">
-          <button class="btn btn-dark-primary">👤+ ثبت شاگرد جدید</button>
-          <button class="btn btn-dark-outline">✎ ویرایش صنف</button>
-          <button class="btn btn-dark-outline">🖨 چاپ لایحه</button>
-      
-        </div>
-      </div>
-
-      <div class="dark-grid">
-        <!-- Card 3: Location & Time (Visual Left in RTL) -->
-        <div class="dark-card">
-          <div class="dark-card-header">
-            <div class="dark-card-title">مکان و زمان<br />برگزاری</div>
-            <div class="dark-tag tag-gold" style="border: none">{{class.turn}}</div>
-          </div>
-
-          <div
-            class="contact-box"
-            style="margin-bottom: 12px; justify-content: space-between"
-          >
-            <span>شروع دروس: </span>
-            <strong style="color: white; text-align: left"
-              >{{class.start_time}}</strong
-            >
-          </div>
-
-          <div
-            class="contact-box"
-            style="margin-bottom: 16px; justify-content: space-between"
-          >
-            <span> پایان دروس: </span>
-            <strong style="color: white; direction: ltr">{{class.end_time}}</strong>
-          </div>
-
-          <p style="font-size: 0.8rem; color: var(--dark-text-muted)">
-            مضامین فعال این هفته:
-          </p>
-          <div class="subject-tags">
-            <span class="subject-tag">ریاضیات</span>
-            <span class="subject-tag">فیزیک</span>
-            <span class="subject-tag">کیمیا</span>
-            <span class="subject-tag">هندسه</span>
-            <span class="subject-tag">ادبیات دری</span>
-          </div>
-
-          <div
-            class="dark-card-footer"
-            style="margin-top: 24px; padding: 0; border: none"
-          >
-           
-          </div>
-        </div>
-
-        <!-- Card 2: Capacity & Stats (Visual Middle) -->
-        <div class="dark-card">
-          <div class="dark-card-header">
-            <div class="dark-card-title">ظرفیت و وضعیت<br />آموزشی صنف</div>
-            <div class="dark-tag tag-green" style="border-radius: 20px">
-              رتبه {{class.grade}} صنف<br />{{class.alpha_grade}}
-            </div>
-          </div>
-
-          <div class="stats-section">
-            <div class="stats-row">
-              <span style="font-size: 0.85rem; color: var(--dark-text-muted)"
-                >شاگردان برحال /<br />ظرفیت کل صنف:</span
-              >
-              <strong style="font-size: 1.1rem; color: white"
-                >{{students_count}} از {{class.capacity}} نفر ({{remain}}<br />سیت خالی)</strong
-              >
-            </div>
-            <div class="progress-bar-bg">
-              <div class="progress-bar-fill"></div>
-            </div>
-            <div
-              style="
-                display: flex;
-                justify-content: space-between;
-                font-size: 0.75rem;
-              "
-            >
-              <span style="color: var(--success)">ثبت‌نام مجاز و فعال</span>
-              <span style="color: var(--dark-text-muted)"
-                >درصد تکمیل: {{completion_percentage}}٪</span
-              >
-            </div>
-          </div>
-
-          <div class="mini-stats-grid">
-            <div class="mini-stat-box">
-              <div class="mini-stat-label">معدل نمرات صنف</div>
-              <div class="mini-stat-value" style="color: var(--dark-primary)">
-                ۸۸.۵
-              </div>
-              <div class="mini-stat-label">سطح کیفی:<br />عالی (A)</div>
-            </div>
-            <div class="mini-stat-box">
-              <div class="mini-stat-label">میانگین حاضری ماهوار</div>
-              <div class="mini-stat-value">۹۴.۰۸٪</div>
-              <div class="mini-stat-label" style="color: var(--success)">
-                ▲ ۲.۱٪<br />بهبود
-              </div>
-            </div>
-          </div>
-
-          <div class="dark-card-footer">
-            <span
-              >نگران صنف:
-              <strong style="color: white"
-                >{{class.guidence.name}} {{class.guidence.last_name}}</strong
-              ></span
-            >
-            <span
-              class="dark-tag"
-              style="
-                border-color: var(--dark-primary);
-                color: var(--dark-primary);
-              "
-              >کارت: CRD-{{class.guidence.id}}</span
-            >
-          </div>
-        </div>
-
-        <!-- Card 1: Teacher Profile (Visual Right in RTL) -->
-        <div class="dark-card">
-          <div class="dark-card-header">
-            <div class="dark-card-title">
-              استاد راهنما صنف<span>(Guidance Teacher)</span>
-            </div>
-            <div class="dark-tag tag-blue" style="border: none">
-              FK:<br />{{class.guidance.id}}
-            </div>
-          </div>
-
-          <div class="teacher-profile">
-            <img
-              src="https://i.pravatar.cc/150?img=11"
-              alt="Dr. Rezaei"
-              class="teacher-avatar"
-            />
-            <div class="teacher-info">
-              <h3>
-              {{class.guidence.name}} {{class.guidence.last_name}}<span class="badge-phd">دکترای {{class.guidence.major}}</span>
-              </h3>
-              <p>
-                استاد راهنمای تربیتی، آموزشی و ناظر پیشرفت تحصیلی شاگردان صنف
-              </p>
-            </div>
-          </div>
-
-          <div class="teacher-contacts">
-            <div class="contact-box">✉ </div>
-            <div class="contact-box" style="direction: ltr">
-              📞 {{class.guidence.phone}}
-            </div>
-            <div class="contact-box full-width">
-              📘 مضمون: {{guidence.teachersubject}}<span>⏱ شنبه تا چهارشنبه (صبح)</span>
-            </div>
-          </div>
-
-          <div class="dark-card-footer">
-            <span>وظیفه: نظارت مستقیم و مشاوره اولیا</span>
-            <a href="{% url 'dashboard:worker-detail' pk=class.guidence.id %}" class="link-primary">مشاهده پرونده استاد ←</a>
-          </div>
-        </div>
-      </div>
+    <div class="hero-actions">
+      <a href="{% url 'dashboard:class-edite' class.id %}" class="btn btn-primary">
+        <i class="fa-solid fa-pen-to-square"></i> ویرایش صنف
+      </a>
+      <a href="{% url 'dashboard:attendence-create' %}?class={{ class.id }}" class="btn btn-outline-dark">
+        <i class="fa-solid fa-calendar-check"></i> ثبت حاضری این صنف
+      </a>
+      <a href="{% url 'dashboard:class-list' %}" class="btn btn-outline-dark">
+        <i class="fa-solid fa-arrow-right"></i> بازگشت به لیست
+      </a>
     </div>
-  </section>
+  </div>
 
-  <!-- ==========================================
-         SECTION 2: Students Roster (Light Theme)
-         ========================================== -->
-  <section>
-    <div class="section-header">
-      <div class="header-actions">
-        <button
-          class="btn btn-primary"
-          style="font-size: 1rem; padding: 10px 24px"
-        >
-          + افزودن<br />شاگرد
-        </button>
-       
-        <button
-          class="btn btn-outline"
-          style="
-            color: var(--success);
-            border-color: #bbf7d0;
-            background-color: var(--success-light);
-          "
-        >
-          📥 خروجی اکسل<br />(Excel)
-        </button>
-      </div>
-
-      <div class="section-title-wrapper">
-        <span class="count-badge">{{class.studentclass.all|length}} شاگرد<br />فعال</span>
-        <div style="text-align: right">
-          <h2>بخش دوم: لیست شاگردان صنف (Students Roster)</h2>
+  <!-- Detail Information Grid -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px;">
+    <!-- 1. ظرفیت و ثبت‌نام -->
+    <div class="stat-card" style="margin: 0;">
+      <div class="stat-header">
+        <div class="stat-title">ظرفیت و تکمیل ثبت‌نام<br />(Enrollment Rate)</div>
+        <div class="stat-icon icon-blue">
+          <i class="fa-solid fa-users"></i>
         </div>
-        <div class="blue-bar" style="background-color: var(--success)"></div>
+      </div>
+      <div class="stat-value" style="font-size: 1.6rem;">
+        {{ students_count }} از {{ class.capacity }} نفر
+      </div>
+      <div class="progress-track" style="height: 6px; background: #e2e8f0; border-radius: 4px; margin-bottom: 8px;">
+        <div style="height: 100%; width: {{ completion_percentage }}%; background-color: #2563eb; border-radius: 4px;"></div>
+      </div>
+      <div class="stat-footer" style="justify-content: space-between;">
+        <span>تکمیل ظرفیت: {{ completion_percentage }}٪</span>
+        <strong style="color: #059669;">{{ remain }} سیت خالی</strong>
       </div>
     </div>
 
-    <div class="light-dashboard">
-      <div class="controls-bar">
-        <div class="input-group search-input-wrapper" style="flex-grow: 1">
-          <input
-            type="text"
-            class="search-input"
-            placeholder="🔍 جستجو بر اساس نام، نام پدر (ولد)، یا شماره کارت شناسایی (card_id)..."
-          />
+    <!-- 2. استاد رهنما -->
+    <div class="stat-card" style="margin: 0;">
+      <div class="stat-header">
+        <div class="stat-title">استاد راهنما صنف<br />(Guidance Teacher)</div>
+        <div class="stat-icon icon-green">
+          <i class="fa-solid fa-user-tie"></i>
         </div>
-        <select class="select-input">
-          <option>شاگردان حاضر و برحال ({{class.studentclass|length}})</option>
-        </select>
-        <select class="select-input">
-          <option>مرتب‌سازی: شماره ردیف ID صعودی</option>
-        </select>
       </div>
-
-      <table>
-        <thead>
-          <tr>
-            <th style="width: 50px">ID</th>
-            <th>نام و مشخصات شاگرد<br />(Name)</th>
-            <th>نام پدر / ولد<br />(Father Name)</th>
-            <th>نمبر مسلسل</th>
-            <th>نمبر تذکره<br />(Card ID)</th>
-            <th>اوسط نمرات<br />صنف</th>
-            <th>شماره تماس<br />ولی</th>
-            <th>عملیات</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for studentclass in class.studentclass.all %}
-          <tr>
-            <td style="color: var(--text-muted); font-weight: 700">#{{studentclass.student.id}}</td>
-            <td>
-              <div class="student-cell">
-                <img
-                  src="https://i.pravatar.cc/100?img=12"
-                  alt="Avatar"
-                  class="avatar"
-                />
-                <div class="student-info">
-                  <div
-                    style="
-                      display: flex;
-                      justify-content: space-between;
-                      align-items: flex-start;
-                    "
-                  >
-                    <strong>{{studentclass.student.name}}</strong>
-                    
-                    {% if class.repersentative.id == studentclass.student.id %}
-                        <span class="badge-rep">مبصر<br />صنف</span>
-                    {% endif %}
-                      
-                  
-                  </div>
-                  <span>تاریخ شمولیت:<br />{{studentclass.student.registered_data|date:'Y/m/d'}}</span>
-                </div>
-              </div>
-            </td>
-            <td style="color: var(--text-muted)">{{studentclass.student.fname}}</td>
-            <td>
-              <div class="card-id-badge">🪪 {{studentclass.student.school_id}}</div>
-              <div
-                style="
-                  font-size: 0.7rem;
-                  color: var(--text-muted);
-                  margin-top: 4px;
-                "
-              >
-                اساس: EXM-801
-              </div>
-            </td>
-            <td>
-              <div class="card-id-badge">🪪 {{studentclass.student.card_id}}</div>
-            </td>
-            <td>
-              <div class="score-info" style="color: var(--primary)">
-                ۹۶.۴
-                <span>ممتاز (+A)</span>
-              </div>
-            </td>
-            <td
-              style="
-                color: var(--text-muted);
-                font-size: 0.85rem;
-                direction: ltr;
-              "
-            >
-              {{studentclass.student.phone}}
-            </td>
-            <td>
-              <div class="table-actions">
-                <a href="{% url 'dashboard:student-detail' studentclass.student.id %}" class="action-btn">👁</a>
-                <a href="{% url 'dashboard:student-edite' studentclass.student.id %}" class="action-btn">✎</a>
-                <button class="action-btn" disabled>🗑</button>
-              </div>
-            </td>
-          </tr>
-
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="stat-value" style="font-size: 1.3rem; margin-bottom: 4px;">
+        {% if class.guidence %}{{ class.guidence.name }} {{ class.guidence.last_name }}{% else %}<span style="color: #d97706; font-size: 1rem;">تعیین‌نشده</span>{% endif %}
+      </div>
+      <div style="font-size: 12px; color: #64748b; margin-bottom: 8px;">
+        رشته: {% if class.guidence %}{{ class.guidence.major }} ({{ class.guidence.degree.name }}){% else %}—{% endif %}
+      </div>
+      <div class="stat-footer">
+        {% if class.guidence %}
+        <a href="{% url 'dashboard:worker-detail' class.guidence.id %}" style="color: #2563eb; font-weight: bold; text-decoration: none;">
+          مشاهده پرونده استاد ❮
+        </a>
+        {% else %}
+        <span>سرپرست تربیتی تعیین نگردیده</span>
+        {% endif %}
+      </div>
     </div>
-  </section>
+
+    <!-- 3. زمان و مکان -->
+    <div class="stat-card" style="margin: 0;">
+      <div class="stat-header">
+        <div class="stat-title">نوبت و ساعات تعلیمی<br />(Schedule & Timing)</div>
+        <div class="stat-icon icon-amber">
+          <i class="fa-solid fa-clock"></i>
+        </div>
+      </div>
+      <div class="stat-value" style="font-size: 1.4rem; color: #1e3a8a;">
+        {{ class.turn }}
+      </div>
+      <div style="font-size: 13px; color: #475569; margin-bottom: 8px; direction: ltr; text-align: right;">
+        ساعت: {{ class.start_time|time:"H:i" }} الی {{ class.end_time|time:"H:i" }}
+      </div>
+      <div class="stat-footer">
+        <span style="color: #059669;">● ساعات رسمی تعلیمی</span>
+      </div>
+    </div>
+
+    <!-- 4. وضعیت فعالیت -->
+    <div class="stat-card" style="margin: 0;">
+      <div class="stat-header">
+        <div class="stat-title">وضعیت اداری صنف<br />(Status)</div>
+        <div class="stat-icon icon-rose">
+          <i class="fa-solid fa-school-flag"></i>
+        </div>
+      </div>
+      <div class="stat-value" style="font-size: 1.4rem;">
+        {% if class.status.id == 1 or not class.status %}
+        <span style="color: #059669;">دایر و فعال</span>
+        {% else %}
+        <span style="color: #dc2626;">غیرفعال</span>
+        {% endif %}
+      </div>
+      <div style="font-size: 12px; color: #64748b; margin-bottom: 8px;">
+        سال تعلیمی: {{ class.academice_year.year }}
+      </div>
+      <div class="stat-footer">
+        <span>ثبت در پروتکل رسمی مکتب</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Students Roster Table -->
+  <div class="table-section">
+    <div class="table-header">
+      <div class="table-title">
+        <div class="table-icon">
+          <i class="fa-solid fa-graduation-cap"></i>
+        </div>
+        <div class="table-info">
+          <h2>لیست شاگردان ثبت‌شده در این صنف (Students Roster)</h2>
+          <p>شاگردان حاضر و برحال در صنف {{ class.grade }} - شعبۀ {{ class.section }}</p>
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <span class="badge badge-primary">
+          {{ class.studentclass.all|length }} شاگرد ثبت‌نامی
+        </span>
+        <a href="{% url 'dashboard:student-register' %}" class="btn btn-primary" style="padding: 6px 14px; font-size: 12px;">
+          <i class="fa-solid fa-user-plus"></i> + افزودن شاگرد به این صنف
+        </a>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 80px; text-align: center;">کد اساس</th>
+          <th>مشخصات و نام شاگرد</th>
+          <th>نام پدر (ولد)</th>
+          <th style="text-align: center;">شماره تذکره</th>
+          <th style="text-align: center;">شماره تماس ولی</th>
+          <th style="text-align: center;">وضعیت پرونده</th>
+          <th style="text-align: center; width: 120px;">عملیات</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sc in class.studentclass.all %}
+        <tr>
+          <td style="text-align: center;">
+            <span style="background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 6px; font-weight: 800; font-size: 12px;">
+              #{{ sc.student.school_id }}
+            </span>
+          </td>
+          <td>
+            <div class="student-cell">
+              <img
+                src="{% static 'dashboard/images/char.png' %}"
+                alt="Student"
+                class="student-avatar"
+              />
+              <div class="student-info">
+                <a href="{% url 'dashboard:student-detail' sc.student.id %}" class="student-name" style="text-decoration: none;">
+                  {{ sc.student.name }}
+                </a>
+                <span class="student-sub">
+                  شمولیت: {{ sc.student.registered_date|date:"Y/m/d" }}
+                </span>
+              </div>
+            </div>
+          </td>
+          <td style="font-weight: 600; color: #1e293b;">
+            {{ sc.student.fname }}
+          </td>
+          <td style="text-align: center; color: #475569; font-size: 13px;">
+            {{ sc.student.card_id }}
+          </td>
+          <td style="text-align: center; direction: ltr; font-size: 12.5px; color: #334155; font-weight: 600;">
+            {{ sc.student.phone }}
+          </td>
+          <td style="text-align: center;">
+            <span class="badge badge-success">
+              <i class="fa-solid fa-circle-check"></i> فعال در صنف
+            </span>
+          </td>
+          <td style="text-align: center;">
+            <div class="action-btns-group">
+              <a
+                href="{% url 'dashboard:student-detail' sc.student.id %}"
+                class="btn-action-view"
+                title="مشاهده پرونده شاگرد"
+              >
+                <i class="fa-solid fa-eye"></i>
+              </a>
+              <a
+                href="{% url 'dashboard:student-edite' sc.student.id %}"
+                class="btn-action-edit"
+                title="ویرایش مشخصات"
+              >
+                <i class="fa-solid fa-pen"></i>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 40px; color: #94a3b8;">
+            <i class="fa-solid fa-users-slash" style="font-size: 36px; margin-bottom: 12px; display: block; color: #cbd5e1;"></i>
+            در حال حاضر هیچ شاگردی در این صنف ثبت‌نام نگردیده است.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
 </div>
-
-{% endblock content %} {% block js %} {% endblock js %}
+{% endblock content %}

@@ -20,7 +20,7 @@
 body {
     background-color: var(--bg-main);
     height: 100vh;
-    overflow: hidden;
+    overflow: auto;
 }
 
 .app-container {
@@ -267,6 +267,10 @@ html {
 }
 
 /* Data Table */
+table-section {
+    overflow: auto;
+}
+
 .table-container {
     background: #fff;
     border-radius: 12px;

@@ -1,13 +1,60 @@
 {% load static %}
 <!doctype html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
   <head>
-    <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login Page</title>
+    <title>ورود به سامانه مدیریت آموزشی | لیسه عالی اهل بیت (ص)</title>
 
+    <!-- Google Font Vazirmatn -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}" />
     <link rel="stylesheet" href="{% static 'accounts/login.css' %}" />
+    <style>
+      body {
+        font-family: 'Vazirmatn', sans-serif !important;
+        background: radial-gradient(circle at 50% 20%, #1e3a8a 0%, #0f172a 100%);
+      }
+      .login-card {
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .main-title {
+        color: #f8fafc;
+        font-size: 1.45rem;
+        font-weight: 800;
+        margin-top: 12px;
+      }
+      .subtitle {
+        color: #94a3b8;
+        font-size: 0.95rem;
+        margin-top: 6px;
+      }
+      .submit-btn {
+        background: linear-gradient(135deg, #1e3a8a, #2563eb);
+        border: none;
+        color: #ffffff;
+        font-weight: 700;
+        border-radius: 10px;
+        padding: 12px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .submit-btn:hover {
+        background: linear-gradient(135deg, #172554, #1d4ed8);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+      }
+      .page-footer p, .page-footer a {
+        color: #94a3b8;
+      }
+    </style>
   </head>
   <body>
     <div class="login-wrapper">
@@ -17,36 +64,42 @@
           <img
             class="school-icon"
             src="{% static 'accounts/logo.png' %}"
-            alt="EduAdmin Logo"
+            alt="لوگوی لیسه عالی اهل بیت (ص)"
           />
         </div>
-        <h1 class="main-title">لیسه عالی خصوصی اهل بیت رسوالله (ص)</h1>
-        <p class="subtitle">دسترسی به پورتال مدیریت</p>
+        <h1 class="main-title">لیسه عالی خصوصی اهل بیت رسول‌الله (ص)</h1>
+        <p class="subtitle">سامانه جامع نظارت تعلیمی و پورتال مدیریت</p>
       </div>
 
       <!-- Main Card -->
       <div class="login-card">
-        <p class="error">{{error}}</p>
+        {% if error %}
+        <p class="error" style="color: #dc2626; background: #fee2e2; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; border: 1px solid #fca5a5;">
+          <i class="fa-solid fa-circle-exclamation" style="margin-left: 6px;"></i> {{ error }}
+        </p>
+        {% endif %}
         <form action="{% url 'accounts:login' %}" method="post">
           {% csrf_token %}
           <div class="form-group">
-            <label for="email">آدرس ایمیل</label>
+            <label for="email">شناسه کاربری / آدرس ایمیل</label>
             <div class="input-wrapper">
               <i class="fa-regular fa-envelope icon-left"></i>
               <input
                 type="email"
                 name="email"
                 id="email"
-                placeholder="example@domain.com"
-                value=""
+                placeholder="admin@school.af"
+                required
+                dir="ltr"
+                style="text-align: right;"
               />
             </div>
           </div>
 
           <div class="form-group">
             <div class="label-row">
-              <label for="password">رمز عبور</label>
-              <a href="#" class="forgot-pass">رمز عبور را فراموش کرده‌اید؟</a>
+              <label for="password">رمز عبور امنیتی</label>
+              <a href="#" class="forgot-pass">فراموشی رمز عبور؟</a>
             </div>
             <div class="input-wrapper">
               <i class="fa-solid fa-lock icon-left"></i>
@@ -54,34 +107,38 @@
                 type="password"
                 id="password"
                 name="password"
-                value=""
                 placeholder="••••••••"
+                required
+                dir="ltr"
+                style="text-align: right;"
               />
-
-              <i class="fa-regular fa-eye icon-right toggle-password"></i>
             </div>
           </div>
 
-          <button type="submit" class="submit-btn">ورود به سیستم</button>
+          <button type="submit" class="submit-btn">
+            <i class="fa-solid fa-right-to-bracket" style="margin-left: 6px;"></i> ورود به پورتال مدیریت
+          </button>
         </form>
 
         <div class="divider"></div>
 
         <div class="footer-links">
-          <p>فقط برای پرسنل مجاز.</p>
           <p>
-            نیاز به حساب کاربری دارید؟ <a href="#">با مدیر سیستم تماس بگیرید</a>
+            <i class="fa-solid fa-shield-halved" style="color: #2563eb; margin-left: 4px;"></i> دسترسی محفوظ فقط برای کادر مجاز اداری و اساتید.
+          </p>
+          <p>
+            نیاز به ایجاد حساب کاربری دارید؟ <a href="#">ارتباط با مدیر سیستم</a>
           </p>
         </div>
       </div>
 
       <!-- Page Footer -->
       <div class="page-footer">
-        <p>© ۲۰۲۶ سیستم‌های مدارس EduAdmin. تمامی حقوق محفوظ است.</p>
+        <p>© ۱۴۰۳ - سامانه هوشمند مدیریت تعلیمی مکاتب. کلیه حقوق محفوظ است.</p>
         <div class="footer-inline-links">
-          <a href="#">سیاست حریم خصوصی</a>
+          <a href="#">حریم خصوصی</a>
           <span>•</span>
-          <a href="#">شرایط استفاده</a>
+          <a href="#">مقررات اداری و انضباطی</a>
         </div>
       </div>
     </div>

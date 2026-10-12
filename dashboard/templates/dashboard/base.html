@@ -19,8 +19,11 @@
   </head>
   <body>
     <div class="app-container">
+      <!-- Mobile Drawer Overlay -->
+      <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
       <!-- ================= SIDEBAR ================= -->
-      <aside class="sidebar">
+      <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
           <div class="logo-wrapper">
             <img
@@ -33,6 +36,9 @@
             <h4>لیسه عالی خصوصی اهل بیت رسول‌الله (ص)</h4>
             <span>سامانه جامع مدیریت و نظارت تعلیمی</span>
           </div>
+          <button type="button" class="sidebar-close-btn" id="sidebar-close-btn" aria-label="بستن منو">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
         </div>
 
         <nav class="sidebar-nav">
@@ -72,6 +78,11 @@
                 <i class="fa-solid fa-trophy"></i> امتحانات
               </a>
             </li>
+            <li class="{% if 'finance' in request.resolver_match.url_name %}active{% endif %}">
+              <a href="{% url 'dashboard:finance-list' %}">
+                <i class="fa-solid fa-coins"></i> امور مالی و شهریه
+              </a>
+            </li>
             <li>
               <a href="{% url 'dashboard:admin-dashboard' %}">
                 <i class="fa-solid fa-gear"></i> تنظیمات سیستم
@@ -93,6 +104,14 @@
      
       <main class="base-container">
         <header class="top-header">
+          <div class="header-right-side">
+            <button type="button" class="btn-hamburger" id="mobile-toggle-btn" aria-label="منوی ناوبری">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="mobile-brand-title">
+              لیسه اهل بیت (ع)
+            </div>
+          </div>
           <div class="left-actions">
             <div class="search-wrapper">
               <i class="fa-solid fa-magnifying-glass"></i>
@@ -108,7 +127,7 @@
             <a href="#" class="icon-btn" title="راهنما"><i class="fa-regular fa-circle-question"></i></a>
           </div>
           <a href="{% url 'accounts:logout' %}" class="btn-logout">
-            خروج <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            <span>خروج</span> <i class="fa-solid fa-arrow-right-from-bracket"></i>
           </a>
         </header>
 

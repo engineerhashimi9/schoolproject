@@ -1,368 +1,311 @@
-{% extends 'dashboard/base.html' %} {% load static %} {% block style %}
-<link rel="stylesheet" href="{% static 'dashboard/css/class_edite.css' %}" />
-{% endblock style %} {% block content %}
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}
+{% if class %}ویرایش مشخصات صنف {{ class.alpha_grade }} (شعبه {{ class.section }}){% else %}ایجاد و ثبت صنف جدید{% endif %} | سامانه مدیریت تعلیمی
+{% endblock title %}
+
+{% block content %}
 <div class="container">
-  <div class="detail-container">
-    <!-- Top Header Card -->
-    <div class="header-card">
-      <div class="header-info">
-        <div class="header-icon">📄</div>
-        <div class="header-text">
-          <h1>ویرایش مشخصات صنف <span>کد: #CLS-{{class.id}}</span></h1>
-          <div style="margin: 4px 0">
-            <span class="status-dot"></span>
-            
+  {% if class %}
+  <form action="{% url 'dashboard:class-edite' id=class.id %}" method="post" id="class-form">
+  {% else %}
+  <form action="{% url 'dashboard:class-register' %}" method="post" id="class-form">
+  {% endif %}
+    {% csrf_token %}
+
+    <!-- Hero Header Banner -->
+    <div class="hero-header">
+      <div class="hero-title-area">
+        <div class="system-badge">
+          <span class="dot" style="background-color: #38bdf8"></span>
+          {% if class %}کد سیستمی صنف: #CLS-{{ class.id }}{% else %}فرم راه‌اندازی و تشکیل صنف درسی جدید{% endif %}
+        </div>
+        <h1>
+          {% if class %}ویرایش مشخصات صنف {{ class.alpha_grade }} - شعبه {{ class.section }}{% else %}ایجاد و ثبت صنف تعلیمی جدید{% endif %}
+        </h1>
+        <p>
+          تنظیمات سال تعلیمی، پایه درسی، انتصاب ناصح و استاد راهنما، اوقات درسی و سقف ظرفیت پذیرش شاگردان.
+        </p>
+      </div>
+      <div class="hero-actions">
+        <a href="{% url 'dashboard:class-list' %}" class="btn btn-outline-dark">
+          <i class="fa-solid fa-arrow-right"></i> انصراف و بازگشت
+        </a>
+        <button type="submit" class="btn btn-primary">
+          <i class="fa-solid fa-floppy-disk"></i> ذخیره و ثبت اطلاعات صنف
+        </button>
+      </div>
+    </div>
+
+    {% if class %}
+    <!-- Class Quick Status Banner -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+      <div style="display: flex; align-items: center; gap: 18px;">
+        <div style="width: 58px; height: 58px; border-radius: 14px; background: linear-gradient(135deg, #0284c7, #0369a1); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);">
+          {{ class.grade }}
+        </div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+            <h2 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #0f172a;">
+              صنف {{ class.alpha_grade }} - شعبه {{ class.section }}
+            </h2>
             {% if class.status.id == 1 %}
-                      <span
-              style="color: var(--primary); font-size: 0.9rem; font-weight: 500"
-              >در حال تدریس و فعال</span
-            >
+            <span class="badge-status badge-active">فعال و در حال تدریس</span>
             {% else %}
-            <span
-              style="color: var(--text-muted); font-size: 0.9rem; font-weight: 500"
-              >غیرفعال و بایگانی شده</span>
+            <span class="badge-status badge-inactive">غیرفعال و بایگانی</span>
             {% endif %}
-              
-    
           </div>
-          <div class="header-subtext">
-            صنف {{class.alpha_grade}} عالی - شعبه {{class.section}} | سال تحصیلی مصوب: {{class.academic_year}}
-          </div>
+          <p style="margin: 0; font-size: 13.5px; color: #64748b;">
+            سال تحصیلی مصوب: <strong style="color: #1e3a8a;">{{ class.academice_year.year }}</strong> | نوبت: {{ class.turn }}
+          </p>
         </div>
       </div>
-      {% if class %}
-      <form action="{% url 'dashboard:class-edite' id=class.id %}" method="post">
-        {% else %}
-              <form action="{% url 'dashboard:class-register' %}" method="post">
+      <div style="display: flex; gap: 20px; align-items: center;">
+        <div style="text-align: center; border-left: 1px solid #e2e8f0; padding-left: 20px;">
+          <span style="display: block; font-size: 12px; color: #64748b;">شاگردان ثبت‌نام شده</span>
+          <strong style="font-size: 15px; color: #1e3a8a;">{{ class.get_registered_count }} نفر</strong>
+        </div>
+        <div style="text-align: center; border-left: 1px solid #e2e8f0; padding-left: 20px;">
+          <span style="display: block; font-size: 12px; color: #64748b;">سقف ظرفیت صنف</span>
+          <strong style="font-size: 15px; color: #059669;">{{ class.capacity }} سیت</strong>
+        </div>
+        <a href="{% url 'dashboard:class-detail' pk=class.id %}" class="btn btn-surface" style="padding: 8px 16px; font-size: 13px;">
+          مشاهده دوسیه کامل صنف <i class="fa-solid fa-arrow-left"></i>
+        </a>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Section 1: مشخصات پایه و هویت صنف -->
+    <div class="form-card">
+      <div class="section-header">
+        <div class="blue-indicator"></div>
+        <h2><i class="fa-solid fa-chalkboard text-primary" style="margin-left: 8px;"></i> بخش اول: مشخصات پایه و هویت سازمانی صنف</h2>
+      </div>
+
+      <div class="form-grid">
+        {% if class %}
+        <div class="input-group">
+          <label>کد سیستمی صنف (غیرقابل تغییر)</label>
+          <input
+            type="text"
+            value="CLS-{{ class.id }}"
+            class="input-control font-bold"
+            disabled
+            style="background: #f1f5f9; color: #64748b; direction: ltr; text-align: center;"
+          />
+        </div>
         {% endif %}
-      {% csrf_token %}
-      <div class="header-actions">
-        <a href="{% url 'dashboard:class-list' %}" class="btn btn-text">انصراف و بازگشت ✕</a>
-        <button type="submit" class="btn btn-primary">ذخیره تغییرات صنف 💾</button>
+
+        <div class="input-group">
+          <label>سال تحصیلی مصوب <span style="color: #dc2626;">*</span></label>
+          <select name="academice_year" class="input-control font-bold" required>
+            {% for y in academic_years %}
+            <option value="{{ y.year }}" {% if class.academice_year.year == y.year %}selected{% endif %}>{{ y.year }}</option>
+            {% empty %}
+            <option value="1405" selected>1405</option>
+            <option value="1404">1404</option>
+            <option value="1403">1403</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label>پایه تحصیلی عددی و الفبایی (Grade) <span style="color: #dc2626;">*</span></label>
+          <select name="grade" class="input-control font-bold" required>
+            <option value="0-آمادگی" {% if class.grade == 0 %}selected{% endif %}>۰ - آمادگی (Pre-school)</option>
+            <option value="1-اول" {% if class.grade == 1 %}selected{% endif %}>۱ - اول (صنف اول ابتدایی)</option>
+            <option value="2-دوم" {% if class.grade == 2 %}selected{% endif %}>۲ - دوم (صنف دوم ابتدایی)</option>
+            <option value="3-سوم" {% if class.grade == 3 %}selected{% endif %}>۳ - سوم (صنف سوم ابتدایی)</option>
+            <option value="4-چهارم" {% if class.grade == 4 %}selected{% endif %}>۴ - چهارم (صنف چهارم)</option>
+            <option value="5-پنجم" {% if class.grade == 5 %}selected{% endif %}>۵ - پنجم (صنف پنجم)</option>
+            <option value="6-ششم" {% if class.grade == 6 %}selected{% endif %}>۶ - ششم (صنف ششم متوسطه)</option>
+            <option value="7-هفتم" {% if class.grade == 7 %}selected{% endif %}>۷ - هفتم (صنف هفتم متوسطه)</option>
+            <option value="8-هشتم" {% if class.grade == 8 %}selected{% endif %}>۸ - هشتم (صنف هشتم متوسطه)</option>
+            <option value="9-نهم" {% if class.grade == 9 %}selected{% endif %}>۹ - نهم (صنف نهم)</option>
+            <option value="10-دهم" {% if class.grade == 10 %}selected{% endif %}>۱۰ - دهم (صنف دهم لیسه)</option>
+            <option value="11-یازدهم" {% if class.grade == 11 %}selected{% endif %}>۱۱ - یازدهم (صنف یازدهم لیسه)</option>
+            <option value="12-دوازدهم" {% if class.grade == 12 %}selected{% endif %}>۱۲ - دوازدهم (صنف دوازدهم لیسه - فارغ‌التحصیلی)</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label>شعبه و بخش صنف (Section) <span style="color: #dc2626;">*</span></label>
+          <select name="section" class="input-control font-bold" required>
+            <option value="الف" {% if class.section == "الف" %}selected{% endif %}>شعبه الف (A)</option>
+            <option value="ب" {% if class.section == "ب" %}selected{% endif %}>شعبه ب (B)</option>
+            <option value="ج" {% if class.section == "ج" %}selected{% endif %}>شعبه ج (C)</option>
+            <option value="د" {% if class.section == "د" %}selected{% endif %}>شعبه د (D)</option>
+            <option value="هـ" {% if class.section == "هـ" %}selected{% endif %}>شعبه هـ (E)</option>
+          </select>
+        </div>
       </div>
     </div>
 
-    <!-- Main Content Layout -->
-    <div class="main-layout">
-      <!-- RIGHT COLUMN: MAIN FORM -->
-      <div class="main-content">
-        <!-- Section 1 -->
-        <div class="card">
-          <div class="section-header">
-            <div class="section-title-wrapper">
-              <div class="blue-indicator"></div>
-              <div class="section-title">
-                <h2>مشخصات پایه و هویت صنف</h2>
-                <p>اطلاعات هویتی و ثبت ساختار سازمانی صنف تحصیلی</p>
-              </div>
-            </div>
-            <div class="section-progress">بخش ۱ از ۴</div>
-          </div>
-
-          <div class="form-grid">
-            <div class="form-group">
-              <label>کد سیستمی صنف  *</label>
-              <div class="input-wrapper">
-                <span class="icon-right" style="font-size: 0.75rem"
-                  >غیرقابل تغییر</span
-                >
-                <input
-                  type="text"
-                  class="form-control disabled input-icon-right input-icon-left"
-                  value="CLS-{{class.id}}"
-                  disabled
-                  style="text-align: center"
-                />
-                <span class="icon-left">🔒</span>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>سال تحصیلی مصوب *</label>
-              <div class="input-wrapper">
-                <select
-                name="academice_year"
-                  class="form-control input-icon-left"
-                  value="{{class.academice_year}}"
-                >
-                  <option value="1404">1404</option>
-                  <option value="1405">1405</option>
-                  <option value="1406">1406</option>
-                  
-                </select>
-                <span class="icon-left">📅</span>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>پایه تحصیلی عددی (Grade) *</label>
-              <div class="input-wrapper">
-                <select
-                name="grade"
-                  class="form-control input-icon-left"
-                  value="{{class.grade}}-{{class.alpha_grade}}"
-                >
-                  <option value="0-آمادگی">0-آمادگی</option>
-                  <option value="1-اول">1-اول</option>
-                  <option value="2-دوم">2-دوم</option>
-                  <option value="3-سوم">3-سوم</option>
-                  <option value="4-چهارم">4-چهارم</option>
-                  <option value="5-پنجم">5-پنجم</option>
-                  <option value="6-ششم">6-ششم</option>
-                  <option value="7-هفتم">7-هفتم</option>
-                  <option value="8-هشتم">8-هشتم</option>
-                  <option value="9-نهم">9-نهم</option>
-                  <option value="10-دهم">10-دهم</option>
-                  <option value="11-یازدهم">11-یازدهم</option>
-                  <option value="12-دوازدهم">12-دوازدهم</option>
-                </select>
-                <span class="icon-left">#</span>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>شعبه و بخش صنف (Section) *</label>
-              <div class="input-wrapper">
-                <select
-                name="section"
-               
-                  class="form-control input-icon-left"
-                  value="{{class.section}}"
-                >
-                  <option  value="الف">الف</option>
-                  <option value="ب">ب</option>
-                  <option value="ج">ج</option>
-                  <option value="د">د</option>
-                </select>
-                <span class="icon-left">🏢</span>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- Section 2 -->
-        <div class="card">
-          <div class="section-header">
-            <div class="section-title-wrapper">
-              <div class="blue-indicator"></div>
-              <div class="section-title">
-                <h2>کادر نظارتی و استاد راهنما (Guidance)</h2>
-                <p>انتصاب ناصح و سرپرست امور تربیتی و انضباطی صنف</p>
-              </div>
-            </div>
-            <div class="section-progress">بخش ۲ از ۴</div>
-          </div>
-
-          <div class="form-group" style="margin-bottom: 24px">
-            <label>انتخاب استاد راهنما (ناصح صنف) *</label>
-            <div class="input-wrapper">
-              <select name="guidence" value="{{class.guidence.id}}" class="form-control input-icon-left">
-                {% if class %}
-                <option value="{{class.guidence.id}}" selected>{{class.guidence.name}} {{class.guidence.last_name}}</option>
-                {% endif %}
-              {% for teacher in teachers  %}
-                <option value="{{teacher.id}}" {% if teacher.id == class.guidence.id %}selected{% endif %}>
-                  {{teacher.name}} {{teacher.last_name}}
-                </option>
-              {% endfor %}
-              </select>
-              <span class="icon-left" style="pointer-events: none">👨‍🏫</span>
-            </div>
-          </div>
-
-          <div class="teacher-box">
-             <img
-                src="{% static 'dashboard/images/char.png' %}"
-                alt="{{class.guidence.name}} {{class.guidence.last_name}}"
-                class="teacher-avatar"
-              />
-
-            <div class="worker-details">
-              
-              <div class="teacher-info" style="text-align: right">
-                <h4>{{class.guidence.name}} {{class.guidence.last_name}}<span>استاد رسمی </span></h4>
-                <p style="direction: ltr; justify-content: flex-end">
-                  📞 {{class.guidence.phone}}
-                </p>
-                <p style="direction: ltr; justify-content: flex-end">
-                  ✉ {{class.guidence.email}}
-                </p>
-                <p>استاد مضمون: {{class.guidence.teachersubject.subject.name}}</p>
-              </div>
-        
-            </div>
-             
-               {% if class %}
-            <a href="{% url 'dashboard:worker-detail' pk=class.guidence.id %}" class="teacher-link">❮ مشاهده دوسیه کامل استاد</a>
-           {% endif %}
-          </div>
-
-        </div>
-
-  
+    <!-- Section 2: استاد راهنما و کادر نظارتی -->
+    <div class="form-card">
+      <div class="section-header">
+        <div class="blue-indicator"></div>
+        <h2><i class="fa-solid fa-user-tie text-primary" style="margin-left: 8px;"></i> بخش دوم: کادر نظارتی و استاد راهنما (ناصح صنف)</h2>
       </div>
 
-      <!-- LEFT COLUMN: SIDEBAR -->
-      <div class="sidebar1">
-        <!-- Location & Capacity Card -->
-        <div class="card sidebar1-card">
-          <div class="section-title-wrapper" style="margin-bottom: 20px">
-            <div class="blue-indicator"></div>
-            <div class="section-title">
-              <h2>ظرفیت و اقات درسی صنف</h2>
+      <div class="form-grid">
+        <div class="input-group" style="grid-column: 1 / -1;">
+          <label>انتخاب استاد راهنما (ناصح و سرپرست صنف) <span style="color: #dc2626;">*</span></label>
+          <select name="guidence" id="guidence-select" class="input-control font-bold" required>
+            {% for teacher in teachers %}
+            <option value="{{ teacher.id }}" {% if class.guidence.id == teacher.id %}selected{% endif %}>
+              استاد {{ teacher.name }} {{ teacher.last_name }} ({{ teacher.job.name|default:teacher.job }} - رشته {{ teacher.major }} | تماس: {{ teacher.phone }})
+            </option>
+            {% empty %}
+            <option value="">هیچ استادی یافت نشد</option>
+            {% endfor %}
+          </select>
+          <small style="color: #64748b; font-size: 12px; margin-top: 6px;">
+            استاد راهنما مسئولیت نظارت بر انضباط، پیشرفت تعلیمی، ثبت کارنامه و پیگیری حاضری این صنف را عهده‌دار خواهد بود.
+          </small>
+        </div>
+      </div>
+
+      {% if class.guidence %}
+      <!-- Existing Teacher Card Preview -->
+      <div style="margin-top: 18px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 46px; height: 46px; border-radius: 10px; background: #1e3a8a; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800;">
+            {{ class.guidence.name|first }}
+          </div>
+          <div>
+            <h4 style="margin: 0; font-size: 14px; font-weight: 700; color: #0f172a;">
+              استاد {{ class.guidence.name }} {{ class.guidence.last_name }}
+              <span style="font-size: 11.5px; color: #059669; font-weight: 500; margin-right: 6px;">(استاد رسمی)</span>
+            </h4>
+            <div style="font-size: 12.5px; color: #64748b; margin-top: 2px;">
+              رشته: {{ class.guidence.major }} | مدرک: {{ class.guidence.degree }} | شماره تماس: <span dir="ltr">{{ class.guidence.phone }}</span>
             </div>
           </div>
+        </div>
+        <a href="{% url 'dashboard:worker-detail' pk=class.guidence.id %}" class="btn btn-surface" style="padding: 6px 14px; font-size: 12.5px;">
+          مشاهده دوسیه استاد <i class="fa-solid fa-arrow-left"></i>
+        </a>
+      </div>
+      {% endif %}
+    </div>
 
-          <div class="form-group" style="margin-bottom: 16px">
-            
+    <!-- Section 3: اوقات درسی و ظرفیت صنف -->
+    <div class="form-card">
+      <div class="section-header">
+        <div class="blue-indicator"></div>
+        <h2><i class="fa-solid fa-clock text-primary" style="margin-left: 8px;"></i> بخش سوم: اوقات درسی روزانه و ظرفیت پذیرش سیت</h2>
+      </div>
 
-          <div class="form-group" style="margin-bottom: 16px">
-            <label>ساعت شروع درس:  
-               </label>
-
-            <div class="input-wrapper">
-               <label class="input-label hour"> ساعت: </label>
-             
-            <input
-            name="start_time_hour"
-                type="number"
-                value="{{class.start_time|time:'H'}}"
-                class="form-control input-icon-right"
-              />
-             <label class="input-label minute"> دقیقه: </label>
-            <input
-              name="start_time_minute"
-                type="number"
-                value="{{class.start_time|time:'i'}}"
-                class="form-control input-icon-right"
-              />
-   
-            </div>
-            <label>ساعت  رخصتی:</label>
-            <div class="input-wrapper">
-               <label class="input-label hour"> ساعت: </label>
+      <div class="form-grid">
+        <!-- Start Time -->
+        <div class="input-group">
+          <label>ساعت شروع تدریس صنف <span style="color: #dc2626;">*</span></label>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <div style="flex: 1;">
+              <small style="color: #64748b; display: block; margin-bottom: 4px;">ساعت (۰۷ تا ۱۸)</small>
               <input
-              name="end_time_hour"
                 type="number"
-                class="form-control input-icon-right"
-                value="{{class.end_time|time:'H'}}"
+                name="start_time_hour"
+                value="{{ class.start_time|time:'H'|default:8 }}"
+                min="6"
+                max="20"
+                class="input-control font-bold"
+                style="text-align: center;"
+                required
               />
-           
-             <label class="input-label minute"> دقیقه: </label>
-            <input
+            </div>
+            <span style="font-size: 20px; font-weight: 700; color: #64748b; margin-top: 18px;">:</span>
+            <div style="flex: 1;">
+              <small style="color: #64748b; display: block; margin-bottom: 4px;">دقیقه (۰۰ تا ۵۹)</small>
+              <input
+                type="number"
+                name="start_time_minute"
+                value="{{ class.start_time|time:'i'|default:0 }}"
+                min="0"
+                max="59"
+                step="5"
+                class="input-control font-bold"
+                style="text-align: center;"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- End Time -->
+        <div class="input-group">
+          <label>ساعت رخصتی و پایان درس <span style="color: #dc2626;">*</span></label>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <div style="flex: 1;">
+              <small style="color: #64748b; display: block; margin-bottom: 4px;">ساعت (۰۷ تا ۱۸)</small>
+              <input
+                type="number"
+                name="end_time_hour"
+                value="{{ class.end_time|time:'H'|default:12 }}"
+                min="6"
+                max="20"
+                class="input-control font-bold"
+                style="text-align: center;"
+                required
+              />
+            </div>
+            <span style="font-size: 20px; font-weight: 700; color: #64748b; margin-top: 18px;">:</span>
+            <div style="flex: 1;">
+              <small style="color: #64748b; display: block; margin-bottom: 4px;">دقیقه (۰۰ تا ۵۹)</small>
+              <input
+                type="number"
                 name="end_time_minute"
-                type="number"
-                class="form-control input-icon-right"
-                 value="{{class.end_time|time:'i'}}"
+                value="{{ class.end_time|time:'i'|default:30 }}"
+                min="0"
+                max="59"
+                step="5"
+                class="input-control font-bold"
+                style="text-align: center;"
+                required
               />
-
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label style="display: flex; justify-content: space-between">
-              ظرفیت مصوب صنف (سیت)
-              <strong>{{class.capacity}} نفر</strong>
-            </label>
-            <div class="input-wrapper">
-              <input
-                type="number"
-                name="capacity"
-                class="form-control input-icon-right"
-                value="{{class.capacity}}"
-                style="text-align: left; direction: ltr"
-              />
-              <span class="icon-right">👥</span>
             </div>
           </div>
         </div>
 
-        <!-- Stats Card -->
-        <div
-          class="card sidebar-card"
-          style="background-color: var(--bg-page); border: none"
-        >
-          <div class="stats-header">
-            <div class="stats-header-text">
-              <h3>۳۲ شاگرد ثبت‌نام شده <span>۹۱.۴٪</span></h3>
-              <p
-                style="
-                  font-size: 0.8rem;
-                  color: var(--text-muted);
-                  margin-top: 4px;
-                "
-              >
-                فعال
-              </p>
-            </div>
-            <div class="stats-badge">تکمیل</div>
-          </div>
-
-          <div class="progress-bg">
-            <div class="progress-fill"></div>
-          </div>
-
-          <div class="stats-footer">
-            <span><span class="status-dot"></span> ۳۲ پرشده</span>
-            <span>۳ سیت خالی باقی‌مانده</span>
-          </div>
-        </div>
-
-        <!-- Actions Card -->
-        <div class="card sidebar-card">
-          <div class="section-title-wrapper" style="margin-bottom: 20px">
-            <div class="blue-indicator"></div>
-            <div class="section-title">
-              <h2>وضعیت و عملیات صنف</h2>
-              <p>دستورات اداری و اسناد رسمی</p>
-            </div>
-          </div>
-
-          <div class="status-toggle">
-            <div>
-              <div style="font-weight: 500; font-size: 0.9rem">
-                وضعیت فعالیت صنف
-              </div>
-              <div style="font-size: 0.8rem; color: var(--text-muted)">
-                صنف فعال و در حال تدریس
-              </div>
-            </div>
-            <div class="toggle-switch">
-              <div class="toggle-knob"></div>
-            </div>
-          </div>
-
-          <ul class="action-list">
-            <li>
-              <div class="action-list-left">
-                <span class="action-icon">🪪</span>
-                <span>چاپ کارت‌های شناسایی شاگردان این صنف</span>
-              </div>
-              <span>❮</span>
-            </li>
-        
-          </ul>
+        <!-- Capacity -->
+        <div class="input-group">
+          <label>سقف مصوب ظرفیت صنف (سیت) <span style="color: #dc2626;">*</span></label>
+          <input
+            type="number"
+            name="capacity"
+            value="{{ class.capacity|default:30 }}"
+            min="10"
+            max="60"
+            class="input-control font-bold"
+            placeholder="مثال: 30"
+            dir="ltr"
+            style="text-align: right;"
+            required
+          />
+          <small style="color: #64748b; font-size: 12px; margin-top: 4px;">
+            تعداد چوکی‌ها و حداکثر سیت مجاز برای پذیرش شاگردان طبق استاندارد وزارت معارف.
+          </small>
         </div>
       </div>
     </div>
-  </div>
-  <!-- Sticky Footer -->
-  <div class="sticky-footer">
-    <div class="footer-info">
-      <span>⏱</span> آخرین به‌روزرسانی: ۲ ساعت قبل توسط مدیر سیستم (ادمین)
+
+    <!-- Bottom Action Footer -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); flex-wrap: wrap; gap: 16px;">
+      <span style="color: #64748b; font-size: 13.5px; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-circle-check text-primary"></i> اطلاعات صنف پس از ذخیره‌سازی در تقویم آموزشی و برنامه حاضری مکتب اعمال خواهد شد.
+      </span>
+      <div style="display: flex; gap: 12px;">
+        <a href="{% url 'dashboard:class-list' %}" class="btn btn-surface">
+          انصراف
+        </a>
+        <button type="submit" class="btn btn-primary" style="padding: 10px 24px;">
+          <i class="fa-solid fa-check"></i> تأیید و ذخیره تغییرات صنف
+        </button>
+      </div>
     </div>
-    <div class="footer-actions">
-    
-      <a href="{% url 'dashboard:class-list' %}" class="btn btn-text">انصراف</a>
-      <button type="submit" class="btn btn-primary">✓ ذخیره و به‌روزرسانی نهایی</button>
-    </div>
-  </div>
+  </form>
 </div>
 {% endblock content %}
-
-
-{% block js %}
-  <script src="{% static 'dashboard/js/class_edite.js' %}"></script>
-{% endblock js %}
-  o

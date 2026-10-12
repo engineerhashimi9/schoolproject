@@ -1,216 +1,377 @@
-{% extends 'dashboard/base.html' %} {% load static %} {% block style %}
-<link rel="stylesheet" href="{% static 'dashboard/css/worker_edite.css' %}" />
-{% endblock style %} {% block content %}
-<div class="container">
-  <div class="header">
-    <h1><span class="arrow">←</span> ویرایش پرونده استاد</h1>
-    <p>فرم ویرایش اطلاعات هویتی، شغلی، تحصیلی و وضعیت پرسنلی</p>
-  </div>
+{% extends 'dashboard/base.html' %}
+{% load static %}
 
-  <!-- Profile card -->
-  <div class="card">
-    <div class="hero">
-      <div class="avatar">م<span class="cam">📷</span></div>
-      <div>
-        <h2 style="font-size: 20px; font-weight: 800">
-          {{teacher.name}} {{teacher.last_name}}{% if teacher.status == "active" %}
-          <span class="pill-green">فعال</span>
-          {% else %}
-          <span class="pill-red">غیر فعال</span>
-          {% endif %}
-        </h2>
-        <p style="color: var(--muted); font-size: 13.5px">
-        {{teacher.degree}} {{teacher.major}} - {{teacher.job}}
+{% block title %}
+{% if teacher %}ویرایش پرونده استاد {{ teacher.name }} {{ teacher.last_name }}{% else %}استخدام و ثبت استاد / کارمند جدید{% endif %} | سامانه مدیریت تعلیمی
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+  {% if teacher %}
+  <form action="{% url 'dashboard:worker-edite' id=teacher.id %}" method="post" id="worker-form">
+  {% else %}
+  <form action="{% url 'dashboard:worker-register' %}" method="post" id="worker-form">
+  {% endif %}
+    {% csrf_token %}
+
+    <!-- Hero Header Banner -->
+    <div class="hero-header">
+      <div class="hero-title-area">
+        <div class="system-badge">
+          <span class="dot" style="background-color: #38bdf8"></span>
+          {% if teacher %}پرونده پرسنلی استاد: کد #{{ teacher.id }}{% else %}فرم استخدام و ثبت پرسنل تعلیمی جدید{% endif %}
+        </div>
+        <h1>
+          {% if teacher %}ویرایش پرونده استاد و کادر اداری{% else %}ثبت‌نام و تشکیل پرونده استاد جدید{% endif %}
+        </h1>
+        <p>
+          مدیریت مشخصات هویتی، مدارک علمی، وضعیت خدمتی، انتصاب صنف راهنما و اطلاعات حقوق و معاش ماهانه.
         </p>
-        <div class="upload" style="margin-top: 12px; max-width: 340px">
-          بارگذاری عکس جدید <b>(حداکثر ۲ مگابایت)</b>
+      </div>
+      <div class="hero-actions">
+        <a href="{% url 'dashboard:worker-list' %}" class="btn btn-outline-dark">
+          <i class="fa-solid fa-arrow-right"></i> انصراف و بازگشت
+        </a>
+        <button type="submit" class="btn btn-primary">
+          <i class="fa-solid fa-floppy-disk"></i> ذخیره و ثبت تغییرات
+        </button>
+      </div>
+    </div>
+
+    {% if teacher %}
+    <!-- Profile Summary Quick Card -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+      <div style="display: flex; align-items: center; gap: 18px;">
+        <div style="width: 58px; height: 58px; border-radius: 14px; background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; box-shadow: 0 4px 10px rgba(30, 58, 138, 0.25);">
+          {{ teacher.name|first }}
+        </div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+            <h2 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: #0f172a;">
+              {{ teacher.name }} {{ teacher.last_name }}
+            </h2>
+            {% if teacher.status.id == 1 %}
+            <span class="badge-status badge-active">فعال و شاغل</span>
+            {% else %}
+            <span class="badge-status badge-inactive">غیرفعال / مرخص</span>
+            {% endif %}
+          </div>
+          <p style="margin: 0; font-size: 13.5px; color: #64748b;">
+            {{ teacher.degree.name|default:teacher.degree }} در رشته {{ teacher.major }} | سمت: <strong style="color: #1e3a8a;">{{ teacher.job.name|default:teacher.job }}</strong>
+          </p>
         </div>
       </div>
-      <div class="meta">
-        <div>
-          <small>کد پرسنلی استاد</small><strong dir="ltr">{{teacher.id}}</strong>
+      <div style="display: flex; gap: 20px; align-items: center;">
+        <div style="text-align: center; border-left: 1px solid #e2e8f0; padding-left: 20px;">
+          <span style="display: block; font-size: 12px; color: #64748b;">کد پرسنلی</span>
+          <strong style="font-size: 15px; color: #0f172a;" dir="ltr">#{{ teacher.id }}</strong>
         </div>
-        <div>
-          <small>تاریخ استخدام</small><strong dir="ltr">{{teacher.registered_date|date:'Y-m-d'}}</strong>
+        <div style="text-align: center; border-left: 1px solid #e2e8f0; padding-left: 20px;">
+          <span style="display: block; font-size: 12px; color: #64748b;">تاریخ استخدام</span>
+          <strong style="font-size: 14px; color: #0f172a;" dir="ltr">{{ teacher.registered_date|date:'Y/m/d' }}</strong>
         </div>
-        <div class="tenure">
-          <strong>{{teacher.years_of_service}}</strong><small>سابقه تدریس</small>
+        <div style="text-align: center;">
+          <span style="display: block; font-size: 12px; color: #64748b;">سابقه تدریس</span>
+          <strong style="font-size: 15px; color: #059669;">{{ teacher.years_of_service }} سال</strong>
         </div>
       </div>
     </div>
-  </div>
-  {% if teacher %}
-    <form action="{% url 'dashboard:worker-edite' id=teacher.id %}" method="post">
-  {% else %}
-  <form action="{% url 'dashboard:worker-register' %}" method="post">
-  {% endif %}
-  
+    {% endif %}
 
-    {% csrf_token %}
-    
-  <div class="grid-2">
-    <section class="card">
-      <div class="card-title">
-        <span class="icon blue">👤</span> اطلاعات هویتی و فردی
+    <!-- Section 1: اطلاعات هویتی و فردی -->
+    <div class="form-card">
+      <div class="section-header">
+        <div class="blue-indicator"></div>
+        <h2><i class="fa-solid fa-user text-primary" style="margin-left: 8px;"></i> بخش اول: اطلاعات هویتی و شناسنامه‌ای استاد</h2>
       </div>
-      <div class="personal-info">
-        
-      <div class="field">
-        <label>کد پرسنلی (غیرقابل تغییر)</label>
-        <input
-          class="input disabled"
-          value="{{teacher.id}}"
-          name="id"
-          readonly
-          style="text-align: right"
-          dir="ltr"
-        />
-      </div>
-      <div class="field">
-        <label>شماره تماس همراه <span class="req">*</span></label>
-        <input
-          class="input"
-          name="phone"
-          value="{{teacher.phone}}"
-          dir="ltr"
-          style="text-align: right"
-        />
-      </div>
-      <div class="field">
-        <label>نام استاد <span class="req">*</span></label
-        ><input class="input" name="name" value="{{teacher.name}}" />
-      </div>
-      <div class="field">
-        <label>نام خانوادگی <span class="req">*</span></label
-        ><input class="input" name="last_name" value="{{teacher.last_name}}" />
-      </div>
-      <div class="field">
-        <label>نام پدر <span class="req">*</span></label
-        ><input class="input" name="fname" value="{{teacher.fname}}" />
-      </div>
-      <div class="field">
-        <label>سال فارغ التحصیلی<span class="req">*</span></label>
-        <input class="input" name="graduation_year" value="{{teacher.graduation_year}}" dir="ltr" style="text-align: right" />
-      </div>
-      </div>
-    </section>
 
-    <section class="card">
-      <div class="card-title">
-        <span class="icon gold">✓</span> وضعیت و تاریخ استخدام
-      </div>
-      <div class="personal-info">
-        
-      <div class="field">
-        <label>وضعیت کاری فعلی <span class="req">*</span></label>
-        <div class="select-wrap">
-          <select class="input" name="status">
-            <option value="1" {% if teacher.status.id == 1  %}
-            selected
-            {% endif %} >فعال (مشغول به تدریس)</option>
-            <option value="2" {% if teacher.status.id == 2  %}
-            selected
-            {% endif %}>غیر فعال</option>
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label>تاریخ استخدام / ثبت‌نام <span class="req">*</span></label>
-        <input class="input" name="registered_date" value="{{teacher.registered_date|date:'Y-m-d'}}"/>
-      </div>
-      <div class="field">
-        <label>تاریخ فراغت / خروج (اختیاری)</label>
-        <input class="input disabled" name="detached_date" value="{{teacher.detached_date|date:'Y-m-d'}}" readonly />
-        <p class="hint">تنها در صورت قطع همکاری یا بازنشستگی پر شود.</p>
-      </div>
-      <div class="field">
-         <label>استاد نگران در</label>
-      <select class="input" name="guidence_at" >
-                <option value="{{teacher.classes}}" selected>{{teacher.classes}}</option>
-               {% for class in classes %}
-              <option
-                value="{{class}}"  
-              >
-                {{class}}
-              {% endfor %}
-              <option value="None" {% if teacher.guidence_at == 'None' %}selected{% endif %}>در هیچ یک</option>
-        </select>
-      </div>
-      </div>
-    </section>
-  </div>
-
-  <div class="grid-2">
-    <section class="card">
-      <div class="card-title">
-        <span class="icon violet">🎓</span> اطلاعات شغلی و تخصصی
-      </div>
-      <div class="personal-info">
-        
-      <div class="field">
-        <label>رشته تحصیلی / حوزه تخصصی <span class="req">*</span></label>
-        <input class="input" value="{{teacher.major}}" name="major" />
-      </div>
-      <div class="field">
-        <label>مدرک تحصیلی (مقطع) <span class="req">*</span></label>
-        <div class="select-wrap">
-          <select class="input" name="degree">
-            <option>دکتری تخصصی (Ph.D)</option>
-            <option>دکتری تخصصی (Ph.D)</option>
-            <option>دکتری تخصصی (Ph.D)</option>
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label>عنوان شغلی و رتبه <span class="req">*</span></label>
-        <input class="input" name="job" value="{{teacher.job}}" />
-      </div>
-      <div class="field">
-        <label>سابقه خدمت به سال <span class="req">*</span></label>
-        <div class="input-wrap">
+      <div class="form-grid">
+        {% if teacher %}
+        <div class="input-group">
+          <label>کد پرسنلی (غیرقابل تغییر)</label>
           <input
-            class="input"
-            value="{{teacher.years_of_service}}"
-            name="years_of_service"
+            type="text"
+            value="{{ teacher.id }}"
+            class="input-control font-bold"
+            disabled
+            style="background: #f1f5f9; color: #64748b; direction: ltr; text-align: right;"
+          />
+        </div>
+        {% endif %}
+
+        <div class="input-group">
+          <label>نام استاد / کارمند <span style="color: #dc2626;">*</span></label>
+          <input
+            type="text"
+            name="name"
+            value="{{ teacher.name }}"
+            class="input-control font-bold"
+            placeholder="نام کوچک..."
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label>نام خانوادگی (تخلص) <span style="color: #dc2626;">*</span></label>
+          <input
+            type="text"
+            name="last_name"
+            value="{{ teacher.last_name }}"
+            class="input-control font-bold"
+            placeholder="تخلص خانوادگی..."
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label>نام پدر <span style="color: #dc2626;">*</span></label>
+          <input
+            type="text"
+            name="fname"
+            value="{{ teacher.fname }}"
+            class="input-control"
+            placeholder="نام پدر..."
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label>شماره تماس همراه <span style="color: #dc2626;">*</span></label>
+          <input
+            type="text"
+            name="phone"
+            value="{{ teacher.phone }}"
+            class="input-control font-bold"
+            placeholder="07xxxxxxxx"
             dir="ltr"
-            style="text-align: right; padding-inline-end: 44px"
-          /><span class="suffix">سال</span>
+            style="text-align: right;"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label>سال فراغت از تحصیل <span style="color: #dc2626;">*</span></label>
+          <input
+            type="number"
+            name="graduation_year"
+            value="{{ teacher.graduation_year|default:1398 }}"
+            class="input-control"
+            placeholder="مثال: 1395"
+            dir="ltr"
+            style="text-align: right;"
+            required
+          />
         </div>
       </div>
-      </div>
-    </section>
-    <section class="card">
-      <div class="card-title">
-        <span class="icon green">$</span> اطلاعات مالی و حقوقی
-      </div>
-      <div class="personal-info">
-        
-      <div class="field">
-        <label>معاش اصلی ماهانه (افغانی)<span class="req">*</span></label>
-        <input type="number" class="input money" name="salary" value="{{teacher.salary}}"  />
-       
-      </div>
-      <div class="field">
-        <label>مالیات ماهانه (افغانی) <span class="req">*</span></label>
-        <input type="number" class="input money error"  value="{{teacher.tax}}" name="tax"  />
-      </div>
-     
-      </div>
-       <div class="salary-box">دریافتی خالص ماهانه:  افغانی </div>
-    </section>
-  </div>
+    </div>
 
-  <div class="action-bar">
-    <button type="submit" class="btn primary">✓ ذخیره تغییرات</button>
-    <button class="btn ghost">انصراف و بازگشت</button>
-    <span class="action-note"
-      ><span class="note-dot">✓</span> تمامی تغییرات پس از ذخیره‌سازی فوراً در
-      پرونده پرسنلی، سامانه آموزشی و سیستم حقوق اعمال خواهند شد.</span
-    >
-  </div>
+    <!-- Section 2: مدارک علمی و تخصصی -->
+    <div class="form-card">
+      <div class="section-header">
+        <div class="blue-indicator"></div>
+        <h2><i class="fa-solid fa-graduation-cap text-primary" style="margin-left: 8px;"></i> بخش دوم: مدارک علمی، تحصیلی و رتبه سازمانی</h2>
+      </div>
 
+      <div class="form-grid">
+        <div class="input-group">
+          <label>مدرک تحصیلی (مقطع) <span style="color: #dc2626;">*</span></label>
+          <select name="degree" class="input-control" required>
+            <option value="دکتری تخصصی (Ph.D)" {% if teacher and teacher.degree.name == 'دکتری تخصصی (Ph.D)' or teacher and teacher.degree == 'دکتری تخصصی (Ph.D)' %}selected{% endif %}>دکتری تخصصی (Ph.D)</option>
+            <option value="ماستری (فوق لیسانس)" {% if teacher and teacher.degree.name == 'ماستری (فوق لیسانس)' or teacher and teacher.degree == 'ماستری (فوق لیسانس)' %}selected{% endif %}>ماستری (فوق لیسانس)</option>
+            <option value="لیسانس (کارشناسی)" {% if not teacher or teacher.degree.name == 'لیسانس (کارشناسی)' or teacher.degree == 'لیسانس (کارشناسی)' %}selected{% endif %}>لیسانس (کارشناسی)</option>
+            <option value="چهارده پاس (فوق دیپلم)" {% if teacher and teacher.degree.name == 'چهارده پاس (فوق دیپلم)' or teacher and teacher.degree == 'چهارده پاس (فوق دیپلم)' %}selected{% endif %}>چهارده پاس (فوق دیپلم)</option>
+            <option value="بکلوریا (دوازده پاس)" {% if teacher and teacher.degree.name == 'بکلوریا (دوازده پاس)' or teacher and teacher.degree == 'بکلوریا (دوازده پاس)' %}selected{% endif %}>بکلوریا (دوازده پاس)</option>
+          </select>
+        </div>
 
+        <div class="input-group">
+          <label>رشته تحصیلی / حوزه تخصصی <span style="color: #dc2626;">*</span></label>
+          <input
+            type="text"
+            name="major"
+            value="{{ teacher.major }}"
+            class="input-control"
+            placeholder="مثال: ریاضیات، فیزیک، ادبیات دری، تعلیم و تربیه..."
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label>عنوان شغلی و سمت سازمانی <span style="color: #dc2626;">*</span></label>
+          <input
+            type="text"
+            name="job"
+            value="{% if teacher %}{{ teacher.job.name|default:teacher.job }}{% else %}استاد{% endif %}"
+            class="input-control"
+            placeholder="مثال: استاد، مدیر تدریسی، سرمعلم، مربی تربیتی..."
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label>سابقه خدمت رسمی (سال) <span style="color: #dc2626;">*</span></label>
+          <input
+            type="number"
+            name="years_of_service"
+            value="{{ teacher.years_of_service|default:1 }}"
+            class="input-control"
+            min="0"
+            dir="ltr"
+            style="text-align: right;"
+            required
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: وضعیت استخدام و صنف راهنما -->
+    <div class="form-card">
+      <div class="section-header">
+        <div class="blue-indicator"></div>
+        <h2><i class="fa-solid fa-briefcase text-primary" style="margin-left: 8px;"></i> بخش سوم: وضعیت خدمتی و مسئولیت نظارت صنف</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="input-group">
+          <label>وضعیت اشتغال فعلی <span style="color: #dc2626;">*</span></label>
+          <select name="status" class="input-control" required>
+            <option value="1" {% if teacher.status.id == 1 or not teacher %}selected{% endif %}>فعال (مشغول به تدریس و خدمت)</option>
+            <option value="2" {% if teacher.status.id == 2 %}selected{% endif %}>غیرفعال (مرخص / منفک شده)</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label>تاریخ استخدام / شروع خدمت <span style="color: #dc2626;">*</span></label>
+          <input
+            type="date"
+            name="registered_date"
+            value="{{ teacher.registered_date|date:'Y-m-d' }}"
+            class="input-control"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label>تاریخ فراغت / قطع خدمت (اختیاری)</label>
+          <input
+            type="date"
+            name="detached_date"
+            value="{{ teacher.detached_date|date:'Y-m-d' }}"
+            class="input-control"
+          />
+          <small style="color: #94a3b8; font-size: 11.5px; margin-top: 4px;">تنها در صورت بازنشستگی یا استعفا تکمیل گردد.</small>
+        </div>
+
+        <div class="input-group">
+          <label>استاد راهنما (ناصح) در صنف</label>
+          <select name="guidence_at" class="input-control">
+            <option value="None" {% if not teacher or not teacher.classes.first %}selected{% endif %}>در هیچ‌یک (فاقد صنف راهنما)</option>
+            {% for class in classes %}
+            <option value="{{ class.grade }}-{{ class.section }}" {% if teacher and teacher.classes.first.id == class.id or teacher and class.guidence.id == teacher.id %}selected{% endif %}>
+              صنف {{ class.alpha_grade }} - شعبه {{ class.section }} ({{ class.grade }}-{{ class.section }})
+            </option>
+            {% endfor %}
+          </select>
+          <small style="color: #94a3b8; font-size: 11.5px; margin-top: 4px;">سرپرستی امور تربیتی و حاضری صنف انتخاب‌شده به این استاد واگذار می‌گردد.</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: اطلاعات مالی و معاش -->
+    <div class="form-card">
+      <div class="section-header">
+        <div class="blue-indicator"></div>
+        <h2><i class="fa-solid fa-coins text-primary" style="margin-left: 8px;"></i> بخش چهارم: اطلاعات مالی، حقوق ماهانه و مالیات</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="input-group">
+          <label>معاش اصلی ماهانه (افغانی) <span style="color: #dc2626;">*</span></label>
+          <input
+            type="number"
+            name="salary"
+            id="salary-input"
+            value="{{ teacher.salary|default:0 }}"
+            class="input-control font-bold"
+            placeholder="مبلغ به افغانی"
+            dir="ltr"
+            style="text-align: right;"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label>مالیات قانونی ماهانه (افغانی) <span style="color: #dc2626;">*</span></label>
+          <input
+            type="number"
+            name="tax"
+            id="tax-input"
+            value="{{ teacher.tax|default:0 }}"
+            class="input-control font-bold"
+            placeholder="مبلغ به افغانی"
+            dir="ltr"
+            style="text-align: right;"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Live Calculation Box -->
+      <div style="margin-top: 20px; background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 1px solid #bbf7d0; border-radius: 12px; padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 42px; height: 42px; border-radius: 10px; background: #059669; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+            <i class="fa-solid fa-wallet"></i>
+          </div>
+          <div>
+            <div style="font-size: 13px; color: #166534; font-weight: 600;">دریافتی خالص ماهانه پس از کسر مالیات</div>
+            <div style="font-size: 12px; color: #15803d;">بر اساس فرمول مصوب اداری (معاش ناخالص منهای مالیات بر عایدات)</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: baseline; gap: 8px;">
+          <span id="net-salary-val" style="font-size: 24px; font-weight: 800; color: #047857; font-family: monospace;">0</span>
+          <span style="font-size: 14px; font-weight: 700; color: #166534;">افغانی (AFN)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Action Footer -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); flex-wrap: wrap; gap: 16px;">
+      <span style="color: #64748b; font-size: 13.5px; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-circle-check text-primary"></i> تمامی تغییرات پس از ذخیره‌سازی فوراً در پرونده پرسنلی، سامانه آموزشی و سیستم حقوق اعمال خواهند شد.
+      </span>
+      <div style="display: flex; gap: 12px;">
+        <a href="{% url 'dashboard:worker-list' %}" class="btn btn-surface">
+          انصراف
+        </a>
+        <button type="submit" class="btn btn-primary" style="padding: 10px 24px;">
+          <i class="fa-solid fa-check"></i> تأیید و ذخیره نهایی
+        </button>
+      </div>
+    </div>
   </form>
 </div>
-
 {% endblock content %}
+
+{% block js %}
+<script>
+  // Real-time calculation of net salary
+  document.addEventListener('DOMContentLoaded', function() {
+    const salaryInput = document.getElementById('salary-input');
+    const taxInput = document.getElementById('tax-input');
+    const netSalaryVal = document.getElementById('net-salary-val');
+
+    function updateNetSalary() {
+      const salary = parseFloat(salaryInput.value) || 0;
+      const tax = parseFloat(taxInput.value) || 0;
+      const net = Math.max(0, salary - tax);
+      netSalaryVal.textContent = net.toLocaleString('fa-AF');
+    }
+
+    if (salaryInput && taxInput && netSalaryVal) {
+      salaryInput.addEventListener('input', updateNetSalary);
+      taxInput.addEventListener('input', updateNetSalary);
+      updateNetSalary();
+    }
+  });
+</script>
+{% endblock js %}

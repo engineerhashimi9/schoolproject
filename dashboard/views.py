@@ -72,8 +72,10 @@ def dashboard_view(request):
     else:
         overall_attendance_rate = 94.2
 
-    recent_students = Student.objects.select_related("status").order_by("-id")[:5]
-    recent_classes = Classes.objects.select_related("guidence", "academice_year").order_by("grade", "section")[:4]
+    recent_students = Student.objects.select_related(
+        "status").order_by("-id")[:5]
+    recent_classes = Classes.objects.select_related(
+        "guidence", "academice_year").order_by("grade", "section")[:4]
 
     context = {
         "students_count": total_students,
@@ -101,6 +103,11 @@ class StudentListView(LoginRequiredMixin, ListView):
     template_name = "dashboard/students/student_list.html"
     context_object_name = "students"
 
+    def get_queryset(self):
+        return Student.objects.select_related("status").prefetch_related(
+            "studentclass__classs"
+        ).order_by("-id")
+
 
 class StudentDetailView(LoginRequiredMixin, DetailView):
     model = Student
@@ -123,7 +130,6 @@ def student_edite(request, id):
     classes = Classes.objects.all()
     if request.method == "POST":
         form = StudentForm(request.POST)
-
         if form.is_valid():
             if student.school_id != form.cleaned_data["school_id"]:
                 student.school_id = form.cleaned_data["school_id"]
@@ -278,6 +284,9 @@ class TeacherListView(LoginRequiredMixin, ListView):
     template_name = "dashboard/workers/workers_list.html"
     context_object_name = "workers"
 
+    def get_queryset(self):
+        return Teacher.objects.select_related("job", "degree", "status").order_by("-id")
+
 
 class TeacherDetailView(LoginRequiredMixin, DetailView):
     model = Teacher
@@ -324,19 +333,24 @@ def teacher_edite(request, id):
             if teacher.tax != form.cleaned_data["tax"]:
                 teacher.tax = form.cleaned_data["tax"]
             if teacher.status.id != int(form.cleaned_data["status"]):
-                teacher.status_id = int(form.cleaned_data["status"])
+                teacher.status.id = int(form.cleaned_data["status"])
             teacher.save()
-            guidence_at = form.cleaned_data["guidence_at"]
-            if guidence_at:
+            guidence_at = form.cleaned_data.get("guidence_at")
+            if guidence_at and "-" in str(guidence_at):
                 grade, section = guidence_at.split("-")
-                class_obj = get_object_or_404(
-                    Classes, grade=int(grade), section=section)
-                class_obj.guidence = teacher
-                class_obj.save()
+                class_obj = Classes.objects.filter(
+                    grade=int(grade), section=section).first()
+                if class_obj:
+                    # Remove any previous class where this teacher was guidence
+                    Classes.objects.filter(guidence=teacher).exclude(id=class_obj.id).update(guidence=None)
+                    class_obj.guidence = teacher
+                    class_obj.save()
+            elif guidence_at in ["None", "", None]:
+                Classes.objects.filter(guidence=teacher).update(guidence=None)
+            messages.success(request, f"اطلاعات پرونده {teacher.name} {teacher.last_name} با موفقیت به‌روزرسانی شد.")
             return redirect(reverse("dashboard:worker-detail", kwargs={"pk": teacher.id}))
         else:
-            print(form.errors)
-            print(request.POST)
+            return render(request, "dashboard/workers/worker_edite.html", {"teacher": teacher, "classes": classes, "errors": form.errors})
 
     else:
         return render(request, "dashboard/workers/worker_edite.html", {"teacher": teacher, "classes": classes})
@@ -348,7 +362,6 @@ def disable_teacher(request, id):
     target.detached_date = str(jdatetime.date.today())
     target.status_id = 2
     target.save()
-    print("Hi")
     return redirect(reverse("dashboard:worker-list"))
 
 
@@ -389,19 +402,20 @@ def teacher_create(request):
                 tax=tax,
                 status_id=status
             )
-            guidence_at = form.cleaned_data["guidence_at"]
-            if guidence_at:
+            guidence_at = form.cleaned_data.get("guidence_at")
+            if guidence_at and "-" in str(guidence_at):
                 grade, section = guidence_at.split("-")
+                class_obj = Classes.objects.filter(
+                    grade=int(grade), section=section).first()
+                if class_obj:
+                    class_obj.guidence = new_teacher
+                    class_obj.save()
 
-                class_obj = get_object_or_404(
-                    Classes, grade=int(grade), section=section)
-                class_obj.guidence = new_teacher
-                class_obj.save()
-
+            messages.success(request, f"استاد/کارمند جدید ({new_teacher.name} {new_teacher.last_name}) با موفقیت در سامانه ثبت شد.")
             return redirect(reverse("dashboard:worker-list"))
         else:
             print(form.errors)
-            print(request.POST)
+            return render(request, "dashboard/workers/worker_edite.html", {"classes": classes, "errors": form.errors})
     else:
         return render(request, "dashboard/workers/worker_edite.html", {"classes": classes})
 
@@ -418,6 +432,11 @@ class ClassesListView(LoginRequiredMixin, ListView):
     model = Classes
     template_name = "dashboard/classes/class_list.html"
     context_object_name = "classes"
+
+    def get_queryset(self):
+        return Classes.objects.select_related(
+            "guidence", "academice_year", "status"
+        ).prefetch_related("studentclass").order_by("grade", "section")
 
     def get_context_data(self, **kwargs) -> dict[str, object]:
         context = super().get_context_data(**kwargs)
@@ -446,11 +465,11 @@ class ClassDetailView(LoginRequiredMixin, DetailView):
 
 @is_admin
 def class_create(request):
-    teachers = Teacher.objects.filter(classes__isnull=True)
+    teachers = Teacher.objects.filter(classes__isnull=True).order_by("name")
+    academic_years = AcademiceYear.objects.all().order_by("-year")
     if request.method == "POST":
         form = ClassForm(request.POST)
         if form.is_valid():
-
             academice_year = int(form.cleaned_data["academice_year"])
             academice_year_obj = AcademiceYear.objects.get(year=academice_year)
             grade, alpha_grade = form.cleaned_data["grade"].split("-")
@@ -462,26 +481,28 @@ def class_create(request):
             end_time_hour = form.cleaned_data["end_time_hour"]
             end_time_minute = form.cleaned_data["end_time_minute"]
             teacher = teachers.get(id=guidence_id)
-            Classes.objects.create(
+            new_cls = Classes.objects.create(
                 academice_year=academice_year_obj,
                 grade=int(grade),
                 alpha_grade=alpha_grade,
                 section=section,
                 capacity=capacity,
                 guidence=teacher,
-                start_time=f"{start_time_hour}:{start_time_minute}",
-                end_time=f"{end_time_hour}:{end_time_minute}"
+                start_time=f"{start_time_hour:02d}:{start_time_minute:02d}",
+                end_time=f"{end_time_hour:02d}:{end_time_minute:02d}"
             )
+            messages.success(request, f"صنف جدید ({new_cls.alpha_grade} شعبه {new_cls.section}) با موفقیت ایجاد شد.")
             return redirect(reverse("dashboard:class-list"))
         else:
             print(form.errors)
-    return render(request, "dashboard/classes/class_edite.html", {"teachers": teachers})
+    return render(request, "dashboard/classes/class_edite.html", {"teachers": teachers, "academic_years": academic_years})
 
 
 @is_admin
 def class_edite(request, id):
-    teachers = Teacher.objects.filter(classes__isnull=True)
     class_obj = get_object_or_404(Classes, id=id)
+    teachers = Teacher.objects.filter(Q(classes=class_obj) | Q(classes__isnull=True)).distinct().order_by("name")
+    academic_years = AcademiceYear.objects.all().order_by("-year")
     if request.method == "POST":
         form = ClassForm(request.POST)
         if form.is_valid():
@@ -507,15 +528,14 @@ def class_edite(request, id):
                 class_obj.capacity = capacity
             if class_obj.guidence_id != guidence_id:
                 class_obj.guidence_id = guidence_id
-            if class_obj.start_time != f"{start_time_hour}:{start_time_minute}":
-                class_obj.start_time = f"{start_time_hour}:{start_time_minute}"
-            if class_obj.end_time != f"{end_time_hour}:{end_time_minute}":
-                class_obj.end_time = f"{end_time_hour}:{end_time_minute}"
+            class_obj.start_time = f"{start_time_hour:02d}:{start_time_minute:02d}"
+            class_obj.end_time = f"{end_time_hour:02d}:{end_time_minute:02d}"
             class_obj.save()
+            messages.success(request, f"مشخصات صنف {class_obj.alpha_grade} شعبه {class_obj.section} با موفقیت به‌روزرسانی شد.")
             return redirect(reverse("dashboard:class-list"))
         else:
             print(form.errors)
-    return render(request, "dashboard/classes/class_edite.html", {"teachers": teachers, "class": class_obj})
+    return render(request, "dashboard/classes/class_edite.html", {"teachers": teachers, "class": class_obj, "academic_years": academic_years})
 
 
 @is_admin
@@ -596,7 +616,8 @@ class AttendenceListView(LoginRequiredMixin, ListView):
 
         context["selected_class_id"] = self.request.GET.get("class_id", "")
         context["selected_month_id"] = self.request.GET.get("month_id", "")
-        context["selected_year_id"] = self.request.GET.get("academic_year_id", "")
+        context["selected_year_id"] = self.request.GET.get(
+            "academic_year_id", "")
         context["search_query"] = self.request.GET.get("search", "")
         return context
 
@@ -608,21 +629,25 @@ def attendance_create_or_edit(request, class_id=None, month_id=None, academic_ye
     months = Month.objects.all().order_by("id")
 
     # Determine Academic Year
-    selected_year_id = academic_year_id or request.GET.get("academic_year") or request.POST.get("academic_year")
+    selected_year_id = academic_year_id or request.GET.get(
+        "academic_year") or request.POST.get("academic_year")
     if selected_year_id and str(selected_year_id).isdigit():
-        academic_year_obj = AcademiceYear.objects.filter(id=int(selected_year_id)).first()
+        academic_year_obj = AcademiceYear.objects.filter(
+            id=int(selected_year_id)).first()
     else:
         academic_year_obj = academic_years.first()
 
     # Determine Class
-    selected_class_id = class_id or request.GET.get("class") or request.POST.get("class")
+    selected_class_id = class_id or request.GET.get(
+        "class") or request.POST.get("class")
     if selected_class_id and str(selected_class_id).isdigit():
         class_obj = Classes.objects.filter(id=int(selected_class_id)).first()
     else:
         class_obj = classes.first()
 
     # Determine Month
-    selected_month_id = month_id or request.GET.get("month") or request.POST.get("month")
+    selected_month_id = month_id or request.GET.get(
+        "month") or request.POST.get("month")
     if selected_month_id and str(selected_month_id).isdigit():
         month_obj = Month.objects.filter(id=int(selected_month_id)).first()
     else:
@@ -762,7 +787,8 @@ def attendance_create_or_edit(request, class_id=None, month_id=None, academic_ye
     student_count = len(student_rows)
     class_all_days = default_all_days or 24
     if student_count > 0 and class_all_days > 0:
-        class_avg_rate = round((total_present_sum / (student_count * class_all_days)) * 100, 1)
+        class_avg_rate = round(
+            (total_present_sum / (student_count * class_all_days)) * 100, 1)
     else:
         class_avg_rate = 100.0 if student_count > 0 else 0.0
 
@@ -821,3 +847,10 @@ class ExamListView(LoginRequiredMixin, ListView):
     model = ExamResult
     template_name = "dashboard/exam.html"
     context_object_name = "exams"
+
+
+@is_admin
+def finance_view(request):
+    return render(request, "dashboard/finance/finance.html")
+
+

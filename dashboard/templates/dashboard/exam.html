@@ -1,552 +1,288 @@
-{% extends 'dashboard/base.html' %} {% load static %} {% block style %}
-<link rel="stylesheet" href="{% static 'dashboard/css/exam.css' %}" />
-{% endblock style %} {% block content %}
+{% extends 'dashboard/base.html' %}
+{% load static %}
 
+{% block title %}
+کارنامه و نتایج امتحانات رسمی | سامانه جامع مدیریت تعلیمی
+{% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/exam.css' %}" />
+{% endblock style %}
+
+{% block content %}
 <div class="container">
   <!-- Hero Header -->
   <div class="hero-header">
-    <div class="hero-content">
-      <div class="hero-title-area">
-        <h1>
-          مدیریت و کارنامه<br />نتایج امتحانات <span>(Exam Results)</span>
-        </h1>
-        <p>
-          ثبت، اعتبارسنجی و صدور صورت‌جلسه رسمی امتحانات ترم و ماهوار به تفکیک
-          صنف، مضمون، نوع آزمون و نظارت ممتحن وزارت معارف.
-        </p>
+    <div class="hero-title-area">
+      <div class="system-badge">
+        <span class="dot" style="background-color: #38bdf8"></span>
+        سامانه رسمی اعتبارسنجی و ثبت نتایج امتحانات (Exam Results)
       </div>
-      <div class="hero-meta">
-        <div class="hero-meta-item">
-          <span>✍</span> استاد ممتحن: <strong>استاد محمد رضایی</strong>
-        </div>
-        <div class="hero-meta-item">
-          <span>👥</span> صنف: <strong>دهم ریاضی (شعبه الف)</strong>
-        </div>
-        <div class="hero-meta-item">
-          <span>📘</span> مضمون: <strong>فیزیک ۱ (مکانیک)</strong>
-        </div>
-      </div>
+      <h1>مدیریت و کارنامه نتایج امتحانات</h1>
+      <p>
+        ثبت، اعتبارسنجی و صدور صورت‌جلسه رسمی امتحانات ترم و ماهوار به تفکیک صنف، مضمون و نظارت ممتحن وزارت معارف.
+      </p>
     </div>
     <div class="hero-actions">
-      <button class="btn btn-outline-dark">
-        <span>📄</span> صورت‌جلسه و تاییدیه
-      </button>
-      <button class="btn btn-outline-dark">
-        <span>📥</span> خروجی اکسل و PDF
-      </button>
       <button class="btn btn-primary">
-        <span>⊕</span> ثبت و ورود نمرات جدید
+        <i class="fa-solid fa-plus"></i> ثبت و ورود نمرات
+      </button>
+      <button class="btn btn-outline-dark" onclick="window.print()">
+        <i class="fa-solid fa-file-pdf"></i> صورت‌جلسه و خروجی PDF
       </button>
     </div>
   </div>
 
   <!-- Stats Grid -->
   <div class="stats-grid">
-    <!-- Card 1 (Right visually in RTL) -->
+    <!-- Card 1 -->
     <div class="stat-card">
       <div class="stat-header">
-        <div class="stat-title">میانگین نمرات صنف<br />از ۱۰۰ نمره</div>
-        <div
-          class="stat-icon"
-          style="background-color: var(--primary-light); color: var(--primary)"
-        >
-          📊
+        <div class="stat-title">میانگین نمرات صنف<br />از سقف ۱۰۰ نمره</div>
+        <div class="stat-icon" style="background-color: #eff6ff; color: #1e3a8a;">
+          <i class="fa-solid fa-chart-simple"></i>
         </div>
       </div>
-      <div class="stat-value" style="color: var(--text-main)">۸۴.۲</div>
+      <div class="stat-value" style="color: #0f172a;">۸۴.۲</div>
       <div class="stat-footer">
-        <span style="color: var(--primary)">▲ ۴.۲٪ رشد نسبت به</span>
-        <span>ترم قبلی</span>
+        <span class="badge-stat" style="background: #e0f2fe; color: #0369a1;">+۴.۲٪ رشد ترمی</span>
+        <span style="color: #059669; font-size: 12px; font-weight: 600;">پایدار</span>
       </div>
     </div>
 
     <!-- Card 2 -->
     <div class="stat-card">
       <div class="stat-header">
-        <div class="stat-title">بالاترین نمره آزمون<br />از ۱۰۰ نمره</div>
-        <div
-          class="stat-icon"
-          style="background-color: var(--warning-light); color: var(--warning)"
-        >
-          🏆
+        <div class="stat-title">بالاترین نمره آزمون<br />۱۰۰ از ۱۰۰</div>
+        <div class="stat-icon" style="background-color: #fef3c7; color: #b45309;">
+          <i class="fa-solid fa-award"></i>
         </div>
       </div>
-      <div class="stat-value" style="color: var(--text-main)">
-        <span>/ ۱۰۰</span> ۱۰۰
-      </div>
+      <div class="stat-value" style="color: #b45309;">۱۰۰</div>
       <div class="stat-footer">
-        <span>شاگرد اول: رضا حس...</span>
-        <span>تذکره: ۳۰۴۰...۳۴</span>
+        <span class="badge-stat" style="background: #fef3c7; color: #b45309;">شاگرد اول صنف</span>
+        <span style="color: #64748b; font-size: 12px;">فیزیک مکانیک</span>
       </div>
     </div>
 
     <!-- Card 3 -->
     <div class="stat-card">
       <div class="stat-header">
-        <div class="stat-title">مردود و نیازمند<br />آزمون جبرانی</div>
-        <div
-          class="stat-icon"
-          style="background-color: var(--danger-light); color: var(--danger)"
-        >
-          🛑
+        <div class="stat-title">مردود و نیازمند چانس<br />زیر نمره قبولی (۴۰)</div>
+        <div class="stat-icon" style="background-color: #fef2f2; color: #dc2626;">
+          <i class="fa-solid fa-triangle-exclamation"></i>
         </div>
       </div>
-      <div class="stat-value" style="color: var(--danger)">
-        ۳ <span>دانش‌آموز (زیر ۴۰)</span>
-      </div>
+      <div class="stat-value" style="color: #dc2626;">۳ <small style="font-size: 14px; font-weight: 600; color: #64748b;">شاگرد</small></div>
       <div class="stat-footer">
-        <span style="color: var(--danger)">❗ اطلاعیه به والدین</span>
-        <span>ارسال شد</span>
+        <span class="badge-stat" style="background: #fee2e2; color: #b91c1c;">نیازمند آزمون مجدد</span>
+        <span style="color: #dc2626; font-size: 12px;">اطلاعیه ارسال شد</span>
       </div>
     </div>
 
-    <!-- Card 4 (Left) -->
+    <!-- Card 4 -->
     <div class="stat-card">
       <div class="stat-header">
-        <div class="stat-title">وضعیت تصحیح و<br />ثبت اوراق</div>
-        <div
-          class="stat-icon"
-          style="background-color: var(--primary-light); color: var(--primary)"
-        >
-          ☑
+        <div class="stat-title">وضعیت تصحیح اوراق<br />ثبت نهایی شیت</div>
+        <div class="stat-icon" style="background-color: #f0fdf4; color: #059669;">
+          <i class="fa-solid fa-circle-check"></i>
         </div>
       </div>
-      <div class="stat-value" style="color: var(--primary)">
-        ۳۲ <span>از ۳۲</span>
-      </div>
+      <div class="stat-value" style="color: #059669;">۳۲ <small style="font-size: 14px; color: #64748b;">/ ۳۲</small></div>
       <div class="stat-footer">
-        <span style="color: var(--text-main)">وضعیت: تایید نهایی</span>
-        <span>ثبت در دیتابیس</span>
+        <span class="badge-stat" style="background: #dcfce7; color: #15803d;">تأیید ممتحن</span>
+        <span style="color: #64748b; font-size: 12px;">ثبت در دیتابیس</span>
       </div>
     </div>
   </div>
+
   <!-- Filters Section -->
   <div class="filters-section">
     <div class="filters-header">
       <div class="filters-title">
-        <span style="color: var(--primary)">⚗</span> فیلترهای جدول ارزیابی نمرات
-      </div>
-      <div class="legend-row">
-        <div class="legend-item">
-          <span class="dot" style="background-color: var(--primary)"></span>
-          عالی (۱۰۰-۹۰: A)
-        </div>
-        <div class="legend-item">
-          <span class="dot" style="background-color: var(--success)"></span>
-          بسیار خوب (۸۹-۷۵: B)
-        </div>
-        <div class="legend-item">
-          <span class="dot" style="background-color: var(--warning)"></span>
-          متوسط (۷۴-۶۰: C)
-        </div>
-        <div class="legend-item">
-          <span class="dot" style="background-color: var(--danger)"></span> نیاز
-          به تقویت (زیر ۶۰)
-        </div>
+        <i class="fa-solid fa-filter text-primary"></i> فیلترهای شیت و کارنامه امتحانات
       </div>
     </div>
     <div class="filter-row">
       <div class="input-group">
         <label>صنف تحصیلی:</label>
-        <select class="input-control">
+        <select class="input-control font-bold">
           <option>دهم ریاضی الف</option>
+          <option>دهم تجربی ب</option>
+          <option>یازدهم الف</option>
         </select>
       </div>
       <div class="input-group">
-        <label>استاد ارزیاب:</label>
-        <select class="input-control">
+        <label>استاد ممتحن:</label>
+        <select class="input-control font-bold">
           <option>استاد محمد رضایی</option>
+          <option>استاد احمد طارقی</option>
         </select>
       </div>
       <div class="input-group">
         <label>نوع امتحان:</label>
-        <select class="input-control">
-          <option>چهارونیم ماهه</option>
-          <option>امتحان نهایی (پایان)</option>
+        <select class="input-control font-bold">
+          <option>چهارونیم ماهه (سمستر اول)</option>
+          <option>امتحان سالانه (نهایی)</option>
+          <option>آزمون‌های ماهوار</option>
         </select>
       </div>
       <div class="input-group">
-        <label>سال تحصیلی:</label>
-        <select class="input-control">
-          <option>1405</option>
+        <label>مضمون آزمون:</label>
+        <select class="input-control font-bold">
+          <option>فیزیک ۱ (مکانیک)</option>
+          <option>ریاضیات عالی</option>
+          <option>کیمیا</option>
         </select>
       </div>
       <div class="input-group">
-        <label>جستجوی دانش‌آموز:</label>
+        <label>جستجوی شاگرد:</label>
         <input
           type="text"
           class="input-control"
-          placeholder="نام یا شماره تذکره..."
-        />
-      </div>
-    </div>
-  </div>
-  <!-- Exam Info & Filters Card -->
-  <div class="exam-card">
-    <div class="exam-info-top">
-      <div class="info-items">
-        <div class="info-item">
-          <i>🔵</i> <strong>آزمون جاری:</strong> امتحان نهایی سمستر اول
-          (چهارونیم ماهه)
-        </div>
-        <div class="info-item">
-          <i>📅</i> <strong>تاریخ برگزاری:</strong> ۱۵ قوس/آذر ۱۴۰۲
-        </div>
-        <div class="info-item">
-          <i>⚖</i> <strong>ضریب مضمون:</strong> ۴ واحد
-        </div>
-        <div class="info-item">
-          <i>⏱</i> <strong>مدت زمان آزمون:</strong> ۱۲۰ دقیقه
-        </div>
-      </div>
-      <div class="info-actions">
-        <button class="btn-small"><span>🖨</span> چاپ شیت نمرات</button>
-        <button class="btn-small"><span>✎</span> ویرایش مشخصات آزمون</button>
-      </div>
-    </div>
-    <div class="exam-filters">
-      <div class="input-group">
-        <label>صنف و شعبه</label>
-        <select class="input-control">
-          <option>دهم ریاضی الف (A)</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label>نوع امتحان</label>
-        <select class="input-control">
-          <option>امتحان نهایی (پایان)</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label>مضمون درسی</label>
-        <select class="input-control">
-          <option>فیزیک ۱ (مکانیک پ...</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label>سطح نمره و درجه</label>
-        <select class="input-control">
-          <option>همه سطوح (A تا F)</option>
-        </select>
-      </div>
-      <div class="input-group">
-        <label>جستجوی نام، ولد یا تذکره</label>
-        <input
-          type="text"
-          class="input-control"
-          placeholder="🔍 نام دانش‌آموز، نام پدر یا کد اساس..."
+          placeholder="نام، ولد یا اساس..."
         />
       </div>
     </div>
   </div>
 
-  <!-- Data Table -->
+  <!-- Data Table Section -->
   <div class="table-section">
     <div class="table-header">
       <div class="table-title">
-        جدول تفصیلی نمرات و کارنامه انفرادی
-        <span class="badge-count">۳۲ نمره تایید شده</span>
+        <div class="table-icon">
+          <i class="fa-solid fa-scroll"></i>
+        </div>
+        <div class="table-info">
+          <h2>جدول تفصیلی نمرات و شیت رسمی امتحانات</h2>
+          <p>صنف دهم ریاضی الف | نوع امتحان: چهارونیم ماهه | مضمون: فیزیک ۱</p>
+        </div>
       </div>
-      <div class="table-tools">
-        <button class="tool-btn">↹</button>
-        <button class="tool-btn">📄</button>
-        <button class="tool-btn">↻</button>
+      <div class="table-actions">
+        <button class="btn btn-surface" onclick="window.print()">
+          <i class="fa-solid fa-print"></i> چاپ شیت نمرات
+        </button>
       </div>
     </div>
 
-    <table>
+    <div class="table-responsive">
+      <table class="data-table">
       <thead>
         <tr>
-          <th style="width: 40px">#</th>
-          <th>مشخصات<br />دانش‌آموز (ولد / اساس)</th>
-          <th>صنف و<br />شعبه</th>
-          <th>نوع<br />امتحان و تاریخ</th>
-          <th>نمره اخذ<br />شده</th>
-          <th style="width: 180px">میزان بازدهی (%)</th>
-          <th>رتبه در<br />صنف</th>
+          <th style="width: 50px;">#</th>
+          <th>مشخصات دانش‌آموز (ولد / اساس)</th>
+          <th>صنف و شعبه</th>
+          <th>نوع امتحان</th>
+          <th>نمره اخذ شده</th>
+          <th style="width: 140px;">میزان بازدهی (%)</th>
           <th>وضعیت قبولی</th>
-          <th>عملیات</th>
+          <th style="width: 80px;">عملیات</th>
         </tr>
       </thead>
       <tbody>
-        <!-- Row 1 -->
+        {% for exam_res in exams %}
         <tr>
-          <td style="color: var(--text-muted); font-size: 0.75rem">
-            EXM-<br />8101
-          </td>
+          <td>{{ forloop.counter }}</td>
           <td>
-            <div class="student-cell">
-              <img
-                src="https://i.pravatar.cc/100?img=11"
-                alt="Avatar"
-                class="avatar"
-              />
-              <div class="student-info">
-                <strong>رضا حسینی</strong>
-                <span>ولد: علی‌رضا | شماره اساس: ۲۷۴۱۰</span>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 36px; height: 36px; border-radius: 8px; background: #e0f2fe; color: #0369a1; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                {{ exam_res.student.name|first }}
+              </div>
+              <div>
+                <strong style="color: #0f172a; display: block;">{{ exam_res.student.name }}</strong>
+                <span style="font-size: 12px; color: #64748b;">ولد: {{ exam_res.student.fname }} | اساس: {{ exam_res.student.school_id }}</span>
               </div>
             </div>
           </td>
           <td>
-            <div class="badge-circle">دهم<br />ریاضی<br />الف</div>
+            <span class="badge-status badge-secondary font-bold">
+              {{ exam_res.exam.classs.alpha_grade }} - {{ exam_res.exam.classs.section }}
+            </span>
           </td>
-          <td style="font-size: 0.75rem; color: var(--text-main)">
-            امتحان<br />نهایی<br />سمستر<br />اول<br /><span
-              style="color: var(--text-muted)"
-              >۱۵ قوس ۱۴۰۲</span
-            >
-          </td>
-          <td>
-            <div class="score-box score-blue">۱۰۰<span>از ۱۰۰</span></div>
+          <td style="color: #1e3a8a; font-size: 13px;">
+            {{ exam_res.exam.exam_type }}
           </td>
           <td>
-            <div class="progress-container">
-              <div class="progress-header" style="color: var(--primary)">
-                <span>نمره کامل</span>
-                <strong>۱۰۰٪</strong>
-              </div>
-              <div class="progress-bar-bg">
-                <div
-                  class="progress-bar-fill"
-                  style="width: 100%; background-color: var(--primary)"
-                ></div>
+            <span class="font-bold" style="font-size: 16px; color: #0f172a;">{{ exam_res.score }}</span>
+            <small style="color: #64748b;">/ {{ exam_res.max_score }}</small>
+          </td>
+          <td>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <div style="height: 6px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+                <div style="width: {% widthratio exam_res.score exam_res.max_score 100 %}%; height: 100%; background: #2563eb; border-radius: 4px;"></div>
               </div>
             </div>
           </td>
-          <td><div class="rank-circle rank-gold">۱</div></td>
           <td>
-            <div class="status-pill status-excellent">
-              ممتاز<br />(درجه A) ★
-            </div>
+            {% if exam_res.score >= 50 %}
+            <span class="badge-status badge-active">
+              <i class="fa-solid fa-check"></i> کامیاب
+            </span>
+            {% else %}
+            <span class="badge-status badge-inactive">
+              <i class="fa-solid fa-xmark"></i> مشروط / ناکام
+            </span>
+            {% endif %}
           </td>
           <td>
-            <div class="row-actions">
-              <button class="action-btn">👁</button>
-              <button class="action-btn">✎</button>
+            <div class="action-btns-group">
+              <button class="action-btn-circle" title="مشاهده کارنامه">
+                <i class="fa-solid fa-eye"></i>
+              </button>
             </div>
           </td>
         </tr>
-
-        <!-- Row 2 -->
+        {% empty %}
+        <!-- Demo Academic Row if DB is empty for demo preview -->
         <tr>
-          <td style="color: var(--text-muted); font-size: 0.75rem">
-            EXM-<br />8102
-          </td>
+          <td class="font-bold">۱</td>
           <td>
-            <div class="student-cell">
-              <img
-                src="https://i.pravatar.cc/100?img=12"
-                alt="Avatar"
-                class="avatar"
-              />
-              <div class="student-info">
-                <strong>محمد رحیمی</strong>
-                <span>ولد: غلام‌نبی | شماره اساس: ۲۷۴۱۴</span>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 36px; height: 36px; border-radius: 8px; background: #e0f2fe; color: #0369a1; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                ر
+              </div>
+              <div>
+                <strong style="color: #0f172a; display: block;">رضا حسینی</strong>
+                <span style="font-size: 12px; color: #64748b;">ولد: علی‌رضا | اساس: ۲۷۴۱۰</span>
               </div>
             </div>
           </td>
           <td>
-            <div class="badge-circle">دهم<br />ریاضی<br />الف</div>
+            <span class="badge-status badge-secondary font-bold">
+              دهم ریاضی الف
+            </span>
           </td>
-          <td style="font-size: 0.75rem; color: var(--text-main)">
-            امتحان<br />نهایی<br />سمستر<br />اول<br /><span
-              style="color: var(--text-muted)"
-              >۱۵ قوس ۱۴۰۲</span
-            >
-          </td>
-          <td>
-            <div class="score-box score-blue">۹۴<span>از ۱۰۰</span></div>
+          <td style="color: #1e3a8a; font-size: 13px;">
+            چهارونیم ماهه
           </td>
           <td>
-            <div class="progress-container">
-              <div class="progress-header" style="color: var(--primary)">
-                <span>بسیار عالی</span>
-                <strong>۹۴٪</strong>
-              </div>
-              <div class="progress-bar-bg">
-                <div
-                  class="progress-bar-fill"
-                  style="width: 94%; background-color: var(--primary)"
-                ></div>
+            <span class="font-bold" style="font-size: 16px; color: #059669;">۱۰۰</span>
+            <small style="color: #64748b;">/ ۱۰۰</small>
+          </td>
+          <td>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <div style="height: 6px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+                <div style="width: 100%; height: 100%; background: #059669; border-radius: 4px;"></div>
               </div>
             </div>
           </td>
-          <td><div class="rank-circle rank-silver">۲</div></td>
           <td>
-            <div class="status-pill status-excellent">ممتاز<br />(درجه A)</div>
+            <span class="badge-status badge-active">
+              <i class="fa-solid fa-check"></i> کامیاب ممتاز
+            </span>
           </td>
           <td>
-            <div class="row-actions">
-              <button class="action-btn">👁</button>
-              <button class="action-btn">✎</button>
+            <div class="action-btns-group">
+              <button class="action-btn-circle" title="مشاهده کارنامه">
+                <i class="fa-solid fa-eye"></i>
+              </button>
             </div>
           </td>
         </tr>
-
-        <!-- Row 3 -->
-        <tr>
-          <td style="color: var(--text-muted); font-size: 0.75rem">
-            EXM-<br />8103
-          </td>
-          <td>
-            <div class="student-cell">
-              <img
-                src="https://i.pravatar.cc/100?img=13"
-                alt="Avatar"
-                class="avatar"
-              />
-              <div class="student-info">
-                <strong>مهدی اکبری</strong>
-                <span>ولد: عبدالحمید | شماره اساس: ۲۷۴۱۵</span>
-              </div>
-            </div>
-          </td>
-          <td>
-            <div class="badge-circle">دهم<br />ریاضی<br />الف</div>
-          </td>
-          <td style="font-size: 0.75rem; color: var(--text-main)">
-            امتحان<br />نهایی<br />سمستر<br />اول<br /><span
-              style="color: var(--text-muted)"
-              >۱۵ قوس ۱۴۰۲</span
-            >
-          </td>
-          <td>
-            <div class="score-box score-dark">۸۸<span>از ۱۰۰</span></div>
-          </td>
-          <td>
-            <div class="progress-container">
-              <div class="progress-header" style="color: var(--primary)">
-                <span>بسیار خوب</span>
-                <strong>۸۸٪</strong>
-              </div>
-              <div class="progress-bar-bg">
-                <div
-                  class="progress-bar-fill"
-                  style="width: 88%; background-color: var(--primary)"
-                ></div>
-              </div>
-            </div>
-          </td>
-          <td><div class="rank-circle rank-silver">۳</div></td>
-          <td>
-            <div class="status-pill status-vgood">بسیار خوب<br />(درجه B)</div>
-          </td>
-          <td>
-            <div class="row-actions">
-              <button class="action-btn">👁</button>
-              <button class="action-btn">✎</button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Row 4 -->
-        <tr>
-          <td style="color: var(--text-muted); font-size: 0.75rem">
-            EXM-<br />8104
-          </td>
-          <td>
-            <div class="student-cell">
-              <img
-                src="https://i.pravatar.cc/100?img=14"
-                alt="Avatar"
-                class="avatar"
-              />
-              <div class="student-info">
-                <strong>جواد رضایی</strong>
-                <span>ولد: محمدکاظم | شماره اساس: ۲۷۴۱۹</span>
-              </div>
-            </div>
-          </td>
-          <td>
-            <div class="badge-circle">دهم<br />ریاضی<br />الف</div>
-          </td>
-          <td style="font-size: 0.75rem; color: var(--text-main)">
-            امتحان<br />نهایی<br />سمستر<br />اول<br /><span
-              style="color: var(--text-muted)"
-              >۱۵ قوس ۱۴۰۲</span
-            >
-          </td>
-          <td>
-            <div class="score-box score-dark">۸۲<span>از ۱۰۰</span></div>
-          </td>
-          <td>
-            <div class="progress-container">
-              <div class="progress-header" style="color: var(--primary)">
-                <span>خوب</span>
-                <strong>۸۲٪</strong>
-              </div>
-              <div class="progress-bar-bg">
-                <div
-                  class="progress-bar-fill"
-                  style="width: 82%; background-color: var(--primary)"
-                ></div>
-              </div>
-            </div>
-          </td>
-          <td><div class="rank-circle rank-silver">۴</div></td>
-          <td>
-            <div class="status-pill status-good">خوب<br />(درجه B-)</div>
-          </td>
-          <td>
-            <div class="row-actions">
-              <button class="action-btn">👁</button>
-              <button class="action-btn">✎</button>
-            </div>
-          </td>
-        </tr>
+        {% endfor %}
       </tbody>
     </table>
-
-    <!-- Pagination -->
-    <div class="pagination">
-      <div>
-        نمایش ردیف ۱ تا ۴ از کل ۳۲ شاگرد صنف دهم ریاضی الف |
-        <span style="color: var(--text-main)">تعداد در صفحه: ▾</span>
-      </div>
-      <div class="page-numbers">
-        <button class="page-btn">❯</button>
-        <button class="page-btn active">۱</button>
-        <button class="page-btn">۲</button>
-        <button class="page-btn">۳</button>
-        <button class="page-btn">❮</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Footer Verification Cards -->
-  <div class="footer-cards">
-    <!-- Teacher Verification -->
-    <div class="footer-card">
-      <div class="footer-icon">✍</div>
-      <div class="footer-info">
-        <h4>تاییدیه استاد ممتحن <span>☑</span></h4>
-        <p>استاد محمد رضایی<br />امضا دیجیتال: ۱۴۰۲/۹/۱۸ - ۱۲:۳۰</p>
-      </div>
-    </div>
-
-    <!-- School Management Verification -->
-    <div class="footer-card">
-      <div class="footer-icon">🛡</div>
-      <div class="footer-info">
-        <h4>مهر و تایید مدیریت لیسه <span>☑</span></h4>
-        <p>دکتر احمد طارقی<br />کد ارجاع نظارتی: ۸۸۰۱۱-AP-۱۴۰۲</p>
-      </div>
-    </div>
-
-    <!-- System Archive -->
-    <div class="footer-card">
-      <div class="footer-icon">🗄</div>
-      <div class="footer-info">
-        <h4>
-          بایگانی سامانه امتحانات
-          <span style="color: var(--primary)">تایید شده</span>
-        </h4>
-        <p>
-          ثبت در کارنامه رسمی دانش‌آموزان<br />امکان ویرایش با مجوز شورای
-          انضباطی
-        </p>
-      </div>
     </div>
   </div>
 </div>
-{% endblock content %} {% block js %} {% endblock js %}
+{% endblock content %}

@@ -1,103 +1,226 @@
-{% extends 'dashboard/base.html' %} {% load static %} {% block style %}
-<link rel="stylesheet" href="{% static 'dashboard/css/student.css' %}" />
+{% extends 'dashboard/base.html' %} {% load static %} {% block title %}لیست
+دانش‌آموزان | سامانه مدیریت آموزشی{% endblock title %} {% block content %}
+<div class="container">
+  <!-- Hero Header -->
+  <div class="hero-header">
+    <div class="hero-title-area">
+      <div class="system-badge">
+        <span class="dot" style="background-color: #38bdf8"></span>
+        سامانه مدیریت سوابق و پرونده‌های شاگردان
+      </div>
+      <h1>بانک جامع اطلاعات و پرونده‌های دانش‌آموزان</h1>
+      <p>
+        نظارت بر وضعیت تحصیلی، مشخصات هویتی، اسناد تذکره، شماره‌های اساس و
+        پرونده‌های فعال شاگردان مکتب.
+      </p>
+    </div>
+    <div class="hero-actions">
+      <button
+        type="button"
+        class="btn btn-outline-dark"
+        onclick="window.print()"
+      >
+        <i class="fa-solid fa-print"></i> چاپ سوابق (PDF)
+      </button>
+      <a href="{% url 'dashboard:student-register' %}" class="btn btn-primary">
+        <i class="fa-solid fa-user-plus"></i> + ثبت‌نام دانش‌آموز جدید
+      </a>
+    </div>
+  </div>
 
-<style>
-  /* Dark backdrop that covers the whole screen */
-  .message-box {
-    display: none; /* Hidden by default */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-    justify-content: center;
-    align-items: center;
-  }
-
-  /* The actual white alert box */
-  .message-content {
-    background-color: #ffffff;
-    padding: 24px;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    max-width: 400px;
-    width: 80%;
-  }
-
-  /* Style the button inside the box */
-  .option-btn {
-    all: unset;
-    margin: 30px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  .message {
-    margin: 20px;
-  }
-</style>
-{% endblock style %} {% block content %}
-<main class="container">
-  <!-- Page Content Container -->
-  <div class="content-wrapper">
-    <!-- Title & Actions -->
-    <div class="page-header">
-      <h2>لیست دانش‌آموزان</h2>
-      <p>مدیریت و مشاهده اطلاعات تمامی دانش‌آموزان ثبت‌نام شده.</p>
-      <div class="page-actions">
-        <button class="btn-exit" id="deleteBtn">
-          <i class="fa-solid fa-sign-out-alt"></i> خروجی اکسل
-        </button>
-        <a href="{% url 'dashboard:student-register' %}" class="btn-primary">
-          <i class="fa-solid fa-plus"></i> افزودن دانش‌آموز جدید
-        </a>
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-title">کل شاگردان ثبت‌شده<br />(Total Students)</div>
+        <div class="stat-icon icon-blue">
+          <i class="fa-solid fa-user-graduate"></i>
+        </div>
+      </div>
+      <div class="stat-value">{{ students|length }}</div>
+      <div class="stat-footer">
+        <span style="color: #2563eb">● پرونده رسمی</span>
+        <span style="color: #64748b">ثبت در دفتر اساس</span>
       </div>
     </div>
 
-    <!-- Filter Bar -->
-    <div class="filter-bar">
-      <div class="filters-left">
-        <button class="btn-filter"><i class="fa-solid fa-filter"></i></button>
-        <select class="filter-select">
-          <option>وضعیت</option>
-        </select>
-        <select class="filter-select">
-          <option>صنف</option>
-        </select>
-        <select class="filter-select">
-          <option>درجه تعلیمی</option>
-        </select>
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-title">
+          شاگردان برحال و فعال<br />(Active Enrolled)
+        </div>
+        <div class="stat-icon icon-green">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
       </div>
-      <div class="search-box">
-        <input type="text" placeholder="جستجوی نام یا شماره دانش‌آموزی..." />
-        <i class="fa-solid fa-magnifying-glass"></i>
+      <div class="stat-value" style="color: #059669">{{ students|length }}</div>
+      <div class="stat-footer">
+        <span style="color: #059669">۱۰۰٪ فعال</span>
+        <span style="color: #64748b">حاضر در صنوف درسی</span>
       </div>
     </div>
 
-    <!-- Data Table -->
-    <div class="table-container">
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-title">صنف‌های آموزشی فعال<br />(Active Classes)</div>
+        <div class="stat-icon icon-amber">
+          <i class="fa-solid fa-school"></i>
+        </div>
+      </div>
+      <div class="stat-value" style="color: #d97706">۱۸</div>
+      <div class="stat-footer">
+        <span style="color: #d97706">پایه‌های ۱ الی ۱۲</span>
+        <span style="color: #64748b">نوبت‌های صبح و بعدازظهر</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-title">سال تحصیلی رسمی<br />(Academic Year)</div>
+        <div class="stat-icon icon-rose">
+          <i class="fa-regular fa-calendar-check"></i>
+        </div>
+      </div>
+      <div class="stat-value" style="color: #dc2626">۱۴۰۴</div>
+      <div class="stat-footer">
+        <span style="color: #dc2626">جاری و مصوب</span>
+        <span style="color: #64748b">تقویم معارف</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters & Search Section -->
+  <div class="filters-section">
+    <div class="filter-row">
+      <div class="input-group" style="flex: 2">
+        <label
+          ><i class="fa-solid fa-magnifying-glass"></i> جستجوی هوشمند
+          دانش‌آموز</label
+        >
+        <input
+          type="text"
+          id="student-search-input"
+          class="input-control"
+          placeholder="جستجو بر اساس نام، نام پدر، شماره اساس، شماره تذکره..."
+        />
+      </div>
+
+      <div class="input-group">
+        <label><i class="fa-solid fa-school"></i> فیلتر صنف</label>
+        <select id="class-filter" class="input-control">
+          <option value="">همه صنف‌ها</option>
+          <option value="1">صنف اول</option>
+          <option value="2">صنف دوم</option>
+          <option value="3">صنف سوم</option>
+          <option value="4">صنف چهارم</option>
+          <option value="5">صنف پنجم</option>
+          <option value="6">صنف ششم</option>
+          <option value="7">صنف هفتم</option>
+          <option value="8">صنف هشتم</option>
+          <option value="9">صنف نهم</option>
+          <option value="10">صنف دهم</option>
+          <option value="11">صنف یازدهم</option>
+          <option value="12">صنف دوازدهم</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label><i class="fa-solid fa-toggle-on"></i> وضعیت تحصیلی</label>
+        <select id="status-filter" class="input-control">
+          <option value="">همه وضعیت‌ها</option>
+          <option value="active">فعال و برحال</option>
+          <option value="inactive">غیرفعال / منفک</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="legend-row">
+      <span>راهنمای وضعیت پرونده:</span>
+      <div class="legend-item">
+        <span class="dot" style="background-color: #059669"></span>
+        <span style="color: #059669">برحال و مشغول به تعلیم</span>
+      </div>
+      <div class="legend-item">
+        <span class="dot" style="background-color: #dc2626"></span>
+        <span style="color: #dc2626">منفک / انتقال یافته</span>
+      </div>
+      <span
+        style="
+          margin-right: auto;
+          background-color: #f1f5f9;
+          padding: 4px 12px;
+          border-radius: 12px;
+          font-size: 13px;
+        "
+      >
+        مجموع نمایش:
+        <strong style="color: #2563eb" id="visible-count"
+          >{{ students|length }}</strong
+        >
+        دانش‌آموز
+      </span>
+    </div>
+  </div>
+
+  <!-- Data Table Section -->
+  <div class="table-section">
+    <div class="table-header">
+      <div class="table-title">
+        <div class="table-icon">
+          <i class="fa-solid fa-users"></i>
+        </div>
+        <div class="table-info">
+          <h2>دفتر جامع مشخصات و اساس دانش‌آموزان</h2>
+          <p>سوابق هویتی، آدرس، تماس و صنف‌های ثبت‌شده شاگردان</p>
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px">
+        <span class="badge badge-primary">
+          <i class="fa-solid fa-shield-check"></i> پرونده‌های تأیید شده
+        </span>
+      </div>
+    </div>
+
+    <div class="table-responsive table-container">
       <table class="data-table">
         <thead>
           <tr>
-            <th>نام دانش‌آموز</th>
-            <th>نام پدر</th>
-            <th>شماره مسلسل</th>
-            <th>درجه تعلیمی</th>
-            <th>وضعیت</th>
-            <th>تلفون</th>
-            <th>عملیات</th>
+            <th style="width: 100px; text-align: center">کد اساس</th>
+            <th>مشخصات و نام شاگرد</th>
+            <th>نام پدر و جد</th>
+            <th style="text-align: center">صنف و دوره</th>
+            <th style="text-align: center">تاریخ ثبت‌نام</th>
+            <th style="text-align: center">شماره تماس</th>
+            <th style="text-align: center">وضعیت</th>
+            <th style="text-align: center; width: 120px">عملیات</th>
           </tr>
         </thead>
-        <tbody>
-          <!-- Row 1 -->
-
+        <tbody id="students-table-body">
           {% for student in students %}
-          <tr id="student-{{ student.id }}">
+          <tr
+            class="student-row"
+            data-name="{{ student.name }}"
+            data-fname="{{ student.fname }}"
+            data-gfname="{{ student.gfname }}"
+            data-schoolid="{{ student.school_id }}"
+            data-cardid="{{ student.card_id }}"
+            data-class="{% if student.studentclass.first %}{{ student.studentclass.first.classs.grade }}{% endif %}"
+            data-status="{% if student.status.name == 'active' or not student.status %}active{% else %}inactive{% endif %}"
+          >
+            <td style="text-align: center">
+              <span
+                style="
+                  background: #e0f2fe;
+                  color: #0369a1;
+                  padding: 4px 10px;
+                  border-radius: 8px;
+                  font-weight: 800;
+                  font-size: 12.5px;
+                "
+              >
+                #{{ student.school_id }}
+              </span>
+            </td>
             <td>
               <div class="student-cell">
                 <img
@@ -106,107 +229,169 @@
                   class="student-avatar"
                 />
                 <div class="student-info">
-                  <span class="student-name">{{student.name}}</span>
-                  <span class="join-date"
-                    >{{student.registered_date}} تاریخ ثبت‌نام:</span
+                  <a
+                    href="{% url 'dashboard:student-detail' student.id %}"
+                    class="student-name"
+                    style="text-decoration: none"
                   >
+                    {{ student.name }}
+                  </a>
+                  <span class="student-sub">
+                    تذکره: {{ student.card_id }}
+                  </span>
                 </div>
               </div>
             </td>
-            <td>{{student.fname}}</td>
-            <td>{{student.school_id}}</td>
-
-            <td>{{student.studentclass.first}}</td>
             <td>
-              <span class="status-badge {{student.status.name|lower}}"
-                >{% if student.status.name == "active" %} فعال {% else %}
-                غیرفعال {% endif %}</span
-              >
+              <div style="font-weight: 600; color: #1e293b">
+                {{ student.fname }}
+              </div>
+              <div style="font-size: 11px; color: #64748b">
+                جد: {{ student.gfname }}
+              </div>
             </td>
-            <td>{{student.phone}}</td>
-            <td>
-              <div class="action-icons">
+            <td style="text-align: center">
+              {% if student.studentclass.first %}
+              <span class="badge badge-gray" style="font-size: 12px">
+                صنف {{ student.studentclass.first.classs.grade }} - شعبۀ {{
+                student.studentclass.first.classs.section }}
+              </span>
+              {% else %}
+              <span class="badge badge-warning" style="font-size: 11px"
+                >ثبت‌نشده در صنف</span
+              >
+              {% endif %}
+            </td>
+            <td style="text-align: center; font-size: 12.5px; color: #475569">
+              {{ student.registered_date|date:"Y/m/d" }}
+            </td>
+            <td
+              style="
+                text-align: center;
+                direction: ltr;
+                font-size: 12.5px;
+                color: #334155;
+                font-weight: 600;
+              "
+            >
+              {{ student.phone }}
+            </td>
+            <td style="text-align: center">
+              {% if student.status.name == "active" or not student.status %}
+              <span class="badge badge-success">
+                <i class="fa-solid fa-circle-check"></i> فعال
+              </span>
+              {% else %}
+              <span class="badge badge-danger">
+                <i class="fa-solid fa-circle-xmark"></i> منفک
+              </span>
+              {% endif %}
+            </td>
+            <td style="text-align: center">
+              <div class="action-btns-group">
                 <a
-                  href="{% url 'dashboard:student-detail' pk=student.id %}"
-                  class="btn-icon"
+                  href="{% url 'dashboard:student-detail' student.id %}"
+                  class="btn-action-view"
+                  title="مشاهده پرونده کامل"
                 >
-                  <i class="fa-regular fa-eye"></i>
+                  <i class="fa-solid fa-eye"></i>
                 </a>
                 <a
-                  href="{% url 'dashboard:student-edite' id=student.id %}"
-                  class="btn-icon"
+                  href="{% url 'dashboard:student-edite' student.id %}"
+                  class="btn-action-edit"
+                  title="ویرایش اطلاعات"
                 >
                   <i class="fa-solid fa-pen"></i>
                 </a>
-                <button
-                  class="btn-icon"
-                  id="disable"
-                  onclick="disevent(event,{{student.id}})"
+                <a
+                  href="{% url 'dashboard:student-disable' student.id %}"
+                  class="btn-action-delete"
+                  title="غیرفعال‌سازی پرونده"
+                  onclick="
+                    return confirm(
+                      'آیا از تغییر وضعیت این پرونده اطمینان دارید؟',
+                    );
+                  "
                 >
-                  <i class="fa-solid fa-trash"></i>
-                </button>
+                  <i class="fa-solid fa-user-slash"></i>
+                </a>
               </div>
             </td>
           </tr>
-
+          {% empty %}
+          <tr>
+            <td
+              colspan="8"
+              style="text-align: center; padding: 40px; color: #94a3b8"
+            >
+              <i
+                class="fa-solid fa-users-slash"
+                style="
+                  font-size: 36px;
+                  margin-bottom: 12px;
+                  display: block;
+                  color: #cbd5e1;
+                "
+              ></i>
+              هیچ دانش‌آموزی در سامانه ثبت نگردیده است.
+            </td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-
-    <!-- Pagination -->
-    <div class="pagination">
-      <div class="page-buttons">
-        <button class="page-btn">
-          <i class="fa-solid fa-chevron-right"></i>
-        </button>
-        <button class="page-btn active">1</button>
-        <button class="page-btn">2</button>
-        <button class="page-btn">3</button>
-        <span class="dots">...</span>
-        <button class="page-btn">26</button>
-        <button class="page-btn">
-          <i class="fa-solid fa-chevron-left"></i>
-        </button>
-      </div>
-      <span class="showing-text">نمایش ۱ تا ۱۰ از ۲۵۶ دانش‌آموز</span>
-    </div>
   </div>
-  <div id="msgBoxModal" class="message-box">
-    <!-- The actual message window -->
-  </div>
-</main>
+</div>
 
-{% endblock content %} {% block js %}
 <script>
-  const modal = document.getElementById("msgBoxModal");
+  document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("student-search-input");
+    const classFilter = document.getElementById("class-filter");
+    const statusFilter = document.getElementById("status-filter");
+    const rows = document.querySelectorAll(".student-row");
+    const countDisplay = document.getElementById("visible-count");
 
-  function closeModal() {
-    modal.style.display = "none";
-    modal.innerHTML = "";
-  }
+    function filterTable() {
+      const query = (searchInput.value || "").trim().toLowerCase();
+      const selectedClass = classFilter.value;
+      const selectedStatus = statusFilter.value;
 
-  function disevent(event, id) {
-    if (event) event.stopPropagation();
+      let visible = 0;
+      rows.forEach((row) => {
+        const name = (row.dataset.name || "").toLowerCase();
+        const fname = (row.dataset.fname || "").toLowerCase();
+        const gfname = (row.dataset.gfname || "").toLowerCase();
+        const schoolid = (row.dataset.schoolid || "").toLowerCase();
+        const cardid = (row.dataset.cardid || "").toLowerCase();
+        const studentClass = row.dataset.class || "";
+        const studentStatus = row.dataset.status || "";
 
-    modal.innerHTML = `
-        <div class="message-content">
-          <h3>اخطار</h3>
-          <p class="message">این دانش‌آموز غیرفعال شود؟</p>
-          <a href="/dashboard/student/${id}/disable" class="option-btn">بله</a>
-          <button type="button" class="option-btn" id="closeBoxBtn">خیر</button>
-        </div>`;
-    modal.style.display = "flex";
-  }
+        const matchesQuery =
+          !query ||
+          name.includes(query) ||
+          fname.includes(query) ||
+          gfname.includes(query) ||
+          schoolid.includes(query) ||
+          cardid.includes(query);
 
-  window.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      closeModal();
+        const matchesClass = !selectedClass || studentClass === selectedClass;
+        const matchesStatus =
+          !selectedStatus || studentStatus === selectedStatus;
+
+        if (matchesQuery && matchesClass && matchesStatus) {
+          row.style.display = "";
+          visible++;
+        } else {
+          row.style.display = "none";
+        }
+      });
+
+      if (countDisplay) countDisplay.textContent = visible;
     }
-    if (e.target && e.target.id === "closeBoxBtn") {
-      closeModal();
-    }
+
+    if (searchInput) searchInput.addEventListener("input", filterTable);
+    if (classFilter) classFilter.addEventListener("change", filterTable);
+    if (statusFilter) statusFilter.addEventListener("change", filterTable);
   });
 </script>
-
-{% endblock js %}
+{% endblock content %}

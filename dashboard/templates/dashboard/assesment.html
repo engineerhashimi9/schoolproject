@@ -1,24 +1,35 @@
-{% extends 'dashboard/base.html' %} {% load static %} {% block style %}
-<link rel="stylesheet" href="{% static 'dashboard/css/assesment.css' %}" />
-{% endblock style %} {% block content %}
+{% extends 'dashboard/base.html' %}
+{% load static %}
 
+{% block title %}
+مدیریت و ثبت نمرات ارزیابی تحصیلی (Assessment) | سامانه جامع مدیریت تعلیمی
+{% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/assesment.css' %}" />
+{% endblock style %}
+
+{% block content %}
 <div class="container">
   <!-- Hero Header -->
   <div class="hero-header">
     <div class="hero-title-area">
       <div class="system-badge">
-        <span class="dot" style="background-color: #60a5fa"></span>
-        سامانه هوشمند ارزیابی و ثبت نمرات ماهانه
+        <span class="dot" style="background-color: #38bdf8"></span>
+        سامانه هوشمند ارزیابی و ثبت نمرات ماهانه شاگردان
       </div>
       <h1>مدیریت و ثبت نمرات و ارزیابی تحصیلی (Assessment)</h1>
       <p>
-        ارزیابی مستمر ماهانه، ثبت نمرات مضامین درسی به تفکیک صنف و استاد و تحلیل
-        نمره
+        ارزیابی مستمر ماهانه، ثبت نمرات مضامین درسی به تفکیک صنف و استاد و تحلیل پیشرفت تعلیمی.
       </p>
     </div>
     <div class="hero-actions">
-      <button class="btn btn-primary">+ ثبت نمره جدید</button>
-      <button class="btn btn-outline-dark">خروجی اکسل و کارنامه PDF</button>
+      <button class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i> ثبت نمره جدید
+      </button>
+      <button class="btn btn-outline-dark" onclick="window.print()">
+        <i class="fa-solid fa-file-pdf"></i> خروجی کارنامه و چاپ
+      </button>
     </div>
   </div>
 
@@ -27,100 +38,60 @@
     <!-- Card 1 -->
     <div class="stat-card">
       <div class="stat-header">
-        <div class="stat-title">اوسط کل نمرات صنف<br />از ۱۰۰</div>
-        <div
-          class="stat-icon"
-          style="background-color: var(--primary-bg); color: var(--primary)"
-        >
-          📊
+        <div class="stat-title">اوسط کل نمرات صنف<br />از سقف ۱۰۰ نمره</div>
+        <div class="stat-icon" style="background-color: #eff6ff; color: #1e3a8a;">
+          <i class="fa-solid fa-chart-line"></i>
         </div>
       </div>
-      <div class="stat-value" style="color: var(--text-main)">۸۸.۵</div>
+      <div class="stat-value" style="color: #0f172a;">۸۸.۵</div>
       <div class="stat-footer">
-        <span
-          class="badge-stat"
-          style="background-color: var(--primary-bg); color: var(--primary)"
-          >۳.۲٪ رشد ماهانه</span
-        >
-        <span style="color: var(--primary); font-size: 0.8rem"
-          >سطح عالی و پایدار</span
-        >
+        <span class="badge-stat" style="background: #e0f2fe; color: #0369a1;">+۳.۲٪ رشد ماهانه</span>
+        <span style="color: #059669; font-size: 12px; font-weight: 600;">سطح عالی و پایدار</span>
       </div>
     </div>
 
     <!-- Card 2 -->
     <div class="stat-card">
       <div class="stat-header">
-        <div class="stat-title">
-          بالاترین نمره ثبت‌شده<br />۱۰۰ /
-          <span
-            style="
-              font-size: 1.2rem;
-              font-weight: bold;
-              color: var(--text-main);
-            "
-            >۱۰۰</span
-          >
-        </div>
-        <div
-          class="stat-icon"
-          style="background-color: var(--warning-bg); color: var(--warning)"
-        >
-          🏆
+        <div class="stat-title">بالاترین نمره ثبت‌شده<br />سقف نمره ۱۰۰ / ۱۰۰</div>
+        <div class="stat-icon" style="background-color: #fef3c7; color: #b45309;">
+          <i class="fa-solid fa-trophy"></i>
         </div>
       </div>
-      <div class="stat-footer" style="padding-top: 16px">
-        <span style="color: var(--text-muted); font-size: 0.8rem"
-          >🥇 شاگرد اول: رضا حسینی (ریاضیا...</span
-        >
+      <div class="stat-value" style="color: #b45309;">۱۰۰</div>
+      <div class="stat-footer">
+        <span class="badge-stat" style="background: #fef3c7; color: #b45309;">شاگرد اول: رضا حسینی</span>
+        <span style="color: #64748b; font-size: 12px;">مضمون: ریاضیات عالی</span>
       </div>
     </div>
 
     <!-- Card 3 -->
     <div class="stat-card">
       <div class="stat-header">
-        <div class="stat-title">نیازمند تلاش و تقویت<br />دانش‌آموز</div>
-        <div
-          class="stat-icon"
-          style="background-color: var(--danger-bg); color: var(--danger)"
-        >
-          ⚠
+        <div class="stat-title">نیازمند تقویت تعلیمی<br />شاگردان زیر حد نصاب</div>
+        <div class="stat-icon" style="background-color: #fef2f2; color: #dc2626;">
+          <i class="fa-solid fa-triangle-exclamation"></i>
         </div>
       </div>
-      <div class="stat-value" style="color: var(--danger)">۲</div>
+      <div class="stat-value" style="color: #dc2626;">۲ <small style="font-size: 14px; font-weight: 600; color: #64748b;">شاگرد</small></div>
       <div class="stat-footer">
-        <span
-          class="badge-stat"
-          style="background-color: var(--danger-bg); color: var(--danger)"
-          >زیر حد نصاب ۶۰٪</span
-        >
-        <span style="color: var(--primary); cursor: pointer; font-size: 0.8rem"
-          >ارسال اطلاعیه</span
-        >
+        <span class="badge-stat" style="background: #fee2e2; color: #b91c1c;">زیر حد نصاب ۶۰٪</span>
+        <span style="color: #dc2626; font-size: 12px; font-weight: 600;">ارسال هشدار به والدین</span>
       </div>
     </div>
 
     <!-- Card 4 -->
     <div class="stat-card">
       <div class="stat-header">
-        <div class="stat-title">مجموع نمرات ثبت‌شده<br />از ۳۲ شاگرد</div>
-        <div
-          class="stat-icon"
-          style="background-color: var(--gray-bg); color: var(--text-main)"
-        >
-          ☑
+        <div class="stat-title">مجموع نمرات ثبت‌شده<br />پوشش ارزیابی شاگردان</div>
+        <div class="stat-icon" style="background-color: #f0fdf4; color: #059669;">
+          <i class="fa-solid fa-circle-check"></i>
         </div>
       </div>
-      <div class="stat-value" style="color: var(--text-main)">۳۲</div>
+      <div class="stat-value" style="color: #059669;">۳۲ <small style="font-size: 14px; color: #64748b;">/ ۳۲ شاگرد</small></div>
       <div class="stat-footer">
-        <span
-          class="badge-stat"
-          style="background-color: var(--primary-bg); color: var(--primary)"
-          >تکمیل ۱۰۰٪ ارزیابی</span
-        >
-        <span style="color: var(--text-muted); font-size: 0.8rem"
-          >ماه عقرب</span
-        >
+        <span class="badge-stat" style="background: #dcfce7; color: #15803d;">تکمیل ۱۰۰٪ ارزیابی</span>
+        <span style="color: #64748b; font-size: 12px;">ماه عقرب</span>
       </div>
     </div>
   </div>
@@ -129,64 +100,72 @@
   <div class="filters-section">
     <div class="filters-header">
       <div class="filters-title">
-        <span style="color: var(--primary)">⚗</span> فیلترهای جدول ارزیابی نمرات
+        <i class="fa-solid fa-filter text-primary"></i> فیلترهای جدول ارزیابی نمرات
       </div>
       <div class="legend-row">
         <div class="legend-item">
-          <span class="dot" style="background-color: var(--primary)"></span>
+          <span class="dot" style="background-color: #2563eb"></span>
           عالی (۱۰۰-۹۰: A)
         </div>
         <div class="legend-item">
-          <span class="dot" style="background-color: var(--success)"></span>
+          <span class="dot" style="background-color: #059669"></span>
           بسیار خوب (۸۹-۷۵: B)
         </div>
         <div class="legend-item">
-          <span class="dot" style="background-color: var(--warning)"></span>
+          <span class="dot" style="background-color: #d97706"></span>
           متوسط (۷۴-۶۰: C)
         </div>
         <div class="legend-item">
-          <span class="dot" style="background-color: var(--danger)"></span> نیاز
-          به تقویت (زیر ۶۰)
+          <span class="dot" style="background-color: #dc2626"></span>
+          نیاز به تقویت (زیر ۶۰)
         </div>
       </div>
     </div>
     <div class="filter-row">
       <div class="input-group">
         <label>صنف تحصیلی:</label>
-        <select class="input-control">
+        <select class="input-control font-bold">
           <option>دهم ریاضی الف</option>
+          <option>دهم تجربی ب</option>
+          <option>یازدهم الف</option>
         </select>
       </div>
       <div class="input-group">
         <label>مضمون درسی:</label>
-        <select class="input-control">
-          <option>ریاضیات عالی و هند...</option>
+        <select class="input-control font-bold">
+          <option>ریاضیات عالی و هندسه</option>
+          <option>فیزیک</option>
+          <option>کیمیا</option>
+          <option>ادبیات دری</option>
         </select>
       </div>
       <div class="input-group">
         <label>استاد ارزیاب:</label>
-        <select class="input-control">
+        <select class="input-control font-bold">
           <option>استاد محمد رضایی</option>
+          <option>استاد احمد طارقی</option>
         </select>
       </div>
       <div class="input-group">
         <label>ماه ارزیابی:</label>
-        <select class="input-control">
+        <select class="input-control font-bold">
           <option>عقرب (آبان)</option>
+          <option>قوس (آذر)</option>
+          <option>میزان (مهر)</option>
         </select>
       </div>
       <div class="input-group">
         <label>سال تحصیلی:</label>
-        <select class="input-control">
+        <select class="input-control font-bold">
           <option>۱۴۰۳ - ۱۴۰۲</option>
         </select>
       </div>
       <div class="input-group">
-        <label>جستجوی دانش‌آموز:</label>
+        <label>جستجوی شاگرد:</label>
         <input
           type="text"
           class="input-control"
-          placeholder="نام یا شماره تذکره..."
+          placeholder="نام یا تذکره..."
         />
       </div>
     </div>
@@ -196,135 +175,161 @@
   <div class="table-section">
     <div class="table-header">
       <div class="table-title">
-        <div class="table-icon">📄</div>
+        <div class="table-icon">
+          <i class="fa-solid fa-file-signature"></i>
+        </div>
         <div class="table-info">
           <h2>
-            جدول نمرات و ارزیابی ماهانه - صنف دهم ریاضی الف (مضمون: ریاضیات
-            عالی)
+            جدول نمرات و ارزیابی ماهانه - صنف دهم ریاضی الف (مضمون: ریاضیات عالی)
           </h2>
           <p>آخرین همگام‌سازی نمرات: امروز، ۱۱:۴۵ قبل از ظهر</p>
         </div>
       </div>
       <div class="table-actions">
-        <button class="btn-table-action">چاپ لیست کامل صنف 🖨</button>
-        <button class="btn-table-action">تازه سازی ↻</button>
+        <button class="btn btn-surface" onclick="window.print()">
+          <i class="fa-solid fa-print"></i> چاپ لیست کامل صنف
+        </button>
       </div>
     </div>
 
-    <table>
+    <div class="table-responsive">
+      <table class="data-table">
       <thead>
         <tr>
-          <th style="width: 40px"></th>
-          <th># آیدی</th>
+          <th style="width: 40px">#</th>
+          <th>آیدی</th>
           <th>مشخصات دانش‌آموز</th>
-          <th>صنف و<br />شعبه</th>
-          <th>مضمون<br />درسی</th>
-          <th>استاد<br />ارزیاب</th>
-          <th>ماه<br />ارزیابی</th>
-          <th>نمره<br />ثبت‌شده</th>
-          <th>حداکثر<br />نمره</th>
-          <th>درصد و بازخورد<br />بصری</th>
-          <th>وضعیت<br />رتبه</th>
-          <th></th>
+          <th>صنف و شعبه</th>
+          <th>مضمون درسی</th>
+          <th>استاد ارزیاب</th>
+          <th>ماه</th>
+          <th>نمره ثبت‌شده</th>
+          <th>سقف</th>
+          <th style="width: 140px;">میزان بازدهی</th>
+          <th>رتبه</th>
+          <th style="width: 90px;">عملیات</th>
         </tr>
       </thead>
       <tbody>
         {% for assesment in assesments %}
-
-        <!-- Row 1 -->
         <tr>
-          <td><input type="radio" name="student" /></td>
-          <td style="color: var(--text-muted); font-size: 0.8rem">
-            <br />{{assesment.student.id}}
-          </td>
+          <td>{{ forloop.counter }}</td>
+          <td style="color: #64748b; font-size: 12px;" dir="ltr">#{{ assesment.student.id }}</td>
           <td>
-            <div class="student-cell">
-              <img
-                src="https://i.pravatar.cc/100?img=11"
-                alt="Avatar"
-                class="avatar"
-              />
-              <div class="student-info">
-                <strong>{{assesment.student.name}}</strong>
-                <span>فرزند: {{assesment.student.fname}} - تذکره: {{assesment.student.card_id}}</span>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 36px; height: 36px; border-radius: 8px; background: #e0f2fe; color: #0369a1; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                {{ assesment.student.name|first }}
+              </div>
+              <div>
+                <strong style="color: #0f172a; display: block;">{{ assesment.student.name }}</strong>
+                <span style="font-size: 12px; color: #64748b;">ولد: {{ assesment.student.fname }} | تذکره: {{ assesment.student.card_id }}</span>
               </div>
             </div>
           </td>
           <td>
-            <div class="badge-circle">{{assesment.classs.alpha_grade}}<br />{{assesment.classs.section}}</div>
+            <span class="badge-status badge-secondary font-bold">
+              {{ assesment.classs.alpha_grade }} - {{ assesment.classs.section }}
+            </span>
           </td>
-          <td style="color: var(--primary); font-weight: 500">
-            {{assesment.subject}}
+          <td style="color: #1e3a8a; font-weight: 600;">
+            {{ assesment.subject }}
           </td>
-          <td style="color: var(--text-muted); font-size: 0.85rem">
-            {{assesment.teacher}}
+          <td style="color: #64748b; font-size: 13px;">
+            {{ assesment.teacher }}
           </td>
-           <td style="color: var(--primary); font-weight: 500">
-            {{assesment.month}}
+          <td style="color: #0284c7; font-weight: 600;">
+            {{ assesment.month }}
           </td>
-          <td><div class="score-box">{{assesment.score}}</div></td>
-          <td style="color: var(--text-muted)">{{assesment.max_score}}</td>
           <td>
-            <div class="progress-cell">
-              <div class="progress-header">
-                <span style="color: var(--primary)">کامل</span>
-                <strong style="color: var(--primary)">۱۰۰٪</strong>
+            <span class="font-bold" style="font-size: 15px; color: #0f172a;">{{ assesment.score }}</span>
+          </td>
+          <td style="color: #64748b;">{{ assesment.max_score }}</td>
+          <td>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #1e3a8a;">
+                <span>پیشرفت</span>
+                <span dir="ltr">{{ assesment.getPercentage }}%</span>
               </div>
-              <div class="progress-bar-bg">
-                <div
-                  class="progress-bar-fill"
-                  style="width: {{assesment.getPercentage}}%; background-color: var(--primary)"
-                ></div>
+              <div style="height: 6px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+                <div style="width: {{ assesment.getPercentage }}%; height: 100%; background: #2563eb; border-radius: 4px;"></div>
               </div>
             </div>
           </td>
           <td>
-            <div
-              class="rank-badge"
-              style="
-                background-color: var(--primary-bg);
-                color: var(--primary);
-                border: 1px solid #bfdbfe;
-              "
-            >
-              {{assesment.get_student_rank}}
+            <span class="badge-status badge-active" style="padding: 2px 8px; font-size: 11.5px;">
+              رتبه {{ assesment.get_student_rank }}
+            </span>
+          </td>
+          <td>
+            <div class="action-btns-group">
+              <button class="action-btn-circle" title="ویرایش نمره">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <!-- Demo Academic Row if DB is empty for demo preview -->
+        <tr>
+          <td>۱</td>
+          <td style="color: #64748b; font-size: 12px;" dir="ltr">#101</td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 36px; height: 36px; border-radius: 8px; background: #e0f2fe; color: #0369a1; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                ر
+              </div>
+              <div>
+                <strong style="color: #0f172a; display: block;">رضا حسینی</strong>
+                <span style="font-size: 12px; color: #64748b;">ولد: علی‌رضا | تذکره: ۱۴۰۳-۹۸۲</span>
+              </div>
             </div>
           </td>
           <td>
-            <div class="row-actions">
-              <button class="action-btn">✎</button>
-              <button class="action-btn">✉</button>
+            <span class="badge-status badge-secondary font-bold">
+              دهم الف
+            </span>
+          </td>
+          <td style="color: #1e3a8a; font-weight: 600;">
+            ریاضیات عالی
+          </td>
+          <td style="color: #64748b; font-size: 13px;">
+            استاد محمد رضایی
+          </td>
+          <td style="color: #0284c7; font-weight: 600;">
+            عقرب
+          </td>
+          <td>
+            <span class="font-bold" style="font-size: 15px; color: #059669;">۹۸</span>
+          </td>
+          <td style="color: #64748b;">۱۰۰</td>
+          <td>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #059669;">
+                <span>عالی</span>
+                <span dir="ltr">۹۸٪</span>
+              </div>
+              <div style="height: 6px; background: #e2e8f0; border-radius: 4px; overflow: hidden;">
+                <div style="width: 98%; height: 100%; background: #059669; border-radius: 4px;"></div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="badge-status badge-active" style="padding: 2px 8px; font-size: 11.5px;">
+              رتبه ۱
+            </span>
+          </td>
+          <td>
+            <div class="action-btns-group">
+              <button class="action-btn-circle" title="ویرایش نمره">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
             </div>
           </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
-
-    <!-- Pagination -->
-    <div class="pagination">
-      <div>نمایش ۱ تا ۵ از کل ۳۲ نمره ثبت‌شده صنف دهم ریاضی الف</div>
-      <div class="page-numbers">
-        <button
-          class="page-btn"
-          style="width: auto; padding: 0 12px; color: var(--text-muted)"
-        >
-          ❮ صفحه قبل
-        </button>
-        <button class="page-btn active">۱</button>
-        <button class="page-btn">۲</button>
-        <button class="page-btn">۳</button>
-        <span>...</span>
-        <button class="page-btn">۷</button>
-        <button
-          class="page-btn"
-          style="width: auto; padding: 0 12px; color: var(--text-main)"
-        >
-          صفحه بعد ❯
-        </button>
-      </div>
-    </div>
   </div>
 </div>
-
-{% endblock content %} {% block js %} {% endblock js %}
+</div>
+{% endblock content %}

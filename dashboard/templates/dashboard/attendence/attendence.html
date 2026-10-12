@@ -206,7 +206,8 @@
     </div>
 
     {% if attendences %}
-    <table>
+    <div class="table-responsive">
+      <table class="data-table">
       <thead>
         <tr>
           <th># شناسه</th>
@@ -299,6 +300,7 @@
         {% endfor %}
       </tbody>
     </table>
+    </div>
 
     {% if is_paginated %}
     <div class="pagination">

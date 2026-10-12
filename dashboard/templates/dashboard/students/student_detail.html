@@ -1,171 +1,157 @@
-{% extends 'dashboard/base.html' %} {% load static %} {% block style %}
-<link rel="stylesheet" href="{% static 'dashboard/css/student_detail.css' %}" />
-{% endblock style %} {% block content %}
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}پرونده تحصیلی {{ student.name }} | سامانه مدیریت آموزشی{% endblock title %}
+
+{% block content %}
 <div class="container">
-  <!-- Page Header -->
-  <header class="page-header">
-    <h1 class="page-title">
-      پرونده دانش‌آموز <i class="fa-solid fa-arrow-left"></i>
-    </h1>
-    <div class="header-actions">
+  <!-- Profile Hero Header -->
+  <div class="hero-header">
+    <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+      <div style="width: 76px; height: 76px; border-radius: 50%; background: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 38px; color: #1e3a8a; border: 3px solid rgba(255, 255, 255, 0.4); flex-shrink: 0;">
+        <i class="fa-solid fa-user-graduate"></i>
+      </div>
+      <div>
+        <div class="system-badge" style="margin-bottom: 6px;">
+          <span class="dot" style="background-color: #38bdf8"></span>
+          پرونده رسمی اساس شماره #{{ student.school_id }}
+        </div>
+        <h1 style="font-size: 1.8rem; margin: 0 0 6px 0; color: #ffffff;">
+          {{ student.name }}
+        </h1>
+        <p style="margin: 0; color: #cbd5e1; font-size: 0.9rem;">
+          فرزند: <strong>{{ student.fname }}</strong> | تذکره: <strong>{{ student.card_id }}</strong> | صنف: <strong>{% if student.studentclass.first %}صنف {{ student.studentclass.first.classs.grade }} - {{ student.studentclass.first.classs.section }}{% else %}ثبت‌نشده{% endif %}</strong>
+        </p>
+      </div>
+    </div>
+
+    <div class="hero-actions">
       <a href="{% url 'dashboard:student-edite' student.id %}" class="btn btn-primary">
-        <i class="fa-solid fa-pen"></i> ویرایش پرونده
+        <i class="fa-solid fa-pen-to-square"></i> ویرایش پرونده
       </a>
-      <button class="btn btn-secondary">
-        <i class="fa-solid fa-print"></i> چاپ سوابق
+      <button type="button" class="btn btn-outline-dark" onclick="window.print()">
+        <i class="fa-solid fa-print"></i> چاپ سوابق تحصیلی
       </button>
-    </div>
-  </header>
-
-  <!-- Top Student Card -->
-  <div class="card profile-card">
-    <div class="profile-top">
-      <div class="profile-photo">
-        <img src="https://i.pravatar.cc/150?img=11" alt="Student Photo" />
-      </div>
-      <div class="profile-info">
-        <td>
-          <span class="status-badge {{student.status.name|lower}}"
-            >{% if student.status.name == "active" %} فعال {% else %} غیرفعال 
-            {% comment %}  {% endcomment %}
-            {%endif %}</span
-          >
-        </td>
-        <h2 class="student-name">{{student.name}} {{student.last_name}}</h2>
-        <p class="student-class">{{student.studentclass.first}}</p>
-      </div>
-    </div>
-
-    <div class="profile-details">
-      <div class="detail-item">
-        <div class="detail-text">
-          <span class="label">شماره شناسایی</span>
-          <span class="value">{{student.school_id}}</span>
-        </div>
-        <div class="icon-box"><i class="fa-regular fa-id-card"></i></div>
-      </div>
-
-      <div class="detail-item">
-        <div class="detail-text">
-          <span class="label">تاریخ ثبت‌نام</span>
-          <span class="value">{{student.registered_date|date:'Y/m/d'}}</span>
-        </div>
-        <div class="icon-box"><i class="fa-regular fa-calendar-days"></i></div>
-      </div>
-
-      <div class="detail-item">
-        <div class="detail-text">
-          <span class="label">تاریخ خرد</span>
-          <span class="value">{{student.detached_date|date:'Y/m/d'}}</span>
-        </div>
-        <div class="icon-box"><i class="fa-regular fa-calendar"></i></div>
-      </div>
+      <a href="{% url 'dashboard:student-list' %}" class="btn btn-outline-dark">
+        <i class="fa-solid fa-arrow-right"></i> بازگشت به لیست
+      </a>
     </div>
   </div>
 
-  <!-- Bottom Split Grid -->
-  <div class="content-grid">
-    <!-- Left Column (Current & Main Residence) -->
-
-    <!-- Right Column (Identity Information) -->
-    <div class="right-col">
-      <div class="card section-card">
-        <div class="section-header">
-          <h3>اطلاعات هویتی</h3>
-          <i class="fa-solid fa-user text-blue"></i>
+  <!-- Detail Information Grid -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
+    <!-- 1. مشخصات فردی و هویتی -->
+    <div class="form-card" style="margin: 0;">
+      <div class="section-header">
+        <div class="blue-indicator"></div>
+        <h2><i class="fa-solid fa-id-card text-primary" style="margin-left: 8px;"></i> مشخصات فردی و هویتی</h2>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 14px; font-size: 14px;">
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #f1f5f9; padding-bottom: 8px;">
+          <span style="color: #64748b;">نام شاگرد:</span>
+          <strong style="color: #0f172a;">{{ student.name }}</strong>
         </div>
-
-        <div class="identity-grid">
-          <div class="identity-item">
-            <span class="label">نام و نام خانوادگی</span>
-            <span class="value">{{student.name}} {{student.last_name}}</span>
-          </div>
-          <div class="identity-item">
-            <span class="label">کد ملی / تذکره</span>
-            <span class="value">{{student.card_id}}</span>
-          </div>
-          <div class="identity-item">
-            <span class="label">نام پدر</span>
-            <span class="value">{{student.fname}}</span>
-          </div>
-          <div class="identity-item">
-            <span class="label">نام پدربزرگ</span>
-            <span class="value">{{student.gfname}}</span>
-          </div>
-          <div class="identity-item">
-            <span class="label">تاریخ تولد</span>
-            <span class="value">{{student.birth_date|date:'Y/m/d'}}</span>
-          </div>
-          <div class="identity-item">
-            <span class="label">تابعیت</span>
-            <span class="value">{{student.nationality}}</span>
-          </div>
-          <div class="identity-item">
-            <span class="label">زبان مادری</span>
-            <span class="value">{{student.mother_language}}</span>
-          </div>
-          <div class="identity-item">
-            <span class="label">شغل پدر</span>
-            <span class="value">{{student.father_job}}</span>
-          </div>
-          <div class="identity-item full-width">
-            <span class="label">شماره تماس (ضروری)</span>
-            <span class="value">{{student.phone}}</span>
-          </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #f1f5f9; padding-bottom: 8px;">
+          <span style="color: #64748b;">نام پدر:</span>
+          <strong style="color: #0f172a;">{{ student.fname }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #f1f5f9; padding-bottom: 8px;">
+          <span style="color: #64748b;">نام پدرکلان (جد):</span>
+          <strong style="color: #0f172a;">{{ student.gfname }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #f1f5f9; padding-bottom: 8px;">
+          <span style="color: #64748b;">شماره تذکره / کارت هویت:</span>
+          <strong style="color: #2563eb;">{{ student.card_id }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #f1f5f9; padding-bottom: 8px;">
+          <span style="color: #64748b;">تاریخ تولد:</span>
+          <strong style="color: #475569;">{{ student.birth_date|date:"Y/m/d" }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #f1f5f9; padding-bottom: 8px;">
+          <span style="color: #64748b;">تابعیت و زبان مادری:</span>
+          <strong style="color: #475569;">{{ student.nationality }} | {{ student.mother_language.name }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #f1f5f9; padding-bottom: 8px;">
+          <span style="color: #64748b;">شغل پدر:</span>
+          <strong style="color: #475569;">{{ student.father_job.name }}</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding-top: 4px;">
+          <span style="color: #64748b;">شماره تماس اولیا:</span>
+          <strong style="color: #2563eb; direction: ltr;">{{ student.phone }}</strong>
         </div>
       </div>
     </div>
 
-    <div class="left-col">
-      <!-- Current Residence -->
-      <div class="card section-card">
-        <div class="section-header">
-          <h3>محل سکونت فعلی</h3>
-          <i class="fa-solid fa-location-dot text-blue"></i>
+    <!-- 2. سکونت فعلی و اصلی -->
+    <div class="form-card" style="margin: 0;">
+      <div class="section-header">
+        <div class="blue-indicator"></div>
+        <h2><i class="fa-solid fa-location-dot text-primary" style="margin-left: 8px;"></i> محل سکونت فعلی و اصلی</h2>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 14px; font-size: 14px;">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;">
+          <strong style="color: #1e3a8a; display: block; margin-bottom: 6px;">
+            <i class="fa-solid fa-house"></i> سکونت فعلی:
+          </strong>
+          <div style="color: #475569;">ولایت: <strong>{{ student.now_province.name }}</strong> | ولسوالی: <strong>{{ student.now_district.name }}</strong></div>
+          <div style="color: #64748b; font-size: 12px; margin-top: 4px;">ناحیه: {{ student.now_zone }} - قریه/گذر: {{ student.now_village }}</div>
         </div>
-        <div class="info-list">
-          <div class="info-row">
-            <span class="label">ولایت </span>
-            <span class="value">{{student.now_province}}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">ولسوالی</span>
-            <span class="value">{{student.now_district}}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">ناحیه/قریه</span>
-            <span class="value"
-              >{{student.now_zone}}-{{student.now_village}}</span
-            >
-          </div>
+
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;">
+          <strong style="color: #047857; display: block; margin-bottom: 6px;">
+            <i class="fa-solid fa-map-pin"></i> سکونت اصلی (زادگاه):
+          </strong>
+          <div style="color: #475569;">ولایت: <strong>{{ student.original_province.name }}</strong> | ولسوالی: <strong>{{ student.original_district.name }}</strong></div>
+          <div style="color: #64748b; font-size: 12px; margin-top: 4px;">ناحیه: {{ student.original_zone }} - قریه/روستا: {{ student.original_village }}</div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px;">
+          <span style="color: #64748b;">وضعیت ثبت‌نام:</span>
+          {% if student.status.name == "active" or not student.status %}
+          <span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> فعال و برحال</span>
+          {% else %}
+          <span class="badge badge-danger"><i class="fa-solid fa-circle-xmark"></i> غیرفعال</span>
+          {% endif %}
         </div>
       </div>
+    </div>
 
-      <!-- Main Residence (Birthplace) -->
-      <div class="card section-card">
-        <div class="section-header">
-          <h3>محل سکونت اصلی (زادگاه)</h3>
-          <i class="fa-solid fa-house text-blue"></i>
+    <!-- 3. سوابق تعلیمی و صنف -->
+    <div class="form-card" style="margin: 0;">
+      <div class="section-header">
+        <div class="blue-indicator"></div>
+        <h2><i class="fa-solid fa-school text-primary" style="margin-left: 8px;"></i> وضعیت تحصیلی و صنف</h2>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 14px; font-size: 14px;">
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #f1f5f9; padding-bottom: 8px;">
+          <span style="color: #64748b;">صنف فعلی:</span>
+          {% if student.studentclass.first %}
+          <strong style="color: #1e3a8a;">
+            صنف {{ student.studentclass.first.classs.grade }} - شعبۀ {{ student.studentclass.first.classs.section }}
+          </strong>
+          {% else %}
+          <span style="color: #d97706;">تعیین‌نشده</span>
+          {% endif %}
         </div>
-        <div class="info-list">
-          <div class="info-row">
-            <span class="label">ولایت</span>
-            <span class="value">{{student.original_province}}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">ولسوالی</span>
-            <span class="value">{{student.original_district}}</span>
-          </div>
-          <div class="info-row">
-            <span class="label">قریه / منطقه</span>
-            <span class="value"
-              >{{student.original_zone}}-{{student.original_village}}</span
-            >
-          </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #f1f5f9; padding-bottom: 8px;">
+          <span style="color: #64748b;">سال تحصیلی ثبت‌نام:</span>
+          <strong style="color: #475569;">{{ student.registered_date|date:"Y/m/d" }}</strong>
         </div>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #f1f5f9; padding-bottom: 8px;">
+          <span style="color: #64748b;">تاریخ انفکاک / فراغت:</span>
+          <strong style="color: #475569;">
+            {% if student.detached_date %}{{ student.detached_date|date:"Y/m/d" }}{% else %}در حال تعلیم{% endif %}
+          </strong>
+        </div>
+        {% if student.studentclass.first %}
+        <div style="margin-top: 10px;">
+          <a href="{% url 'dashboard:class-detail' student.studentclass.first.classs.id %}" class="btn btn-surface" style="width: 100%; justify-content: center;">
+            <i class="fa-solid fa-chalkboard"></i> مشاهده مشخصات صنف و هم‌صنفی‌ها
+          </a>
+        </div>
+        {% endif %}
       </div>
     </div>
   </div>
 </div>
-
 {% endblock content %}
