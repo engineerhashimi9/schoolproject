@@ -253,8 +253,7 @@
             <td style="text-align: center">
               {% if student.studentclass.first %}
               <span class="badge badge-gray" style="font-size: 12px">
-                صنف {{ student.studentclass.first.classs.grade }} - شعبۀ {{
-                student.studentclass.first.classs.section }}
+                صنف {{ student.studentclass.first.classs.grade }} - شعبۀ {{ student.studentclass.first.classs.section }}
               </span>
               {% else %}
               <span class="badge badge-warning" style="font-size: 11px"
@@ -277,7 +276,7 @@
               {{ student.phone }}
             </td>
             <td style="text-align: center">
-              {% if student.status.name == "active" or not student.status %}
+              {% if student.status.id == 1 or not student.status %}
               <span class="badge badge-success">
                 <i class="fa-solid fa-circle-check"></i> فعال
               </span>

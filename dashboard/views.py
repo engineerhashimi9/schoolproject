@@ -9,7 +9,7 @@ import jdatetime
 from .models import (
     Student, Teacher, Classes, Job, StudentClass,
     AcademiceYear, Degree, Attendance, Assessment,
-    ExamResult, Exam, Month
+    ExamResult, Exam, Month, Language
 )
 from .forms import StudentForm, TeacherForm, ClassForm
 
@@ -197,8 +197,7 @@ def student_edite(request, id):
                     StudentClass.objects.create(
                         student=student, classs=class_obj, academice_year=academice_year_obj)
         else:
-            print("form is not valid")
-            print(form.errors)
+            return render(request, "dashboard/students/student_edite.html", {"student": student, "classes": classes, "errors": form.errors})
         return redirect(reverse("dashboard:student-detail", kwargs={"pk": student.id}))
     else:
         return render(request, "dashboard/students/student_edite.html", {"student": student, "classes": classes})
@@ -209,8 +208,8 @@ def student_create(request):
     classes = Classes.objects.all()
     if request.method == "POST":
         form = StudentForm(request.POST)
-
         if form.is_valid():
+            print(form.data)
             school_id = form.cleaned_data["school_id"]
             card_id = form.cleaned_data["card_id"]
             name = form.cleaned_data["name"]
@@ -221,7 +220,8 @@ def student_create(request):
             father_job = Job.objects.get_or_create(
                 name=form.cleaned_data["father_job"])[0]
             phone = form.cleaned_data["phone"]
-            mother_language = int(form.cleaned_data["mother_language"])
+            mother_language = Language.objects.get(
+                id=int(form.cleaned_data["mother_language"]))
             status = int(form.cleaned_data["status"])
             registered_date = form.cleaned_data["registered_date"]
             grade, section = form.cleaned_data["class_section"].split("-")
@@ -244,7 +244,7 @@ def student_create(request):
                 nationality=nationality,
                 father_job=father_job,
                 phone=phone,
-                mother_language_id=mother_language,
+                mother_language=mother_language,
                 status_id=status,
                 registered_date=registered_date,
                 now_province_id=now_province,
@@ -266,9 +266,9 @@ def student_create(request):
                 student=new_student, classs=class_obj, academice_year=academice_year_obj)
             return redirect(reverse("dashboard:student-list"))
         else:
-            print(form.errors)
-
-    return render(request, "dashboard/students/student_edite.html", {"classes": classes})
+            return render(request, "dashboard/students/student_edite.html", {"classes": classes, "errors": form.errors})
+    else:
+        return render(request, "dashboard/students/student_edite.html", {"classes": classes})
 
 # -----------------------------------------------------------------------------
 #####
@@ -342,12 +342,14 @@ def teacher_edite(request, id):
                     grade=int(grade), section=section).first()
                 if class_obj:
                     # Remove any previous class where this teacher was guidence
-                    Classes.objects.filter(guidence=teacher).exclude(id=class_obj.id).update(guidence=None)
+                    Classes.objects.filter(guidence=teacher).exclude(
+                        id=class_obj.id).update(guidence=None)
                     class_obj.guidence = teacher
                     class_obj.save()
             elif guidence_at in ["None", "", None]:
                 Classes.objects.filter(guidence=teacher).update(guidence=None)
-            messages.success(request, f"اطلاعات پرونده {teacher.name} {teacher.last_name} با موفقیت به‌روزرسانی شد.")
+            messages.success(
+                request, f"اطلاعات پرونده {teacher.name} {teacher.last_name} با موفقیت به‌روزرسانی شد.")
             return redirect(reverse("dashboard:worker-detail", kwargs={"pk": teacher.id}))
         else:
             return render(request, "dashboard/workers/worker_edite.html", {"teacher": teacher, "classes": classes, "errors": form.errors})
@@ -371,6 +373,7 @@ def teacher_create(request):
     if request.method == "POST":
         form = TeacherForm(request.POST)
         if form.is_valid():
+            print(form.data)
             name = form.cleaned_data["name"]
             fname = form.cleaned_data["fname"]
             last_name = form.cleaned_data["last_name"]
@@ -411,7 +414,8 @@ def teacher_create(request):
                     class_obj.guidence = new_teacher
                     class_obj.save()
 
-            messages.success(request, f"استاد/کارمند جدید ({new_teacher.name} {new_teacher.last_name}) با موفقیت در سامانه ثبت شد.")
+            messages.success(
+                request, f"استاد/کارمند جدید ({new_teacher.name} {new_teacher.last_name}) با موفقیت در سامانه ثبت شد.")
             return redirect(reverse("dashboard:worker-list"))
         else:
             print(form.errors)
@@ -491,7 +495,8 @@ def class_create(request):
                 start_time=f"{start_time_hour:02d}:{start_time_minute:02d}",
                 end_time=f"{end_time_hour:02d}:{end_time_minute:02d}"
             )
-            messages.success(request, f"صنف جدید ({new_cls.alpha_grade} شعبه {new_cls.section}) با موفقیت ایجاد شد.")
+            messages.success(
+                request, f"صنف جدید ({new_cls.alpha_grade} شعبه {new_cls.section}) با موفقیت ایجاد شد.")
             return redirect(reverse("dashboard:class-list"))
         else:
             print(form.errors)
@@ -501,7 +506,8 @@ def class_create(request):
 @is_admin
 def class_edite(request, id):
     class_obj = get_object_or_404(Classes, id=id)
-    teachers = Teacher.objects.filter(Q(classes=class_obj) | Q(classes__isnull=True)).distinct().order_by("name")
+    teachers = Teacher.objects.filter(Q(classes=class_obj) | Q(
+        classes__isnull=True)).distinct().order_by("name")
     academic_years = AcademiceYear.objects.all().order_by("-year")
     if request.method == "POST":
         form = ClassForm(request.POST)
@@ -531,14 +537,14 @@ def class_edite(request, id):
             class_obj.start_time = f"{start_time_hour:02d}:{start_time_minute:02d}"
             class_obj.end_time = f"{end_time_hour:02d}:{end_time_minute:02d}"
             class_obj.save()
-            messages.success(request, f"مشخصات صنف {class_obj.alpha_grade} شعبه {class_obj.section} با موفقیت به‌روزرسانی شد.")
+            messages.success(
+                request, f"مشخصات صنف {class_obj.alpha_grade} شعبه {class_obj.section} با موفقیت به‌روزرسانی شد.")
             return redirect(reverse("dashboard:class-list"))
         else:
             print(form.errors)
     return render(request, "dashboard/classes/class_edite.html", {"teachers": teachers, "class": class_obj, "academic_years": academic_years})
 
 
-@is_admin
 @is_admin
 def class_disable(request, id):
     class_obj = get_object_or_404(Classes, id=id)
@@ -852,5 +858,3 @@ class ExamListView(LoginRequiredMixin, ListView):
 @is_admin
 def finance_view(request):
     return render(request, "dashboard/finance/finance.html")
-
-

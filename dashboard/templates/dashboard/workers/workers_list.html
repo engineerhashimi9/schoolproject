@@ -214,7 +214,7 @@
             {{ worker.phone }}
           </td>
           <td style="text-align: center;">
-            {% if worker.status.name == "active" or not worker.status %}
+            {% if worker.status.id == 1 or not worker.status %}
             <span class="badge badge-success">
               <i class="fa-solid fa-circle-check"></i> فعال
             </span>

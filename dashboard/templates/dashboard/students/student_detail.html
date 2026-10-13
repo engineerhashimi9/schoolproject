@@ -107,7 +107,7 @@
 
         <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px;">
           <span style="color: #64748b;">وضعیت ثبت‌نام:</span>
-          {% if student.status.name == "active" or not student.status %}
+          {% if student.status.id == 1 or not student.status %}
           <span class="badge badge-success"><i class="fa-solid fa-circle-check"></i> فعال و برحال</span>
           {% else %}
           <span class="badge badge-danger"><i class="fa-solid fa-circle-xmark"></i> غیرفعال</span>

@@ -4,7 +4,7 @@
 @font-face {
     font-family: "Vazirmatn";
     src: url("../fonts/Vazirmatn-RD-Regular.woff2") format("woff2"),
-         url("../fonts/Vazirmatn-Regular.ttf") format("truetype");
+        url("../fonts/Vazirmatn-Regular.ttf") format("truetype");
     font-weight: 400;
     font-display: swap;
 }
@@ -12,7 +12,7 @@
 @font-face {
     font-family: "Vazirmatn";
     src: url("../fonts/Vazirmatn-RD-Bold.woff2") format("woff2"),
-         url("../fonts/Vazirmatn-Bold.ttf") format("truetype");
+        url("../fonts/Vazirmatn-Bold.ttf") format("truetype");
     font-weight: 700;
     font-display: swap;
 }
@@ -99,7 +99,17 @@ a {
     border-left: 1px solid #1e293b;
 }
 
+.sidebar-nav::-webkit-scrollbar {
+    display: none;
+}
 
+/* Hide scrollbar for IE, Edge and Firefox */
+.sidebar-nav {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
 
 
 
@@ -909,6 +919,7 @@ a {
         opacity: 0;
         transform: translateY(-8px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -942,7 +953,8 @@ a {
     border: 1px solid #a7f3d0;
 }
 
-.alert-error, .alert-danger {
+.alert-error,
+.alert-danger {
     background-color: #fef2f2;
     color: #991b1b;
     border: 1px solid #fecaca;
@@ -1184,10 +1196,25 @@ a {
     font-size: 18px;
 }
 
-.stat-icon.icon-blue { background: #eff6ff; color: #2563eb; }
-.stat-icon.icon-green { background: #ecfdf5; color: #059669; }
-.stat-icon.icon-amber { background: #fffbeb; color: #d97706; }
-.stat-icon.icon-rose { background: #fef2f2; color: #dc2626; }
+.stat-icon.icon-blue {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.stat-icon.icon-green {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.stat-icon.icon-amber {
+    background: #fffbeb;
+    color: #d97706;
+}
+
+.stat-icon.icon-rose {
+    background: #fef2f2;
+    color: #dc2626;
+}
 
 .stat-value {
     font-size: 1.9rem;
@@ -1414,7 +1441,8 @@ td {
     gap: 12px;
 }
 
-.student-avatar, .avatar-sm {
+.student-avatar,
+.avatar-sm {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -1429,13 +1457,15 @@ td {
     gap: 2px;
 }
 
-.student-name, .student-info strong {
+.student-name,
+.student-info strong {
     font-weight: 700;
     color: #0f172a;
     font-size: 0.92rem;
 }
 
-.student-sub, .student-info span {
+.student-sub,
+.student-info span {
     font-size: 0.76rem;
     color: #64748b;
 }
@@ -1453,11 +1483,35 @@ td {
     white-space: nowrap;
 }
 
-.badge-success { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
-.badge-danger { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
-.badge-warning { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
-.badge-primary { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
-.badge-gray { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+.badge-success {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+}
+
+.badge-danger {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.badge-warning {
+    background: #fffbeb;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.badge-primary {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+}
+
+.badge-gray {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
 
 /* 7. Action Button Icons Group */
 .action-btns-group {
@@ -1467,7 +1521,9 @@ td {
     justify-content: center;
 }
 
-.btn-action-view, .btn-action-edit, .btn-action-delete {
+.btn-action-view,
+.btn-action-edit,
+.btn-action-delete {
     width: 32px;
     height: 32px;
     border-radius: 8px;
@@ -1481,14 +1537,35 @@ td {
     cursor: pointer;
 }
 
-.btn-action-view { background: #eff6ff; color: #2563eb; }
-.btn-action-view:hover { background: #2563eb; color: #ffffff; }
+.btn-action-view {
+    background: #eff6ff;
+    color: #2563eb;
+}
 
-.btn-action-edit { background: #fef3c7; color: #b45309; }
-.btn-action-edit:hover { background: #b45309; color: #ffffff; }
+.btn-action-view:hover {
+    background: #2563eb;
+    color: #ffffff;
+}
 
-.btn-action-delete { background: #fee2e2; color: #dc2626; }
-.btn-action-delete:hover { background: #dc2626; color: #ffffff; }
+.btn-action-edit {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.btn-action-edit:hover {
+    background: #b45309;
+    color: #ffffff;
+}
+
+.btn-action-delete {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.btn-action-delete:hover {
+    background: #dc2626;
+    color: #ffffff;
+}
 
 /* 8. Forms & Profile Detail Layouts */
 .form-card {
@@ -1534,6 +1611,7 @@ td {
    =================================================== */
 
 @media (max-width: 992px) {
+
     /* Mobile Off-Canvas Sidebar Drawer */
     .sidebar {
         position: fixed;
@@ -1706,4 +1784,4 @@ td {
     .stat-value {
         font-size: 1.6rem;
     }
-}
+}
