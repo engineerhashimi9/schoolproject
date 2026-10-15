@@ -34,8 +34,10 @@ urlpatterns = [
     path("attendence/edite/<int:class_id>/<int:month_id>/<int:academic_year_id>/", views.attendence_edite, name="attendence-edite-specific"),
 
     # assesment urls
-    path("assesment/", views.AssesmentListView.as_view(
-    ), name="assesment-list"),
+    path("assesment/", views.AssesmentListView.as_view(), name="assesment-list"),
+    path("assesment/create/", views.assesment_create, name="assesment-create"),
+    path("assesment/<int:id>/edite/", views.assesment_edite, name="assesment-edite"),
+    path("assesment/<int:id>/delete/", views.assesment_delete, name="assesment-delete"),
     # exam urls
     path("exam/", views.ExamListView.as_view(
     ), name="exam-list"),

@@ -9,7 +9,7 @@ import jdatetime
 from .models import (
     Student, Teacher, Classes, Job, StudentClass,
     AcademiceYear, Degree, Attendance, Assessment,
-    ExamResult, Exam, Month, Language
+    ExamResult, Exam, Month, Language, Subject
 )
 from .forms import StudentForm, TeacherForm, ClassForm
 
@@ -838,6 +838,332 @@ class AssesmentListView(LoginRequiredMixin, ListView):
     model = Assessment
     template_name = "dashboard/assesment.html"
     context_object_name = "assesments"
+    paginate_by = 50
+
+    def get_queryset(self):
+        qs = Assessment.objects.select_related(
+            "student", "teacher", "subject", "classs", "month", "academice_year"
+        ).order_by("-id")
+
+        class_id = self.request.GET.get("class_id")
+        subject_id = self.request.GET.get("subject_id")
+        teacher_id = self.request.GET.get("teacher_id")
+        month_id = self.request.GET.get("month_id")
+        academic_year_id = self.request.GET.get("academic_year_id")
+        search = self.request.GET.get("search")
+
+        if class_id and str(class_id).isdigit():
+            qs = qs.filter(classs_id=int(class_id))
+        if subject_id and str(subject_id).isdigit():
+            qs = qs.filter(subject_id=int(subject_id))
+        if teacher_id and str(teacher_id).isdigit():
+            qs = qs.filter(teacher_id=int(teacher_id))
+        if month_id and str(month_id).isdigit():
+            qs = qs.filter(month_id=int(month_id))
+        if academic_year_id and str(academic_year_id).isdigit():
+            qs = qs.filter(academice_year_id=int(academic_year_id))
+        if search:
+            search = search.strip()
+            qs = qs.filter(
+                Q(student__name__icontains=search)
+                | Q(student__fname__icontains=search)
+                | Q(student__card_id__icontains=search)
+                | Q(student__school_id__icontains=search)
+            )
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        records = list(self.get_queryset())
+        total_records = len(records)
+
+        if total_records > 0:
+            percentages = [r.getPercentage() for r in records]
+            avg_score = round(sum(percentages) / total_records, 1)
+            highest_rec = max(records, key=lambda r: r.getPercentage())
+            needs_help = sum(1 for p in percentages if p < 60)
+        else:
+            avg_score = 0.0
+            highest_rec = None
+            needs_help = 0
+
+        context["total_records"] = total_records
+        context["avg_score"] = avg_score
+        context["highest_rec"] = highest_rec
+        context["needs_help_count"] = needs_help
+
+        context["classes"] = Classes.objects.all().order_by("grade", "section")
+        context["subjects"] = Subject.objects.all().order_by("name")
+        context["teachers"] = Teacher.objects.filter(status_id=1).order_by("name", "last_name")
+        context["months"] = Month.objects.all().order_by("id")
+        context["academic_years"] = AcademiceYear.objects.all().order_by("-year")
+
+        context["selected_class_id"] = self.request.GET.get("class_id", "")
+        context["selected_subject_id"] = self.request.GET.get("subject_id", "")
+        context["selected_teacher_id"] = self.request.GET.get("teacher_id", "")
+        context["selected_month_id"] = self.request.GET.get("month_id", "")
+        context["selected_year_id"] = self.request.GET.get("academic_year_id", "")
+        context["search_query"] = self.request.GET.get("search", "")
+        return context
+
+
+@is_admin
+def assesment_create(request):
+    academic_years = AcademiceYear.objects.all().order_by("-year")
+    classes = Classes.objects.all().order_by("grade", "section")
+    subjects = Subject.objects.all().order_by("name")
+    teachers = Teacher.objects.filter(status_id=1).order_by("name", "last_name")
+    months = Month.objects.all().order_by("id")
+
+    # Mode: "batch" (class roster grading) or "single"
+    mode = request.GET.get("mode") or request.POST.get("mode") or "batch"
+
+    selected_year_id = request.GET.get("academic_year") or request.POST.get("academic_year")
+    if selected_year_id and str(selected_year_id).isdigit():
+        year_obj = AcademiceYear.objects.filter(id=int(selected_year_id)).first()
+    else:
+        year_obj = academic_years.first()
+
+    selected_class_id = request.GET.get("class") or request.POST.get("class")
+    if selected_class_id and str(selected_class_id).isdigit():
+        class_obj = Classes.objects.filter(id=int(selected_class_id)).first()
+    else:
+        class_obj = classes.first()
+
+    selected_subject_id = request.GET.get("subject") or request.POST.get("subject")
+    if selected_subject_id and str(selected_subject_id).isdigit():
+        subject_obj = Subject.objects.filter(id=int(selected_subject_id)).first()
+    else:
+        subject_obj = subjects.first()
+
+    selected_month_id = request.GET.get("month") or request.POST.get("month")
+    if selected_month_id and str(selected_month_id).isdigit():
+        month_obj = Month.objects.filter(id=int(selected_month_id)).first()
+    else:
+        month_obj = months.first()
+
+    selected_teacher_id = request.GET.get("teacher") or request.POST.get("teacher")
+    if selected_teacher_id and str(selected_teacher_id).isdigit():
+        teacher_obj = Teacher.objects.filter(id=int(selected_teacher_id)).first()
+    elif class_obj and class_obj.guidence:
+        teacher_obj = class_obj.guidence
+    else:
+        teacher_obj = teachers.first()
+
+    default_max_score = 100
+    max_score_input = request.GET.get("max_score") or request.POST.get("max_score")
+    if max_score_input and str(max_score_input).isdigit():
+        default_max_score = int(max_score_input)
+
+    if request.method == "POST":
+        action_type = request.POST.get("action_type", "batch")
+        
+        if action_type == "single":
+            student_id = request.POST.get("student")
+            score_val = request.POST.get("score")
+            max_val = request.POST.get("single_max_score", 100)
+
+            if student_id and score_val is not None:
+                student = get_object_or_404(Student, id=int(student_id))
+                try:
+                    score = int(score_val)
+                    max_score = max(1, int(max_val or 100))
+                except (ValueError, TypeError):
+                    score = 0
+                    max_score = 100
+
+                Assessment.objects.update_or_create(
+                    student=student,
+                    subject=subject_obj,
+                    month=month_obj,
+                    academice_year=year_obj,
+                    defaults={
+                        "classs": class_obj,
+                        "teacher": teacher_obj,
+                        "score": score,
+                        "max_score": max_score,
+                    }
+                )
+                messages.success(request, f"نمره ارزیابی شاگرد «{student.name}» با موفقیت ثبت شد.")
+                return redirect(f"{reverse('dashboard:assesment-list')}?class_id={class_obj.id}&subject_id={subject_obj.id}&month_id={month_obj.id}&academic_year_id={year_obj.id}")
+        else:
+            student_enrollments = StudentClass.objects.filter(
+                classs=class_obj,
+                academice_year=year_obj
+            ).select_related("student")
+
+            saved_count = 0
+            for sc in student_enrollments:
+                student = sc.student
+                score_key = f"score_{student.id}"
+                max_key = f"max_score_{student.id}"
+
+                if score_key in request.POST:
+                    raw_score = request.POST.get(score_key)
+                    raw_max = request.POST.get(max_key, default_max_score)
+                    if raw_score is not None and str(raw_score).strip() != "":
+                        try:
+                            score = int(raw_score)
+                            max_sc = max(1, int(raw_max or default_max_score))
+                        except (ValueError, TypeError):
+                            score = 0
+                            max_sc = default_max_score
+
+                        Assessment.objects.update_or_create(
+                            student=student,
+                            subject=subject_obj,
+                            month=month_obj,
+                            academice_year=year_obj,
+                            defaults={
+                                "classs": class_obj,
+                                "teacher": teacher_obj,
+                                "score": score,
+                                "max_score": max_sc,
+                            }
+                        )
+                        saved_count += 1
+
+            messages.success(
+                request,
+                f"نمرات ارزیابی مضمون «{subject_obj.name}» برای صنف {class_obj.grade}-{class_obj.section} در ماه {month_obj.name} با موفقیت ({saved_count} شاگرد) ذخیره و به‌روزرسانی شد."
+            )
+            return redirect(f"{reverse('dashboard:assesment-list')}?class_id={class_obj.id}&subject_id={subject_obj.id}&month_id={month_obj.id}&academic_year_id={year_obj.id}")
+
+    # Prepare class roster for GET
+    student_enrollments = StudentClass.objects.filter(
+        classs=class_obj,
+        academice_year=year_obj
+    ).select_related("student") if class_obj and year_obj else []
+
+    existing_assessments = {}
+    if class_obj and subject_obj and month_obj and year_obj:
+        for a in Assessment.objects.filter(
+            classs=class_obj,
+            subject=subject_obj,
+            month=month_obj,
+            academice_year=year_obj
+        ):
+            existing_assessments[a.student_id] = a
+
+    student_rows = []
+    for sc in student_enrollments:
+        student = sc.student
+        rec = existing_assessments.get(student.id)
+        if rec:
+            sc_val = rec.score
+            mx_val = rec.max_score
+            is_new = False
+            pct = rec.getPercentage()
+            rank_label = rec.get_student_rank()
+        else:
+            sc_val = ""
+            mx_val = default_max_score
+            is_new = True
+            pct = 0
+            rank_label = "ثبت‌نشده"
+
+        student_rows.append({
+            "student": student,
+            "score": sc_val,
+            "max_score": mx_val,
+            "percentage": pct,
+            "rank_label": rank_label,
+            "is_new": is_new,
+        })
+
+    all_students = Student.objects.filter(status_id=1).order_by("name")
+
+    context = {
+        "is_edit_mode": False,
+        "academic_years": academic_years,
+        "classes": classes,
+        "subjects": subjects,
+        "teachers": teachers,
+        "months": months,
+        "all_students": all_students,
+        "selected_year": year_obj,
+        "selected_class": class_obj,
+        "selected_subject": subject_obj,
+        "selected_teacher": teacher_obj,
+        "selected_month": month_obj,
+        "default_max_score": default_max_score,
+        "student_rows": student_rows,
+        "student_count": len(student_rows),
+        "existing_count": len(existing_assessments),
+        "mode": mode,
+    }
+    return render(request, "dashboard/assesment_edite.html", context)
+
+
+@is_admin
+def assesment_edite(request, id):
+    assessment = get_object_or_404(
+        Assessment.objects.select_related(
+            "student", "classs", "subject", "teacher", "month", "academice_year"
+        ),
+        id=id
+    )
+
+    academic_years = AcademiceYear.objects.all().order_by("-year")
+    classes = Classes.objects.all().order_by("grade", "section")
+    subjects = Subject.objects.all().order_by("name")
+    teachers = Teacher.objects.filter(status_id=1).order_by("name", "last_name")
+    months = Month.objects.all().order_by("id")
+    students = Student.objects.filter(status_id=1).order_by("name")
+
+    if request.method == "POST":
+        student_id = request.POST.get("student")
+        class_id = request.POST.get("class")
+        subject_id = request.POST.get("subject")
+        teacher_id = request.POST.get("teacher")
+        month_id = request.POST.get("month")
+        year_id = request.POST.get("academic_year")
+        raw_score = request.POST.get("score")
+        raw_max = request.POST.get("max_score")
+
+        if student_id and class_id and subject_id and teacher_id and month_id and year_id:
+            assessment.student_id = int(student_id)
+            assessment.classs_id = int(class_id)
+            assessment.subject_id = int(subject_id)
+            assessment.teacher_id = int(teacher_id)
+            assessment.month_id = int(month_id)
+            assessment.academice_year_id = int(year_id)
+            try:
+                assessment.score = int(raw_score or 0)
+                assessment.max_score = max(1, int(raw_max or 100))
+            except (ValueError, TypeError):
+                pass
+            assessment.save()
+            messages.success(request, f"نمره ارزیابی شاگرد «{assessment.student.name}» با موفقیت ویرایش و ذخیره شد.")
+            return redirect(reverse("dashboard:assesment-list"))
+
+    context = {
+        "is_edit_mode": True,
+        "assessment": assessment,
+        "academic_years": academic_years,
+        "classes": classes,
+        "subjects": subjects,
+        "teachers": teachers,
+        "months": months,
+        "all_students": students,
+        "selected_year": assessment.academice_year,
+        "selected_class": assessment.classs,
+        "selected_subject": assessment.subject,
+        "selected_teacher": assessment.teacher,
+        "selected_month": assessment.month,
+        "selected_student": assessment.student,
+    }
+    return render(request, "dashboard/assesment_edite.html", context)
+
+
+@is_admin
+def assesment_delete(request, id):
+    assessment = get_object_or_404(Assessment, id=id)
+    student_name = assessment.student.name if assessment.student else "شاگرد"
+    subject_name = assessment.subject.name if assessment.subject else "مضمون"
+    assessment.delete()
+    messages.success(request, f"نمره ارزیابی «{student_name}» در مضمون «{subject_name}» با موفقیت حذف گردید.")
+    return redirect(reverse("dashboard:assesment-list"))
 
 # -----------------------------------------------------------------------------
 #####

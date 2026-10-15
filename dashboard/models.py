@@ -265,7 +265,9 @@ class Assessment(models.Model):
         return f"{self.student}-{self.teacher}-{self.subject}-{self.classs}-{self.month}"
 
     def getPercentage(self):
-        return int((self.score/self.max_score)*100)
+        if not self.max_score or self.max_score <= 0:
+            return 0
+        return int((self.score / self.max_score) * 100)
 
     def get_rank(self):
         # Get all assessments for the same subject, class, month, and academic year
@@ -276,12 +278,11 @@ class Assessment(models.Model):
             academice_year=self.academice_year
         ).order_by('-score')
 
-        # Create a list of scores
         scores = [assessment.score for assessment in assessments]
-
-        # Get the rank of the current assessment
-        rank = scores.index(self.score) + 1  # +1 because index starts at 0
-
+        try:
+            rank = scores.index(self.score) + 1
+        except ValueError:
+            rank = 1
         return rank
 
     def get_student_rank(self):
