@@ -304,13 +304,13 @@
                 </a>
                 <a
                   href="{% url 'dashboard:student-disable' student.id %}"
-                  class="btn-action-delete"
+                  class="btn-action-delete btn-trigger-confirm"
+                  data-confirm-url="{% url 'dashboard:student-disable' student.id %}"
+                  data-confirm-title="غیرفعال‌سازی پرونده دانش‌آموز"
+                  data-confirm-message="آیا از تغییر وضعیت و غیرفعال‌سازی پرونده این دانش‌آموز اطمینان دارید؟"
+                  data-confirm-name="{{ student.name }} (ولد: {{ student.fname }} | اساس: {{ student.school_id }})"
+                  data-confirm-btn="بله، غیرفعال شود"
                   title="غیرفعال‌سازی پرونده"
-                  onclick="
-                    return confirm(
-                      'آیا از تغییر وضعیت این پرونده اطمینان دارید؟',
-                    );
-                  "
                 >
                   <i class="fa-solid fa-user-slash"></i>
                 </a>

@@ -242,9 +242,13 @@
               </a>
               <a
                 href="{% url 'dashboard:worker-disable' worker.id %}"
-                class="btn-action-delete"
+                class="btn-action-delete btn-trigger-confirm"
+                data-confirm-url="{% url 'dashboard:worker-disable' worker.id %}"
+                data-confirm-title="غیرفعال‌سازی پرونده استاد / کارمند"
+                data-confirm-message="آیا از تغییر وضعیت و غیرفعال‌سازی این پرسنل در سامانه اطمینان دارید؟"
+                data-confirm-name="استاد {{ worker.name }} {{ worker.last_name }} ({{ worker.job.name }})"
+                data-confirm-btn="بله، غیرفعال شود"
                 title="غیرفعال‌سازی پرسنل"
-                onclick="return confirm('آیا از تغییر وضعیت این پرسنل اطمینان دارید؟');"
               >
                 <i class="fa-solid fa-user-slash"></i>
               </a>

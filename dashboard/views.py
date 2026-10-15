@@ -121,6 +121,7 @@ def disable_student(request, id):
     target.detached_date = str(jdatetime.date.today())
     target.status_id = 2
     target.save()
+    messages.success(request, f"پرونده دانش‌آموز «{target.name}» با موفقیت غیرفعال گردید.")
     return redirect(reverse("dashboard:student-list"))
 
 
@@ -418,6 +419,7 @@ def disable_teacher(request, id):
     target.detached_date = str(jdatetime.date.today())
     target.status_id = 2
     target.save()
+    messages.success(request, f"پرونده استاد «{target.name} {target.last_name}» با موفقیت غیرفعال گردید.")
     return redirect(reverse("dashboard:worker-list"))
 
 
@@ -546,6 +548,7 @@ def class_disable(request, id):
     class_obj = get_object_or_404(Classes, id=id)
     class_obj.status_id = 2
     class_obj.save()
+    messages.success(request, f"صنف «{class_obj.grade} - {class_obj.section}» با موفقیت غیرفعال گردید.")
     return redirect(reverse("dashboard:class-list"))
 # -----------------------------------------------------------------------------
 #####

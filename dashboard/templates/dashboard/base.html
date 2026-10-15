@@ -151,6 +151,41 @@
         {% block content %} {% endblock content %}
       </main>
     </div>
+
+    <!-- Global Custom Confirmation Modal -->
+    <div class="confirm-modal-overlay" id="confirmModalOverlay" aria-hidden="true">
+      <div class="confirm-modal-card" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+        <div class="confirm-modal-header">
+          <div class="confirm-modal-icon-badge" id="confirmModalIcon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <button type="button" class="confirm-modal-close-btn" id="confirmModalCloseBtn" aria-label="بستن">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="confirm-modal-content">
+          <h3 class="confirm-modal-title" id="confirmModalTitle">تأیید غیرفعال‌سازی</h3>
+          <p class="confirm-modal-text" id="confirmModalMessage">آیا از انجام این عملیات اطمینان دارید؟</p>
+          <div class="confirm-modal-target-box" id="confirmModalTargetBox" style="display: none;">
+            <span class="confirm-modal-target-label">مورد انتخابی:</span>
+            <strong class="confirm-modal-target-name" id="confirmModalTargetName"></strong>
+          </div>
+          <div class="confirm-modal-subtext">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>این عملیات وضعیت پرونده را به «غیرفعال» تغییر داده و در سوابق تعلیمی مکتب ثبت می‌گردد.</span>
+          </div>
+        </div>
+        <div class="confirm-modal-actions">
+          <button type="button" class="btn btn-surface" id="confirmModalCancelBtn">
+            <i class="fa-solid fa-xmark"></i> انصراف
+          </button>
+          <a href="#" class="btn btn-danger" id="confirmModalProceedBtn">
+            <i class="fa-solid fa-check"></i> بله، غیرفعال شود
+          </a>
+        </div>
+      </div>
+    </div>
+
     <script src="{% static 'dashboard/js/main.js' %}"></script>
     {% block js %} {% endblock js %}
   </body>
