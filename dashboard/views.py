@@ -1,15 +1,18 @@
+from typing import Any
+
+from django.db.models.query import QuerySet
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from django.db.models import Q, Sum, Avg, Count
+from django.db.models import Q, Sum, Avg, Count,F
 import jdatetime
 
 from .models import (
     Student, Teacher, Classes, Job, StudentClass,
     AcademiceYear, Degree, Attendance, Assessment,
-    ExamResult, Exam, Month, Language, Subject
+    ExamResult, Exam, Month, Language, Subject, Fee
 )
 from .forms import StudentForm, TeacherForm, ClassForm
 
@@ -121,7 +124,8 @@ def disable_student(request, id):
     target.detached_date = str(jdatetime.date.today())
     target.status_id = 2
     target.save()
-    messages.success(request, f"پرونده دانش‌آموز «{target.name}» با موفقیت غیرفعال گردید.")
+    messages.success(
+        request, f"پرونده دانش‌آموز «{target.name}» با موفقیت غیرفعال گردید.")
     return redirect(reverse("dashboard:student-list"))
 
 
@@ -189,7 +193,7 @@ def student_edite(request, id):
                 class_obj = get_object_or_404(
                     Classes, grade=grade, section=section, academice_year=academice_year_obj)
                 student_class = StudentClass.objects.filter(
-                    student=student,academice_year=academice_year_obj).first()
+                    student=student, academice_year=academice_year_obj).first()
                 if student_class:
                     student_class.classs = class_obj
                     student_class.save()
@@ -258,8 +262,8 @@ def student_create(request):
             )
             academice_year_obj = AcademiceYear.objects.filter(
                 year=academice_year).first()
-            class_obj =Classes.objects.filter(
-                grade=grade, section=section,academice_year=academice_year_obj)
+            class_obj = Classes.objects.filter(
+                grade=grade, section=section, academice_year=academice_year_obj)
             StudentClass.objects.create(
                 student=new_student, classs=class_obj, academice_year=academice_year_obj)
             return redirect(reverse("dashboard:student-list"))
@@ -290,6 +294,7 @@ class TeacherDetailView(LoginRequiredMixin, DetailView):
     model = Teacher
     template_name = "dashboard/workers/worker_detail.html"
     context_object_name = "worker"
+
 
 @is_admin
 def teacher_create(request):
@@ -346,14 +351,13 @@ def teacher_create(request):
         return render(request, "dashboard/workers/worker_edite.html", {"classes": classes})
 
 
-
 @is_admin
 def teacher_edite(request, id):
     teacher = get_object_or_404(Teacher, id=id)
     classes = Classes.objects.filter(
         Q(guidence=teacher) | Q(guidence__isnull=True))
     if request.method == "POST":
-        
+
         form = TeacherForm(request.POST)
         if form.is_valid():
             if teacher.name != form.cleaned_data["name"]:
@@ -375,7 +379,7 @@ def teacher_edite(request, id):
                     name=form.cleaned_data["job"])[0]
                 teacher.job = job
             if teacher.years_of_service != form.cleaned_data["years_of_service"]:
-               
+
                 teacher.years_of_service = form.cleaned_data["years_of_service"]
             if teacher.registered_date != form.cleaned_data["registered_date"]:
                 teacher.registered_date = form.cleaned_data["registered_date"]
@@ -419,7 +423,8 @@ def disable_teacher(request, id):
     target.detached_date = str(jdatetime.date.today())
     target.status_id = 2
     target.save()
-    messages.success(request, f"پرونده استاد «{target.name} {target.last_name}» با موفقیت غیرفعال گردید.")
+    messages.success(
+        request, f"پرونده استاد «{target.name} {target.last_name}» با موفقیت غیرفعال گردید.")
     return redirect(reverse("dashboard:worker-list"))
 
 
@@ -539,7 +544,7 @@ def class_edite(request, id):
             messages.success(
                 request, f"مشخصات صنف {class_obj.alpha_grade} شعبه {class_obj.section} با موفقیت به‌روزرسانی شد.")
             return redirect(reverse("dashboard:class-list"))
-            
+
     return render(request, "dashboard/classes/class_edite.html", {"teachers": teachers, "class": class_obj, "academic_years": academic_years})
 
 
@@ -548,7 +553,8 @@ def class_disable(request, id):
     class_obj = get_object_or_404(Classes, id=id)
     class_obj.status_id = 2
     class_obj.save()
-    messages.success(request, f"صنف «{class_obj.grade} - {class_obj.section}» با موفقیت غیرفعال گردید.")
+    messages.success(
+        request, f"صنف «{class_obj.grade} - {class_obj.section}» با موفقیت غیرفعال گردید.")
     return redirect(reverse("dashboard:class-list"))
 # -----------------------------------------------------------------------------
 #####
@@ -833,12 +839,14 @@ def attendence_edite(request, class_id=None, month_id=None, academic_year_id=Non
 #####
 # ---------------------------------------------------------------------------
 
+# Asisment list view has checked and have not any probelm
+
 
 class AssesmentListView(LoginRequiredMixin, ListView):
     model = Assessment
     template_name = "dashboard/assesment/assesment.html"
     context_object_name = "assesments"
-    paginate_by = 50
+    paginate_by = 20
 
     def get_queryset(self):
         qs = Assessment.objects.select_related(
@@ -894,7 +902,8 @@ class AssesmentListView(LoginRequiredMixin, ListView):
 
         context["classes"] = Classes.objects.all().order_by("grade", "section")
         context["subjects"] = Subject.objects.all().order_by("name")
-        context["teachers"] = Teacher.objects.filter(status_id=1).order_by("name", "last_name")
+        context["teachers"] = Teacher.objects.filter(
+            status_id=1).order_by("name", "last_name")
         context["months"] = Month.objects.all().order_by("id")
         context["academic_years"] = AcademiceYear.objects.all().order_by("-year")
 
@@ -902,25 +911,31 @@ class AssesmentListView(LoginRequiredMixin, ListView):
         context["selected_subject_id"] = self.request.GET.get("subject_id", "")
         context["selected_teacher_id"] = self.request.GET.get("teacher_id", "")
         context["selected_month_id"] = self.request.GET.get("month_id", "")
-        context["selected_year_id"] = self.request.GET.get("academic_year_id", "")
+        context["selected_year_id"] = self.request.GET.get(
+            "academic_year_id", "")
         context["search_query"] = self.request.GET.get("search", "")
         return context
 
 
 @is_admin
 def assesment_create(request):
+    print(request.GET)
+    print(request.POST)
     academic_years = AcademiceYear.objects.all().order_by("-year")
     classes = Classes.objects.all().order_by("grade", "section")
     subjects = Subject.objects.all().order_by("name")
-    teachers = Teacher.objects.filter(status_id=1).order_by("name", "last_name")
+    teachers = Teacher.objects.filter(
+        status_id=1).order_by("name", "last_name")
     months = Month.objects.all().order_by("id")
 
     # Mode: "batch" (class roster grading) or "single"
     mode = request.GET.get("mode") or request.POST.get("mode") or "batch"
 
-    selected_year_id = request.GET.get("academic_year") or request.POST.get("academic_year")
+    selected_year_id = request.GET.get(
+        "academic_year") or request.POST.get("academic_year")
     if selected_year_id and str(selected_year_id).isdigit():
-        year_obj = AcademiceYear.objects.filter(id=int(selected_year_id)).first()
+        year_obj = AcademiceYear.objects.filter(
+            id=int(selected_year_id)).first()
     else:
         year_obj = academic_years.first()
 
@@ -930,9 +945,11 @@ def assesment_create(request):
     else:
         class_obj = classes.first()
 
-    selected_subject_id = request.GET.get("subject") or request.POST.get("subject")
+    selected_subject_id = request.GET.get(
+        "subject") or request.POST.get("subject")
     if selected_subject_id and str(selected_subject_id).isdigit():
-        subject_obj = Subject.objects.filter(id=int(selected_subject_id)).first()
+        subject_obj = Subject.objects.filter(
+            id=int(selected_subject_id)).first()
     else:
         subject_obj = subjects.first()
 
@@ -942,22 +959,25 @@ def assesment_create(request):
     else:
         month_obj = months.first()
 
-    selected_teacher_id = request.GET.get("teacher") or request.POST.get("teacher")
+    selected_teacher_id = request.GET.get(
+        "teacher") or request.POST.get("teacher")
     if selected_teacher_id and str(selected_teacher_id).isdigit():
-        teacher_obj = Teacher.objects.filter(id=int(selected_teacher_id)).first()
+        teacher_obj = Teacher.objects.filter(
+            id=int(selected_teacher_id)).first()
     elif class_obj and class_obj.guidence:
         teacher_obj = class_obj.guidence
     else:
         teacher_obj = teachers.first()
 
     default_max_score = 100
-    max_score_input = request.GET.get("max_score") or request.POST.get("max_score")
+    max_score_input = request.GET.get(
+        "max_score") or request.POST.get("max_score")
     if max_score_input and str(max_score_input).isdigit():
         default_max_score = int(max_score_input)
 
     if request.method == "POST":
         action_type = request.POST.get("action_type", "batch")
-        
+
         if action_type == "single":
             student_id = request.POST.get("student")
             score_val = request.POST.get("score")
@@ -984,7 +1004,8 @@ def assesment_create(request):
                         "max_score": max_score,
                     }
                 )
-                messages.success(request, f"نمره ارزیابی شاگرد «{student.name}» با موفقیت ثبت شد.")
+                messages.success(
+                    request, f"نمره ارزیابی شاگرد «{student.name}» با موفقیت ثبت شد.")
                 return redirect(f"{reverse('dashboard:assesment-list')}?class_id={class_obj.id}&subject_id={subject_obj.id}&month_id={month_obj.id}&academic_year_id={year_obj.id}")
         else:
             student_enrollments = StudentClass.objects.filter(
@@ -1092,7 +1113,7 @@ def assesment_create(request):
         "existing_count": len(existing_assessments),
         "mode": mode,
     }
-    return render(request, "dashboard//assesment_edite.html", context)
+    return render(request, "dashboard/assesment/assesment_edite.html", context)
 
 
 @is_admin
@@ -1107,7 +1128,8 @@ def assesment_edite(request, id):
     academic_years = AcademiceYear.objects.all().order_by("-year")
     classes = Classes.objects.all().order_by("grade", "section")
     subjects = Subject.objects.all().order_by("name")
-    teachers = Teacher.objects.filter(status_id=1).order_by("name", "last_name")
+    teachers = Teacher.objects.filter(
+        status_id=1).order_by("name", "last_name")
     months = Month.objects.all().order_by("id")
     students = Student.objects.filter(status_id=1).order_by("name")
 
@@ -1134,7 +1156,8 @@ def assesment_edite(request, id):
             except (ValueError, TypeError):
                 pass
             assessment.save()
-            messages.success(request, f"نمره ارزیابی شاگرد «{assessment.student.name}» با موفقیت ویرایش و ذخیره شد.")
+            messages.success(
+                request, f"نمره ارزیابی شاگرد «{assessment.student.name}» با موفقیت ویرایش و ذخیره شد.")
             return redirect(reverse("dashboard:assesment-list"))
 
     context = {
@@ -1162,7 +1185,8 @@ def assesment_delete(request, id):
     student_name = assessment.student.name if assessment.student else "شاگرد"
     subject_name = assessment.subject.name if assessment.subject else "مضمون"
     assessment.delete()
-    messages.success(request, f"نمره ارزیابی «{student_name}» در مضمون «{subject_name}» با موفقیت حذف گردید.")
+    messages.success(
+        request, f"نمره ارزیابی «{student_name}» در مضمون «{subject_name}» با موفقیت حذف گردید.")
     return redirect(reverse("dashboard:assesment-list"))
 
 # -----------------------------------------------------------------------------
@@ -1179,7 +1203,56 @@ class ExamListView(LoginRequiredMixin, ListView):
     template_name = "dashboard/exam/exam.html"
     context_object_name = "exams"
 
+    def get_queryset(self):
+        qs = ExamResult.objects.select_related("student", "exam")
+        class_id = self.request.GET.get("class_id")
+        academice_year_id = self.request.GET.get("academice_year_id")
+        search = self.request.GET.get("search")
+        return super().get_queryset()
 
-@is_admin
-def finance_view(request):
-    return render(request, "dashboard/finance/finance.html")
+
+class FinanceListView(ListView):
+    model = Fee
+    template_name = "dashboard/finance/finance.html"
+    context_object_name = "fee"
+
+    def get_queryset(self) -> QuerySet[Any, Any]:
+        qs = Fee.objects.select_related(
+            "student", "class_section", "month", "academice_year").order_by("-id")
+        class_id = self.request.GET.get("class_id")
+        month_id = self.request.GET.get("month_id")
+        year_id = self.request.GET.get("year_id")
+        fee_type = self.request.GET.get("fee_type")
+        search = self.request.GET.get("search")
+        if class_id and str(class_id).isdigit():
+            qs = qs.filter(class_section_id=int(class_id))
+        if month_id and str(month_id).isdigit():
+            qs = qs.filter(month_id=int(month_id))
+        if year_id and str(year_id).isdigit():
+            qs = qs.filter(academice_year_id=int(year_id))
+        if fee_type and str(fee_type).isdigit() :
+            if int(fee_type)==1 :
+                qs = qs.filter(paied=F("amount"))
+            else :
+                qs = qs.exclude(paied=F("amount"))
+        if search:
+            search = search.strip()
+            qs = qs.filter(
+                Q(student__name__icontains=search)
+                | Q(student__fname__icontains=search)
+                | Q(student__card_id__icontains=search)
+                | Q(student__school_id__icontains=search)
+            )
+        return qs
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["classes"]=Classes.objects.all().order_by("id")
+        context["months"]=Month.objects.all().order_by("id")
+        context["years"]=AcademiceYear.objects.all().order_by("id")
+        context["search"]=self.request.GET.get("search")
+        context["selected_class_id"]=self.request.GET.get("class_id")
+        context["selected_month_id"]=self.request.GET.get("month_id")
+        context["selected_year_id"]=self.request.GET.get("year_id")
+        context["selected_fee_type"]=self.request.GET.get("fee_type")
+        return context
+    

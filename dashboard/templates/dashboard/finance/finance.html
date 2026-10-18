@@ -166,10 +166,12 @@
         <i class="fa-solid fa-filter text-primary"></i> فیلترهای دفتر روزنامه و قبوض مالی
       </div>
     </div>
+    <form action="{% url 'dashboard:finance-list' %}" method="get">
+      
     <div class="filter-row">
       <div class="input-group" style="flex: 2;">
         <label>جستجوی شاگرد:</label>
-        <input
+        <input name="search" value="{{ search }}"
           type="text"
           class="input-control"
           placeholder="جستجوی نام شاگرد، ولد، کد اساس..."
@@ -177,31 +179,47 @@
       </div>
       <div class="input-group" style="flex: 1.2;">
         <label>صنف تحصیلی:</label>
-        <select class="input-control">
-          <option>همه صنف‌ها</option>
-          <option selected>صنف دهم الف</option>
-          <option>صنف یازدهم ب</option>
-          <option>صنف دوازدهم ج</option>
+        <select name="class_id" onchange="this.form.submit()" class="input-control">
+          <option>همه صنف‌ها</option>  
+          {% for c in classes %}
+              <option value="{{ c.id }}" {% if selected_class_id == c.id|stringformat:"s" %}selected{% endif %}>
+                {{ c.alpha_grade }} - {{ c.section }}
+              </option>
+            {% endfor %}
         </select>
       </div>
       <div class="input-group" style="flex: 1;">
         <label>ماه پرداخت:</label>
-        <select class="input-control">
-          <option>ماه قوس (آذر)</option>
-          <option>ماه عقرب (آبان)</option>
-          <option>ماه میزان (مهر)</option>
+        <select name="month_id" onchange="this.form.submit()" class="input-control">
+          <option>همه ماه ها</option>
+          {% for m in months %}
+              <option value="{{ m.id }}" {% if selected_month_id == m.id|stringformat:"s" %}selected{% endif %}>
+                {{ m.name }}
+              </option>
+            {% endfor %}
+        </select>
+      </div>
+      <div class="input-group" style="flex: 1;">
+        <label>سال تعلیمی :</label>
+        <select name="year_id" onchange="this.form.submit()" class="input-control">
+          <option>همه سال ها</option>
+          {% for y in years %}
+              <option value="{{ y.id }}" {% if selected_year_id == y.id|stringformat:"s" %}selected{% endif %}>
+                {{ y.name }}
+              </option>
+            {% endfor %}
         </select>
       </div>
       <div class="input-group" style="flex: 1;">
         <label>وضعیت تسویه:</label>
-        <select class="input-control">
+        <select name="fee_type" onchange="this.form.submit()" class="input-control">
           <option>همگی وضعیت‌ها</option>
-          <option>تسویه کامل</option>
-          <option>پرداخت قسطی</option>
-          <option>معوقه / پرداخت‌نشده</option>
+          <option value="1">تسویه کامل</option>
+          <option value="3">معوقه / پرداخت‌نشده</option>
         </select>
       </div>
     </div>
+    </form>
   </div>
 
   <!-- Data Table Section -->

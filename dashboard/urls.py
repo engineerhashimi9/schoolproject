@@ -42,7 +42,7 @@ urlpatterns = [
     path("exam/", views.ExamListView.as_view(
     ), name="exam-list"),
     # finance urls
-    path("finance/", views.finance_view, name="finance-list"),
+    path("finance/", views.FinanceListView.as_view(), name="finance-list"),
 
 
 ]
