@@ -836,7 +836,7 @@ def attendence_edite(request, class_id=None, month_id=None, academic_year_id=Non
 
 class AssesmentListView(LoginRequiredMixin, ListView):
     model = Assessment
-    template_name = "dashboard/assesment.html"
+    template_name = "dashboard/assesment/assesment.html"
     context_object_name = "assesments"
     paginate_by = 50
 
@@ -1092,7 +1092,7 @@ def assesment_create(request):
         "existing_count": len(existing_assessments),
         "mode": mode,
     }
-    return render(request, "dashboard/assesment_edite.html", context)
+    return render(request, "dashboard//assesment_edite.html", context)
 
 
 @is_admin
@@ -1153,7 +1153,7 @@ def assesment_edite(request, id):
         "selected_month": assessment.month,
         "selected_student": assessment.student,
     }
-    return render(request, "dashboard/assesment_edite.html", context)
+    return render(request, "dashboard/assesment/assesment_edite.html", context)
 
 
 @is_admin
@@ -1176,7 +1176,7 @@ def assesment_delete(request, id):
 
 class ExamListView(LoginRequiredMixin, ListView):
     model = ExamResult
-    template_name = "dashboard/exam.html"
+    template_name = "dashboard/exam/exam.html"
     context_object_name = "exams"
 
 
