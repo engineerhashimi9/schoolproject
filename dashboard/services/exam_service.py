@@ -75,7 +75,8 @@ def format_rank_afghan(rank_number: int) -> str:
     elif rank_number == 3:
         return "سوم نمره"
     elif rank_number > 3:
-        return f"مقام {rank_number}"
+        en_to_fa = str.maketrans("0123456789", "۰۱۲۳۴۵۶۷۸۹")
+        return f"مقام {str(rank_number).translate(en_to_fa)}"
     return "-"
 
 

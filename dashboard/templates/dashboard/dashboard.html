@@ -24,7 +24,7 @@
     </div>
   </div>
 
-  <!-- Stat Cards Row -->
+  <!-- Stat Cards Row 1: Academic & Administrative -->
   <div class="stats-row">
     <!-- Card 1: Students -->
     <div class="stat-card">
@@ -32,7 +32,7 @@
         <i class="fa-solid fa-user-graduate"></i>
       </div>
       <div class="stat-info">
-        <span class="stat-label">کل دانش‌آموزان</span>
+        <span class="stat-label">کل شاگردان</span>
         <span class="stat-number">{{ students_count }}</span>
       </div>
       <div class="stat-footer">
@@ -94,6 +94,77 @@
     </div>
   </div>
 
+  <!-- Stat Cards Row 2: Finance & Timetable Highlights -->
+  <div class="stats-row" style="margin-top: 16px;">
+    <!-- Card 5: Finance Revenue -->
+    <div class="stat-card">
+      <div class="stat-icon green" style="background: rgba(16, 185, 129, 0.12); color: #059669;">
+        <i class="fa-solid fa-hand-holding-dollar"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">عواید وصول‌شده فیس</span>
+        <span class="stat-number" style="font-size: 20px;">{{ fee_collected|floatformat:0 }} <small style="font-size: 13px; font-weight: normal;">افغانی</small></span>
+      </div>
+      <div class="stat-footer">
+        <a href="{% url 'dashboard:finance-list' %}" style="color: inherit; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+          <span>مدیریت مالی و فیس‌ها</span>
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Card 6: Net Financial Balance -->
+    <div class="stat-card">
+      <div class="stat-icon blue" style="background: rgba(37, 99, 235, 0.12); color: #1d4ed8;">
+        <i class="fa-solid fa-wallet"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">موجودی خالص صندوق</span>
+        <span class="stat-number" style="font-size: 20px;">{{ net_balance|floatformat:0 }} <small style="font-size: 13px; font-weight: normal;">افغانی</small></span>
+      </div>
+      <div class="stat-footer">
+        <a href="{% url 'dashboard:finance-report' %}" style="color: inherit; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+          <span>گزارش تراز مالی</span>
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Card 7: Timetable Slots -->
+    <div class="stat-card">
+      <div class="stat-icon yellow" style="background: rgba(245, 158, 11, 0.12); color: #d97706;">
+        <i class="fa-solid fa-calendar-week"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">ساعات درسی تنظیم‌شده</span>
+        <span class="stat-number">{{ timetable_count }} <small style="font-size: 13px; font-weight: normal;">ساعت/هفته</small></span>
+      </div>
+      <div class="stat-footer">
+        <a href="{% url 'dashboard:timetable-master' %}" style="color: inherit; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+          <span>تقسیم اوقات عمومی مکتب</span>
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Card 8: Shaqqa Exam Marks -->
+    <div class="stat-card">
+      <div class="stat-icon red" style="background: rgba(239, 68, 68, 0.12); color: #dc2626;">
+        <i class="fa-solid fa-file-signature"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">نمرات ثبت‌شده شقه</span>
+        <span class="stat-number">{{ shaqqa_count }}</span>
+      </div>
+      <div class="stat-footer">
+        <a href="{% url 'dashboard:exam-jadwal-nataij' %}" style="color: inherit; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+          <span>جدول نتایج صنف‌ها</span>
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
   <!-- Middle Grid -->
   <div class="dashboard-grid">
     <!-- Quick Access & Status -->
@@ -103,36 +174,51 @@
           <h3><i class="fa-solid fa-bolt text-warning" style="margin-left: 8px;"></i> دسترسی سریع عملیاتی</h3>
         </div>
         <div class="quick-access-list">
-          <a href="{% url 'dashboard:attendence-create' %}" class="qa-item">
-            <i class="fa-solid fa-clipboard-check green-icon"></i>
+          <a href="{% url 'dashboard:exam-shaqqa' %}" class="qa-item">
+            <i class="fa-solid fa-file-pen green-icon"></i>
             <div>
-              <strong>ثبت کارنامه حاضری</strong>
-              <span>ورود و ویرایش روزهای حضور و غیاب ماهوار</span>
+              <strong>ثبت شقه نمرات امتحانات</strong>
+              <span>ورود نمرات چهارونیم ماهه و سالانه مطابق طرزالعمل</span>
+            </div>
+          </a>
+          <a href="{% url 'dashboard:timetable-class' %}" class="qa-item">
+            <i class="fa-solid fa-calendar-days blue-icon"></i>
+            <div>
+              <strong>تقسیم اوقات دروس صنوف</strong>
+              <span>جدول ۶ روزه شنبه تا پنج‌شنبه با زنگ تفریح</span>
+            </div>
+          </a>
+          <a href="{% url 'dashboard:finance-list' %}" class="qa-item">
+            <i class="fa-solid fa-receipt orange-icon"></i>
+            <div>
+              <strong>امور مالی و رسید فیس</strong>
+              <span>صدور قبض فیس و ثبت مصارف اداری مکتب</span>
+            </div>
+          </a>
+          <a href="{% url 'dashboard:exam-jadwal-nataij' %}" class="qa-item">
+            <i class="fa-solid fa-table-list blue-icon"></i>
+            <div>
+              <strong>جدول نتایج صنف‌ها (شقه عمومی)</strong>
+              <span>مجموع نمرات، فیصدی، اول تا سوم نمره و نتیجه نهایی</span>
             </div>
           </a>
           <a href="{% url 'dashboard:student-register' %}" class="qa-item">
-            <i class="fa-solid fa-user-plus blue-icon"></i>
+            <i class="fa-solid fa-user-plus green-icon"></i>
             <div>
-              <strong>ثبت‌نام دانش‌آموز جدید</strong>
-              <span>فرم پذیرش و ثبت مشخصات هویتی و سکونت</span>
+              <strong>ثبت‌نام شاگرد جدید</strong>
+              <span>فرم پذیرش اساس و مشخصات هویتی و سکونت</span>
             </div>
           </a>
-          <a href="{% url 'dashboard:class-list' %}" class="qa-item">
-            <i class="fa-solid fa-chalkboard-user orange-icon"></i>
+          <a href="{% url 'dashboard:attendence-create' %}" class="qa-item">
+            <i class="fa-solid fa-clipboard-check red-icon"></i>
             <div>
-              <strong>مدیریت صنف‌ها و ظرفیت</strong>
-              <span>تعیین اساتید راهنما و برنامه‌ریزی اوقات درسی</span>
-            </div>
-          </a>
-          <a href="{% url 'dashboard:exam-list' %}" class="qa-item">
-            <i class="fa-solid fa-trophy blue-icon"></i>
-            <div>
-              <strong>امتحانات و نمرات</strong>
-              <span>مدیریت نتایج و ثبت ارزیابی‌های چهارونیم ماهه</span>
+              <strong>ثبت حاضری ماهوار</strong>
+              <span>ورود و ویرایش روزهای حضور و غیاب صنف‌ها</span>
             </div>
           </a>
         </div>
       </div>
+    </div>
 
      
     </div>
@@ -221,13 +307,4 @@
   </div>
 </div>
 
-<!-- Footer -->
-<footer class="app-footer">
-  <div class="footer-links">
-    <a href="#">سیاست حریم خصوصی</a>
-    <a href="#">پورتال پشتیبانی و فنی</a>
-  </div>
-  <span>© سیستم جامع مدیریت تعلیمی لیسه عالی خصوصی اهل بیت رسول‌الله (ص)</span>
-  <span class="version">نسخه آموزشی ۲.۵</span>
-</footer>
 {% endblock content %}

@@ -50,7 +50,7 @@
             </li>
             <li class="{% if 'student' in request.resolver_match.url_name %}active{% endif %}">
               <a href="{% url 'dashboard:student-list' %}">
-                <i class="fa-solid fa-user-graduate"></i> دانش‌آموزان
+                <i class="fa-solid fa-user-graduate"></i> شاگردان (متعلمین)
               </a>
             </li>
             <li class="{% if 'class' in request.resolver_match.url_name %}active{% endif %}">
@@ -90,12 +90,12 @@
             </li>
             <li class="{% if 'etlanama' in request.resolver_match.url_name %}active{% endif %}">
               <a href="{% url 'dashboard:exam-etlanama' %}">
-                <i class="fa-solid fa-id-card"></i> اطلاعنامه شاگرد
+                <i class="fa-solid fa-id-card"></i> اطلاع‌نامه شاگرد
               </a>
             </li>
             <li class="{% if 'finance-list' in request.resolver_match.url_name or 'fee-' in request.resolver_match.url_name %}active{% endif %}">
               <a href="{% url 'dashboard:finance-list' %}">
-                <i class="fa-solid fa-coins"></i> امور مالی و شهریه
+                <i class="fa-solid fa-coins"></i> امور مالی و فیس
               </a>
             </li>
             <li class="{% if 'finance-expenses' in request.resolver_match.url_name or 'expense-' in request.resolver_match.url_name %}active{% endif %}">
@@ -105,7 +105,7 @@
             </li>
             <li class="{% if 'finance-report' in request.resolver_match.url_name %}active{% endif %}">
               <a href="{% url 'dashboard:finance-report' %}">
-                <i class="fa-solid fa-chart-pie"></i> بیلان مالی مکتب
+                <i class="fa-solid fa-chart-pie"></i> بیلان مالی و گزارش
               </a>
             </li>
             <li>

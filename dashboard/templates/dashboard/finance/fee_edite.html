@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-ویرایش قبض مالی شاگرد {{ fee.student.name }} | سامانه جامع تعلیمی
+{% if is_create %}صدور و ثبت قبض پرداختی فیس شاگرد{% else %}ویرایش قبض مالی شاگرد {{ fee.student.name }}{% endif %} | سامانه جامع تعلیمی
 {% endblock title %}
 
 {% block style %}
@@ -76,19 +76,38 @@
   <div class="edit-card">
     <div class="edit-header">
       <div>
-        <h2><i class="fa-solid fa-pen-to-square" style="margin-left: 8px;"></i> ویرایش و اصلاح سند مالی</h2>
+        <h2>
+          <i class="fa-solid fa-{% if is_create %}plus-circle{% else %}pen-to-square{% endif %}" style="margin-left: 8px;"></i>
+          {% if is_create %}صدور و ثبت قبض پرداختی جدید{% else %}ویرایش و اصلاح سند مالی{% endif %}
+        </h2>
         <p style="margin: 4px 0 0; font-size: 13px; color: #94a3b8;">
-          اصلاح مبالغ دریافتی، نوعیت فیس و وضعیت سند شماره {{ fee.receipt_number|default:fee.id }}
+          {% if is_create %}ثبت دریافت فیس و صدور رسید مالی رسمی برای شاگرد{% else %}اصلاح مبالغ دریافتی، نوعیت فیس و وضعیت سند شماره {{ fee.receipt_number|default:fee.id }}{% endif %}
         </p>
       </div>
+      {% if fee and fee.id %}
       <a href="{% url 'dashboard:fee-receipt' fee.id %}" class="btn btn-surface" style="color: #0f172a; font-size: 13px;">
         <i class="fa-solid fa-receipt"></i> مشاهده قبض
       </a>
+      {% endif %}
     </div>
 
-    <form method="POST" style="padding: 28px;">
+    <form method="POST" action="{% if is_create %}{% url 'dashboard:fee-create' %}{% endif %}" style="padding: 28px;">
       {% csrf_token %}
 
+      {% if is_create %}
+      <!-- Student Selector for New Fee -->
+      <div class="input-group" style="margin-bottom: 24px;">
+        <label>انتخاب شاگرد (متعلم) <span style="color: #ef4444;">*</span>:</label>
+        <select name="student_id" required class="input-control font-bold">
+          <option value="">-- لطفاً شاگرد مورد نظر را انتخاب نمایید --</option>
+          {% for s in all_students %}
+            <option value="{{ s.id }}">
+              {{ s.name }} ولد {{ s.fname }} (اساس: {{ s.school_id }})
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      {% else %}
       <!-- Student Summary Badge -->
       <div class="student-badge-box">
         <div class="student-avatar-big">
@@ -108,6 +127,7 @@
           </span>
         </div>
       </div>
+      {% endif %}
 
       <div class="form-grid-2">
         <div class="input-group">
@@ -235,7 +255,7 @@
           انصراف
         </a>
         <button type="submit" class="btn btn-primary" style="padding: 10px 24px;">
-          <i class="fa-solid fa-check"></i> ذخیره تغییرات قبض
+          <i class="fa-solid fa-check"></i> {% if is_create %}ثبت و صدور قبض پرداختی جدید{% else %}ذخیره تغییرات قبض{% endif %}
         </button>
       </div>
     </form>

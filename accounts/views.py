@@ -7,18 +7,21 @@ from django.contrib.auth import logout
 useradmin=get_user_model()
 # Create your views here.
 def login_view(request):
-    error=""
-    if request.method=="POST" :
-        email=request.POST.get("email")
-        password=request.POST.get("password")
-        user=authenticate(email=email,password=password)
-        if user is not None :
-            login(request,user=user)
+    if request.user.is_authenticated:
+        return redirect(reverse("dashboard:admin-dashboard"))
+
+    error = ""
+    if request.method == "POST":
+        email = (request.POST.get("email") or "").strip()
+        password = (request.POST.get("password") or "").strip()
+        user = authenticate(email=email, password=password)
+        if user is not None:
+            login(request, user=user)
             return redirect(reverse("dashboard:admin-dashboard"))
-        else :
-            error="ایمیل یا رمز عبور اشتباه!"
-            
-    return render(request, "accounts/login.html",{"error":error})
+        else:
+            error = "ایمیل یا رمز عبور اشتباه است!"
+
+    return render(request, "accounts/login.html", {"error": error})
 
 def custom_logout(request):
     logout(request)

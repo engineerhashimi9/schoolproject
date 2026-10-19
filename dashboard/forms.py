@@ -53,7 +53,7 @@ class ClassForm(forms.Form) :
     academice_year=forms.IntegerField(required=True)
     grade=forms.CharField(max_length=20, required=True)
     section=forms.CharField(max_length=10, required=True)
-    guidence=forms.IntegerField(required=True)
+    guidence=forms.IntegerField(required=False)
     start_time_hour=forms.IntegerField(required=True)
     start_time_minute=forms.IntegerField(required=True)
     end_time_hour=forms.IntegerField(required=True)

@@ -99,6 +99,13 @@ def dashboard_view(request):
     else:
         overall_attendance_rate = 94.2
 
+    # Financial & Timetable KPIs
+    fee_collected = Fee.objects.aggregate(total=Sum("paied"))["total"] or 0
+    expenses_total = Expense.objects.aggregate(total=Sum("amount"))["total"] or 0
+    net_balance = fee_collected - expenses_total
+    timetable_count = TimeTable.objects.count()
+    shaqqa_count = ExamMark.objects.count()
+
     recent_students = Student.objects.select_related(
         "status").order_by("-id")[:5]
     recent_classes = Classes.objects.select_related(
@@ -111,6 +118,11 @@ def dashboard_view(request):
         "exams_count": total_exams,
         "overall_attendance_rate": overall_attendance_rate,
         "jalali_date_str": jalali_date_str,
+        "fee_collected": fee_collected,
+        "expenses_total": expenses_total,
+        "net_balance": net_balance,
+        "timetable_count": timetable_count,
+        "shaqqa_count": shaqqa_count,
         "recent_students": recent_students,
         "recent_classes": recent_classes,
     }
@@ -156,88 +168,68 @@ def disable_student(request, id):
 @is_admin
 def student_edite(request, id):
     student = get_object_or_404(Student, id=id)
-    classes = Classes.objects.all()
+    classes = Classes.objects.all().order_by("grade", "section")
     if request.method == "POST":
         form = StudentForm(request.POST)
         if form.is_valid():
-            if student.school_id != form.cleaned_data["school_id"]:
-                student.school_id = form.cleaned_data["school_id"]
-            if student.card_id != form.cleaned_data["card_id"]:
-                student.card_id = form.cleaned_data["card_id"]
-            if student.name != form.cleaned_data["name"]:
-                student.name = form.cleaned_data["name"]
-            if student.fname != form.cleaned_data["fname"]:
-                student.fname = form.cleaned_data["fname"]
-            if student.gfname != form.cleaned_data["gfname"]:
-                student.gfname = form.cleaned_data["gfname"]
-            if student.birth_date != form.cleaned_data["birth_date"]:
-                student.birth_date = form.cleaned_data["birth_date"]
-            if student.nationality != form.cleaned_data["nationality"]:
-                student.nationality = form.cleaned_data["nationality"]
-            if student.father_job.name != form.cleaned_data["father_job"]:
-                fjob = Job.objects.get_or_create(
-                    name=form.cleaned_data["father_job"])[0]
+            student.school_id = form.cleaned_data["school_id"]
+            student.card_id = form.cleaned_data["card_id"]
+            student.name = form.cleaned_data["name"]
+            student.fname = form.cleaned_data["fname"]
+            student.gfname = form.cleaned_data["gfname"]
+            student.birth_date = form.cleaned_data["birth_date"]
+            student.nationality = form.cleaned_data["nationality"]
+            
+            fjob_str = form.cleaned_data.get("father_job")
+            if fjob_str:
+                fjob, _ = Job.objects.get_or_create(name=fjob_str.strip())
                 student.father_job = fjob
-            if student.phone != form.cleaned_data["phone"]:
-                student.phone = form.cleaned_data["phone"]
-            if student.mother_language.id != int(form.cleaned_data["mother_language"]):
-                student.mother_language_id = int(
-                    form.cleaned_data["mother_language"])
-            if student.status.id != int(form.cleaned_data["status"]):
-                student.status_id = int(form.cleaned_data["status"])
-            if student.registered_date != form.cleaned_data["registered_date"]:
-                student.registered_date = form.cleaned_data["registered_date"]
-            if student.now_province.id != int(form.cleaned_data["now_province"]):
-                student.now_province_id = int(
-                    form.cleaned_data["now_province"])
-            if student.now_district.id != int(form.cleaned_data["now_district"]):
-                student.now_district_id = int(
-                    form.cleaned_data["now_district"])
-            if student.now_zone != int(form.cleaned_data["now_zone"]):
-                student.now_zone = int(form.cleaned_data["now_zone"])
-            if student.now_village != form.cleaned_data["now_village"]:
-                student.now_village = form.cleaned_data["now_village"]
-            if student.original_province.id != int(form.cleaned_data["original_province"]):
-                student.original_province_id = int(
-                    form.cleaned_data["original_province"])
-            if student.original_district.id != int(form.cleaned_data["original_district"]):
-                student.original_district_id = int(
-                    form.cleaned_data["original_district"])
-            if student.original_zone != int(form.cleaned_data["original_zone"]):
-                student.original_zone = int(form.cleaned_data["original_zone"])
-            if student.original_village != form.cleaned_data["original_village"]:
-                student.original_village = form.cleaned_data["original_village"]
+
+            student.phone = form.cleaned_data["phone"]
+            student.mother_language_id = int(form.cleaned_data["mother_language"])
+            student.status_id = int(form.cleaned_data["status"])
+            student.registered_date = form.cleaned_data["registered_date"]
+
+            student.now_province_id = int(form.cleaned_data["now_province"])
+            student.now_district_id = int(form.cleaned_data["now_district"])
+            student.now_zone = int(form.cleaned_data["now_zone"])
+            student.now_village = form.cleaned_data["now_village"]
+
+            student.original_province_id = int(form.cleaned_data["original_province"])
+            student.original_district_id = int(form.cleaned_data["original_district"])
+            student.original_zone = int(form.cleaned_data["original_zone"])
+            student.original_village = form.cleaned_data["original_village"]
             student.save()
 
             if "class_section" in form.cleaned_data:
                 grade, section = form.cleaned_data["class_section"].split("-")
                 academice_year = int(form.cleaned_data["academice_year"])
                 academice_year_obj = AcademiceYear.objects.filter(
-                    year=academice_year).first()
-                class_obj = get_object_or_404(
-                    Classes, grade=grade, section=section, academice_year=academice_year_obj)
-                student_class = StudentClass.objects.filter(
-                    student=student, academice_year=academice_year_obj).first()
-                if student_class:
-                    student_class.classs = class_obj
-                    student_class.save()
-                else:
-                    StudentClass.objects.create(
-                        student=student, classs=class_obj, academice_year=academice_year_obj)
+                    year=academice_year).first() or AcademiceYear.objects.first()
+                class_obj = Classes.objects.filter(grade=int(grade), section=section).first()
+                if class_obj and academice_year_obj:
+                    student_class = StudentClass.objects.filter(
+                        student=student, academice_year=academice_year_obj).first()
+                    if student_class:
+                        student_class.classs = class_obj
+                        student_class.save()
+                    else:
+                        StudentClass.objects.create(
+                            student=student, classs=class_obj, academice_year=academice_year_obj)
+            messages.success(request, f"پرونده دانش‌آموز «{student.name}» با موفقیت به‌روزرسانی شد.")
+            return redirect(reverse("dashboard:student-detail", kwargs={"pk": student.id}))
         else:
             return render(request, "dashboard/students/student_edite.html", {"student": student, "classes": classes, "errors": form.errors})
-        return redirect(reverse("dashboard:student-detail", kwargs={"pk": student.id}))
     else:
         return render(request, "dashboard/students/student_edite.html", {"student": student, "classes": classes})
 
 
 @is_admin
 def student_create(request):
-    classes = Classes.objects.all()
+    classes = Classes.objects.all().order_by("grade", "section")
     if request.method == "POST":
         form = StudentForm(request.POST)
         if form.is_valid():
-            print(form.data)
             school_id = form.cleaned_data["school_id"]
             card_id = form.cleaned_data["card_id"]
             name = form.cleaned_data["name"]
@@ -245,23 +237,24 @@ def student_create(request):
             gfname = form.cleaned_data["gfname"]
             birth_date = form.cleaned_data["birth_date"]
             nationality = form.cleaned_data["nationality"]
-            father_job = Job.objects.get_or_create(
-                name=form.cleaned_data["father_job"])[0]
+            father_job, _ = Job.objects.get_or_create(
+                name=form.cleaned_data["father_job"].strip())
             phone = form.cleaned_data["phone"]
             mother_language = Language.objects.get(
                 id=int(form.cleaned_data["mother_language"]))
-            status = int(form.cleaned_data["status"])
+            status_id = int(form.cleaned_data["status"])
             registered_date = form.cleaned_data["registered_date"]
             grade, section = form.cleaned_data["class_section"].split("-")
-            now_province = int(form.cleaned_data["now_province"])
-            now_district = int(form.cleaned_data["now_district"])
+            now_province_id = int(form.cleaned_data["now_province"])
+            now_district_id = int(form.cleaned_data["now_district"])
             now_zone = int(form.cleaned_data["now_zone"])
             now_village = form.cleaned_data["now_village"]
-            original_province = int(form.cleaned_data["original_province"])
-            original_district = int(form.cleaned_data["original_district"])
+            original_province_id = int(form.cleaned_data["original_province"])
+            original_district_id = int(form.cleaned_data["original_district"])
             original_zone = int(form.cleaned_data["original_zone"])
             original_village = form.cleaned_data["original_village"]
             academice_year = int(form.cleaned_data["academice_year"])
+            
             new_student = Student.objects.create(
                 school_id=school_id,
                 card_id=card_id,
@@ -273,28 +266,31 @@ def student_create(request):
                 father_job=father_job,
                 phone=phone,
                 mother_language=mother_language,
-                status_id=status,
+                status_id=status_id,
                 registered_date=registered_date,
-                now_province_id=now_province,
-                now_district_id=now_district,
+                now_province_id=now_province_id,
+                now_district_id=now_district_id,
                 now_zone=now_zone,
                 now_village=now_village,
-                original_province_id=original_province,
-                original_district_id=original_district,
+                original_province_id=original_province_id,
+                original_district_id=original_district_id,
                 original_zone=original_zone,
                 original_village=original_village
             )
             academice_year_obj = AcademiceYear.objects.filter(
-                year=academice_year).first()
+                year=academice_year).first() or AcademiceYear.objects.first()
             class_obj = Classes.objects.filter(
-                grade=grade, section=section, academice_year=academice_year_obj)
-            StudentClass.objects.create(
-                student=new_student, classs=class_obj, academice_year=academice_year_obj)
+                grade=int(grade), section=section).first()
+            if class_obj and academice_year_obj:
+                StudentClass.objects.create(
+                    student=new_student, classs=class_obj, academice_year=academice_year_obj)
+            messages.success(request, f"دانش‌آموز «{new_student.name}» با موفقیت در سامانه پذیرش و ثبت‌نام شد.")
             return redirect(reverse("dashboard:student-list"))
         else:
             return render(request, "dashboard/students/student_edite.html", {"classes": classes, "errors": form.errors})
     else:
         return render(request, "dashboard/students/student_edite.html", {"classes": classes})
+
 
 # -----------------------------------------------------------------------------
 #####
@@ -384,39 +380,30 @@ def teacher_edite(request, id):
 
         form = TeacherForm(request.POST)
         if form.is_valid():
-            if teacher.name != form.cleaned_data["name"]:
-                teacher.name = form.cleaned_data["name"]
-            if teacher.fname != form.cleaned_data["fname"]:
-                teacher.fname = form.cleaned_data["fname"]
-            if teacher.last_name != form.cleaned_data["last_name"]:
-                teacher.last_name = form.cleaned_data["last_name"]
-            if teacher.phone != form.cleaned_data["phone"]:
-                teacher.phone = form.cleaned_data["phone"]
-            if teacher.major != form.cleaned_data["major"]:
-                teacher.major = form.cleaned_data["major"]
-            if teacher.degree.name != form.cleaned_data["degree"]:
-                degree = Degree.objects.get_or_create(
-                    name=form.cleaned_data["degree"])[0]
-                teacher.degree = degree
-            if teacher.job.name != form.cleaned_data["job"]:
-                job = Job.objects.get_or_create(
-                    name=form.cleaned_data["job"])[0]
-                teacher.job = job
-            if teacher.years_of_service != form.cleaned_data["years_of_service"]:
+            teacher.name = form.cleaned_data["name"]
+            teacher.fname = form.cleaned_data["fname"]
+            teacher.last_name = form.cleaned_data["last_name"]
+            teacher.phone = form.cleaned_data["phone"]
+            teacher.major = form.cleaned_data["major"]
 
-                teacher.years_of_service = form.cleaned_data["years_of_service"]
-            if teacher.registered_date != form.cleaned_data["registered_date"]:
-                teacher.registered_date = form.cleaned_data["registered_date"]
-            if teacher.detached_date != form.cleaned_data["detached_date"]:
-                teacher.detached_date = form.cleaned_data["detached_date"]
-            if teacher.graduation_year != form.cleaned_data["graduation_year"]:
-                teacher.graduation_year = form.cleaned_data["graduation_year"]
-            if teacher.salary != form.cleaned_data["salary"]:
-                teacher.salary = form.cleaned_data["salary"]
-            if teacher.tax != form.cleaned_data["tax"]:
-                teacher.tax = form.cleaned_data["tax"]
-            if teacher.status.id != int(form.cleaned_data["status"]):
-                teacher.status.id = int(form.cleaned_data["status"])
+            degree_name = form.cleaned_data.get("degree")
+            if degree_name:
+                degree, _ = Degree.objects.get_or_create(name=degree_name.strip())
+                teacher.degree = degree
+
+            job_name = form.cleaned_data.get("job")
+            if job_name:
+                job, _ = Job.objects.get_or_create(name=job_name.strip())
+                teacher.job = job
+
+            teacher.years_of_service = form.cleaned_data["years_of_service"]
+            teacher.registered_date = form.cleaned_data["registered_date"]
+            teacher.detached_date = form.cleaned_data.get("detached_date")
+            teacher.graduation_year = form.cleaned_data["graduation_year"]
+            teacher.salary = form.cleaned_data["salary"]
+            teacher.tax = form.cleaned_data["tax"]
+            if form.cleaned_data.get("status"):
+                teacher.status_id = int(form.cleaned_data["status"])
             teacher.save()
             guidence_at = form.cleaned_data.get("guidence_at")
             if guidence_at and "-" in str(guidence_at):
@@ -503,23 +490,29 @@ def class_create(request):
         form = ClassForm(request.POST)
         if form.is_valid():
             academice_year = int(form.cleaned_data["academice_year"])
-            academice_year_obj = AcademiceYear.objects.get(year=academice_year)
+            academice_year_obj = AcademiceYear.objects.filter(year=academice_year).first()
+            if not academice_year_obj:
+                academice_year_obj = AcademiceYear.objects.get_or_create(year=academice_year)[0]
             grade, alpha_grade = form.cleaned_data["grade"].split("-")
             section = form.cleaned_data["section"]
             capacity = form.cleaned_data["capacity"]
-            guidence_id = form.cleaned_data["guidence"]
+            guidence_id = form.cleaned_data.get("guidence")
             start_time_hour = form.cleaned_data["start_time_hour"]
             start_time_minute = form.cleaned_data["start_time_minute"]
             end_time_hour = form.cleaned_data["end_time_hour"]
             end_time_minute = form.cleaned_data["end_time_minute"]
-            teacher = teachers.get(id=guidence_id)
+            
+            guidence_teacher = None
+            if guidence_id and str(guidence_id).isdigit():
+                guidence_teacher = Teacher.objects.filter(id=int(guidence_id)).first()
+
             new_cls = Classes.objects.create(
                 academice_year=academice_year_obj,
                 grade=int(grade),
                 alpha_grade=alpha_grade,
                 section=section,
                 capacity=capacity,
-                guidence=teacher,
+                guidence=guidence_teacher,
                 start_time=f"{start_time_hour:02d}:{start_time_minute:02d}",
                 end_time=f"{end_time_hour:02d}:{end_time_minute:02d}"
             )
@@ -527,7 +520,8 @@ def class_create(request):
                 request, f"صنف جدید ({new_cls.alpha_grade} شعبه {new_cls.section}) با موفقیت ایجاد شد.")
             return redirect(reverse("dashboard:class-list"))
         else:
-            return redirect(reverse("dashboard:class-register"))
+            messages.error(request, "لطفاً خطاهای فرم ثبت صنف را تصحیح نمایید.")
+            return render(request, "dashboard/classes/class_edite.html", {"teachers": teachers, "academic_years": academic_years, "errors": form.errors})
     return render(request, "dashboard/classes/class_edite.html", {"teachers": teachers, "academic_years": academic_years})
 
 
@@ -541,33 +535,38 @@ def class_edite(request, id):
         form = ClassForm(request.POST)
         if form.is_valid():
             academice_year = int(form.cleaned_data["academice_year"])
-            academice_year_obj = AcademiceYear.objects.get(year=academice_year)
+            academice_year_obj = AcademiceYear.objects.filter(year=academice_year).first()
+            if not academice_year_obj:
+                academice_year_obj = AcademiceYear.objects.get_or_create(year=academice_year)[0]
             grade, alpha_grade = form.cleaned_data["grade"].split("-")
             section = form.cleaned_data["section"]
             capacity = form.cleaned_data["capacity"]
-            guidence_id = form.cleaned_data["guidence"]
+            guidence_id = form.cleaned_data.get("guidence")
             start_time_hour = form.cleaned_data["start_time_hour"]
             start_time_minute = form.cleaned_data["start_time_minute"]
             end_time_hour = form.cleaned_data["end_time_hour"]
             end_time_minute = form.cleaned_data["end_time_minute"]
-            if class_obj.academice_year != academice_year_obj:
-                class_obj.academice_year = academice_year_obj
-            if class_obj.grade != int(grade):
-                class_obj.grade = int(grade)
-            if class_obj.alpha_grade != alpha_grade:
-                class_obj.alpha_grade = alpha_grade
-            if class_obj.section != section:
-                class_obj.section = section
-            if class_obj.capacity != capacity:
-                class_obj.capacity = capacity
-            if class_obj.guidence_id != guidence_id:
-                class_obj.guidence_id = guidence_id
+            
+            class_obj.academice_year = academice_year_obj
+            class_obj.grade = int(grade)
+            class_obj.alpha_grade = alpha_grade
+            class_obj.section = section
+            class_obj.capacity = capacity
+            
+            if guidence_id and str(guidence_id).isdigit():
+                class_obj.guidence_id = int(guidence_id)
+            else:
+                class_obj.guidence = None
+
             class_obj.start_time = f"{start_time_hour:02d}:{start_time_minute:02d}"
             class_obj.end_time = f"{end_time_hour:02d}:{end_time_minute:02d}"
             class_obj.save()
             messages.success(
                 request, f"مشخصات صنف {class_obj.alpha_grade} شعبه {class_obj.section} با موفقیت به‌روزرسانی شد.")
             return redirect(reverse("dashboard:class-list"))
+        else:
+            messages.error(request, "لطفاً خطاهای فرم ویرایش صنف را تصحیح نمایید.")
+            return render(request, "dashboard/classes/class_edite.html", {"teachers": teachers, "class": class_obj, "academic_years": academic_years, "errors": form.errors})
 
     return render(request, "dashboard/classes/class_edite.html", {"teachers": teachers, "class": class_obj, "academic_years": academic_years})
 
@@ -943,8 +942,6 @@ class AssesmentListView(LoginRequiredMixin, ListView):
 
 @is_admin
 def assesment_create(request):
-    print(request.GET)
-    print(request.POST)
     academic_years = AcademiceYear.objects.all().order_by("-year")
     classes = Classes.objects.all().order_by("grade", "section")
     subjects = Subject.objects.all().order_by("name")
@@ -1834,7 +1831,14 @@ def fee_create(request):
             messages.error(request, f"خطا در ثبت قبض پرداختی: {str(e)}")
             return redirect(reverse("dashboard:finance-list"))
 
-    return redirect(reverse("dashboard:finance-list"))
+    context = {
+        "classes": Classes.objects.all().order_by("grade", "section"),
+        "months": Month.objects.all().order_by("id"),
+        "years": AcademiceYear.objects.all().order_by("-year"),
+        "all_students": Student.objects.filter(status_id=1).order_by("name"),
+        "is_create": True,
+    }
+    return render(request, "dashboard/finance/fee_edite.html", context)
 
 
 @is_admin

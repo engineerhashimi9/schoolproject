@@ -196,7 +196,7 @@ def validate_timetable_slot(
     return (True, None)
 
 
-def get_master_timetable_matrix(academic_year_id: int, day_of_week: int) -> Dict[str, Any]:
+def get_master_timetable_matrix(academic_year_id: int, day_of_week: int = 1) -> Dict[str, Any]:
     """
     Build master school matrix for all classes for a specific day of the week.
     """
