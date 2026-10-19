@@ -1,0 +1,452 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}
+تقسیم اوقات کاری استاد {{ selected_teacher.name }} | سامانه تعلیمی
+{% endblock title %}
+
+{% block style %}
+<style>
+  .timetable-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 4px;
+    overflow-x: auto;
+  }
+  .timetable-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #64748b;
+    border-radius: 10px 10px 0 0;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -6px;
+    white-space: nowrap;
+  }
+  .timetable-tab:hover {
+    color: #0f172a;
+    background: #f1f5f9;
+  }
+  .timetable-tab.active {
+    color: #1e3a8a;
+    border-bottom-color: #1e3a8a;
+    background: #eff6ff;
+  }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 1024px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 640px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .stat-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 20px 24px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  }
+  .stat-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 8px;
+  }
+  .stat-card-value {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 6px;
+  }
+  .stat-card-footer {
+    font-size: 12px;
+    color: #94a3b8;
+  }
+
+  /* Table Grid */
+  .timetable-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .timetable-card-header {
+    background: linear-gradient(135deg, #091426, #1e3a8a);
+    color: #ffffff;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .timetable-card-title h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+  }
+  .timetable-card-title p {
+    margin: 4px 0 0 0;
+    font-size: 13px;
+    color: #94a3b8;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+    width: 100%;
+  }
+  .timetable-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+  }
+  .timetable-table th, .timetable-table td {
+    border: 1px solid #e2e8f0;
+    padding: 10px;
+    text-align: center;
+  }
+  .timetable-table thead th {
+    background: #f8fafc;
+    color: #1e293b;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 12px 8px;
+  }
+  .day-col {
+    background: #f1f5f9 !important;
+    font-weight: 800;
+    color: #0f172a;
+    width: 110px;
+  }
+  .period-header {
+    font-weight: 800;
+    display: block;
+  }
+  .period-time-sub {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 600;
+    display: block;
+    margin-top: 2px;
+  }
+
+  .recess-col {
+    background: #fffbeb !important;
+    color: #b45309;
+    font-weight: 800;
+    font-size: 12px;
+    width: 48px;
+    padding: 6px 2px;
+    vertical-align: middle;
+  }
+  .recess-text {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    letter-spacing: 2px;
+    display: inline-block;
+  }
+
+  /* Teaching Slot Box */
+  .teacher-slot-box {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 8px 10px;
+    min-height: 82px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: right;
+  }
+  .teacher-slot-class {
+    font-size: 13px;
+    font-weight: 800;
+    color: #1e3a8a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .teacher-slot-subject {
+    font-size: 12px;
+    color: #334155;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .teacher-slot-room {
+    font-size: 11px;
+    color: #64748b;
+    font-weight: 600;
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px dashed #cbd5e1;
+  }
+
+  /* Free hour slot */
+  .teacher-free-box {
+    background: #f8fafc;
+    border: 1px dashed #e2e8f0;
+    border-radius: 10px;
+    min-height: 82px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .summary-chips-box {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    padding: 20px 24px;
+    margin-top: 24px;
+  }
+</style>
+{% endblock style %}
+
+{% block content %}
+<div class="container">
+  <!-- Timetable Navigation Tabs -->
+  <div class="timetable-tabs">
+    <a href="{% url 'dashboard:timetable-class' %}?year_id={{ selected_year.id }}" class="timetable-tab">
+      <i class="fa-solid fa-chalkboard"></i> تقسیم اوقات هفتگی صنف
+    </a>
+    <a href="{% url 'dashboard:timetable-teacher' %}?teacher_id={{ selected_teacher.id }}&year_id={{ selected_year.id }}" class="timetable-tab active">
+      <i class="fa-solid fa-user-tie"></i> تقسیم اوقات کاری استاد
+    </a>
+    <a href="{% url 'dashboard:timetable-master' %}?year_id={{ selected_year.id }}" class="timetable-tab">
+      <i class="fa-solid fa-table-cells"></i> جدول عمومی مکتب
+    </a>
+  </div>
+
+  <!-- Hero Header -->
+  <div class="hero-header">
+    <div class="hero-title-area">
+      <div class="system-badge">
+        <span class="dot" style="background-color: #10b981"></span>
+        جدول ساعات کاری و تدریس کادر اساتید
+      </div>
+      <h1>برنامه تدریس استاد {{ selected_teacher.name }} {{ selected_teacher.last_name|default:"" }}</h1>
+      <p>
+        رشته و تخصص: <strong>{{ selected_teacher.major|default:"عمومی" }}</strong> | درجه تحصیل: <strong>{{ selected_teacher.degree.name|default:"لیسانس" }}</strong> | سال تعلیمی: <strong>{{ selected_year.year }}</strong>
+      </p>
+    </div>
+    <div class="hero-actions">
+      {% if selected_teacher %}
+      <a href="{% url 'dashboard:timetable-teacher-print' selected_teacher.id %}?year_id={{ selected_year.id }}" class="btn btn-primary">
+        <i class="fa-solid fa-print"></i> چاپ کارت برنامه کاری استاد
+      </a>
+      {% endif %}
+      <a href="{% url 'dashboard:timetable-class' %}?year_id={{ selected_year.id }}" class="btn btn-surface">
+        <i class="fa-solid fa-arrow-left"></i> مشاهده تقسیم اوقات صنف‌ها
+      </a>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <div class="filters-header">
+      <div class="filters-title">
+        <i class="fa-solid fa-filter text-primary"></i> انتخاب استاد و سال تعلیمی
+      </div>
+    </div>
+    <form action="{% url 'dashboard:timetable-teacher' %}" method="get">
+      <div class="filter-row">
+        <div class="input-group" style="flex: 2;">
+          <label>استاد تدریس‌کننده:</label>
+          <select name="teacher_id" onchange="this.form.submit()" class="input-control font-bold">
+            {% for t in teachers %}
+              <option value="{{ t.id }}" {% if selected_teacher.id == t.id %}selected{% endif %}>
+                استاد {{ t.name }} {{ t.last_name|default:"" }} {% if t.major %}(تخصص: {{ t.major }}){% endif %}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="input-group" style="flex: 1.5;">
+          <label>سال تعلیمی:</label>
+          <select name="year_id" onchange="this.form.submit()" class="input-control font-bold">
+            {% for y in years %}
+              <option value="{{ y.id }}" {% if selected_year.id == y.id %}selected{% endif %}>
+                سال تعلیمی {{ y.year }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-card-title">مجموع ساعات تدریس در هفته</div>
+      <div class="stat-card-value" style="color: #1e3a8a;">
+        {{ matrix.total_teaching_hours }} <small style="font-size: 14px; color: #64748b;">ساعت درسی</small>
+      </div>
+      <div class="stat-card-footer">
+        بار تدریس هفتگی استاد
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card-title">صنوف تحت تدریس</div>
+      <div class="stat-card-value" style="color: #059669;">
+        {{ matrix.distinct_classes_count }} <small style="font-size: 14px; color: #64748b;">صنف مختلف</small>
+      </div>
+      <div class="stat-card-footer">
+        پوشش شعبات مکتب
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card-title">مضامین تخصصی تدریس‌شده</div>
+      <div class="stat-card-value" style="color: #7c3aed;">
+        {{ matrix.distinct_subjects_count }} <small style="font-size: 14px; color: #64748b;">مضمون</small>
+      </div>
+      <div class="stat-card-footer">
+        بر اساس رشته تخصصی
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card-title">ساعات آزاد و فراغت</div>
+      <div class="stat-card-value" style="color: #d97706;">
+        {{ matrix.free_hours }} <small style="font-size: 14px; color: #64748b;">ساعت در هفته</small>
+      </div>
+      <div class="stat-card-footer">
+        فرصت آمادگی درس و استراحت
+      </div>
+    </div>
+  </div>
+
+  <!-- Weekly Timetable Matrix Card -->
+  <div class="timetable-card">
+    <div class="timetable-card-header">
+      <div class="timetable-card-title">
+        <h2>
+          <i class="fa-solid fa-calendar-check" style="margin-left: 8px;"></i>
+          برنامه هفتگی استاد {{ selected_teacher.name }} {{ selected_teacher.last_name|default:"" }}
+        </h2>
+        <p>سال تعلیمی {{ selected_year.year }} | وضعیت حضور و صنف‌های تحت تدریس</p>
+      </div>
+      <div>
+        <span style="background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;">
+          {{ recess_info.title }}: {{ recess_info.time }}
+        </span>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="timetable-table">
+        <thead>
+          <tr>
+            <th class="day-col">روزهای هفته</th>
+            {% for p in periods %}
+              <th>
+                <span class="period-header">{{ p.name }}</span>
+                <span class="period-time-sub">{{ p.time }}</span>
+              </th>
+              {% if p.num == 3 %}
+                <th class="recess-col" rowspan="7">
+                  <span class="recess-text">تفریح</span>
+                </th>
+              {% endif %}
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for day_row in matrix.weekly_grid %}
+          <tr>
+            <td class="day-col">
+              <strong>{{ day_row.day.name }}</strong>
+            </td>
+            {% for item in day_row.slots %}
+              <td>
+                {% if item.slot %}
+                  <div class="teacher-slot-box">
+                    <div>
+                      <div class="teacher-slot-class">
+                        <i class="fa-solid fa-chalkboard-user" style="color: #1e3a8a;"></i>
+                        صنف {{ item.slot.classs.alpha_grade }} - {{ item.slot.classs.section }}
+                      </div>
+                      <div class="teacher-slot-subject">
+                        مضمون: {{ item.slot.subject.name }}
+                      </div>
+                    </div>
+                    <div class="teacher-slot-room">
+                      {{ item.slot.room_number|default:"اتاق صنف" }}
+                    </div>
+                  </div>
+                {% else %}
+                  <div class="teacher-free-box">
+                    <i class="fa-solid fa-mug-hot" style="margin-left: 4px;"></i> ساعت آزاد
+                  </div>
+                {% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Summary of Classes & Subjects -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    {% if matrix.class_counts %}
+    <div class="summary-chips-box">
+      <h3 style="margin: 0 0 14px 0; font-size: 15px; font-weight: 800; color: #0f172a;">
+        <i class="fa-solid fa-chalkboard" style="color: #1e3a8a; margin-left: 6px;"></i>
+        توزیع ساعات تدریس در صنوف
+      </h3>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        {% for c_name, count in matrix.class_counts.items %}
+          <div style="background: #f1f5f9; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; color: #1e293b; display: inline-flex; align-items: center; gap: 8px;">
+            <span>صنف {{ c_name }}</span>
+            <span style="background: #1e3a8a; color: white; border-radius: 12px; padding: 1px 8px; font-size: 11px;">{{ count }} ساعت</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if matrix.subject_counts %}
+    <div class="summary-chips-box">
+      <h3 style="margin: 0 0 14px 0; font-size: 15px; font-weight: 800; color: #0f172a;">
+        <i class="fa-solid fa-book-open" style="color: #059669; margin-left: 6px;"></i>
+        توزیع مضامین تدریسی استاد
+      </h3>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        {% for s_name, count in matrix.subject_counts.items %}
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; color: #166534; display: inline-flex; align-items: center; gap: 8px;">
+            <span>{{ s_name }}</span>
+            <span style="background: #059669; color: white; border-radius: 12px; padding: 1px 8px; font-size: 11px;">{{ count }} ساعت</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}

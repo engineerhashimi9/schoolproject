@@ -63,6 +63,11 @@
                 <i class="fa-solid fa-calendar-check"></i> حاضری و غیاب
               </a>
             </li>
+            <li class="{% if 'timetable' in request.resolver_match.url_name %}active{% endif %}">
+              <a href="{% url 'dashboard:timetable-class' %}">
+                <i class="fa-solid fa-calendar-week"></i> تقسیم اوقات درسی
+              </a>
+            </li>
             <li class="{% if 'assesment' in request.resolver_match.url_name %}active{% endif %}">
               <a href="{% url 'dashboard:assesment-list' %}">
                 <i class="fa-regular fa-file-lines"></i> ارزیابی‌های ماهوار

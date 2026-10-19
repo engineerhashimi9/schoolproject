@@ -1,0 +1,278 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}
+جدول عمومی تقسیم اوقات مکتب | سامانه جامع مدیریت تعلیمی
+{% endblock title %}
+
+{% block style %}
+<style>
+  .timetable-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 4px;
+    overflow-x: auto;
+  }
+  .timetable-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #64748b;
+    border-radius: 10px 10px 0 0;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -6px;
+    white-space: nowrap;
+  }
+  .timetable-tab:hover {
+    color: #0f172a;
+    background: #f1f5f9;
+  }
+  .timetable-tab.active {
+    color: #1e3a8a;
+    border-bottom-color: #1e3a8a;
+    background: #eff6ff;
+  }
+
+  /* Day Selector Pills */
+  .day-pills {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .day-pill {
+    padding: 10px 22px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #334155;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .day-pill:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+  }
+  .day-pill.active {
+    background: #1e3a8a;
+    border-color: #1e3a8a;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25);
+  }
+
+  /* Master Table Card */
+  .master-card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    overflow: hidden;
+  }
+  .master-header {
+    background: linear-gradient(135deg, #091426, #1e3a8a);
+    color: #ffffff;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .master-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 950px;
+  }
+  .master-table th, .master-table td {
+    border: 1px solid #e2e8f0;
+    padding: 10px;
+    text-align: center;
+  }
+  .master-table thead th {
+    background: #f8fafc;
+    color: #1e293b;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 12px 8px;
+  }
+  .recess-col {
+    background: #fffbeb !important;
+    color: #b45309;
+    font-weight: 800;
+    font-size: 12px;
+    width: 44px;
+    vertical-align: middle;
+  }
+  .recess-text {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    letter-spacing: 2px;
+  }
+
+  .slot-mini-box {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 6px 8px;
+    font-size: 12px;
+    text-align: right;
+  }
+  .slot-mini-sub {
+    font-weight: 800;
+    color: #0f172a;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .slot-mini-tea {
+    font-size: 11px;
+    color: #475569;
+    font-weight: 600;
+    display: block;
+  }
+</style>
+{% endblock style %}
+
+{% block content %}
+<div class="container">
+  <!-- Timetable Navigation Tabs -->
+  <div class="timetable-tabs">
+    <a href="{% url 'dashboard:timetable-class' %}?year_id={{ selected_year.id }}" class="timetable-tab">
+      <i class="fa-solid fa-chalkboard"></i> تقسیم اوقات هفتگی صنف
+    </a>
+    <a href="{% url 'dashboard:timetable-teacher' %}?year_id={{ selected_year.id }}" class="timetable-tab">
+      <i class="fa-solid fa-user-tie"></i> تقسیم اوقات کاری استاد
+    </a>
+    <a href="{% url 'dashboard:timetable-master' %}?day={{ selected_day_num }}&year_id={{ selected_year.id }}" class="timetable-tab active">
+      <i class="fa-solid fa-table-cells"></i> جدول عمومی مکتب
+    </a>
+  </div>
+
+  <!-- Hero Header -->
+  <div class="hero-header">
+    <div class="hero-title-area">
+      <div class="system-badge">
+        <span class="dot" style="background-color: #3b82f6"></span>
+        نمای کلان مدیریتی ساعات درسی مکتب
+      </div>
+      <h1>جدول جامع تقسیم اوقات مکتب - روز {{ matrix.day.name }}</h1>
+      <p>
+        مشاهده همزمان ساعات درسی تمامی صنوف مکتب، کنترل عدم تداخل اساتید و مدیریت فضاهای آموزشی در روز {{ matrix.day.name }}.
+      </p>
+    </div>
+    <div class="hero-actions">
+      <!-- Year switcher -->
+      <form method="GET" style="display: inline-block;">
+        <input type="hidden" name="day" value="{{ selected_day_num }}" />
+        <select name="year_id" onchange="this.form.submit()" class="input-control font-bold" style="background: white; border: 1px solid #cbd5e1; height: 42px;">
+          {% for y in years %}
+            <option value="{{ y.id }}" {% if selected_year.id == y.id %}selected{% endif %}>
+              سال تعلیمی {{ y.year }}
+            </option>
+          {% endfor %}
+        </select>
+      </form>
+      <button class="btn btn-primary" onclick="window.print()">
+        <i class="fa-solid fa-print"></i> چاپ جدول روزانه مکتب
+      </button>
+    </div>
+  </div>
+
+  <!-- Day Selector Pills -->
+  <div class="day-pills">
+    {% for d in days %}
+      <a
+        href="{% url 'dashboard:timetable-master' %}?day={{ d.num }}&year_id={{ selected_year.id }}"
+        class="day-pill {% if selected_day_num == d.num %}active{% endif %}"
+      >
+        <i class="fa-regular fa-calendar-check" style="margin-left: 6px;"></i>
+        روز {{ d.name }}
+      </a>
+    {% endfor %}
+  </div>
+
+  <!-- Master Table Card -->
+  <div class="master-card">
+    <div class="master-header">
+      <div>
+        <h2 style="margin: 0; font-size: 17px; font-weight: 800;">
+          <i class="fa-solid fa-table-list" style="margin-left: 8px;"></i>
+          تقسیم اوقات تمامی صنوف در روز {{ matrix.day.name }}
+        </h2>
+        <p style="margin: 4px 0 0 0; font-size: 12px; color: #94a3b8;">
+          سال تعلیمی {{ selected_year.year }} | تعداد صنوف: {{ matrix.total_classes }} صنف
+        </p>
+      </div>
+      <div>
+        <span style="background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;">
+          زنگ تفریح: ۱۰:۱۵ - ۱۰:۳۵
+        </span>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="master-table">
+        <thead>
+          <tr>
+            <th style="width: 140px;">صنف و شعبه</th>
+            <th style="width: 130px;">استاد نگران</th>
+            {% for p in periods %}
+              <th>
+                <span style="font-weight: 800; display: block;">{{ p.name }}</span>
+                <span style="font-size: 11px; color: #64748b; font-weight: 600; display: block;">{{ p.time }}</span>
+              </th>
+              {% if p.num == 3 %}
+                <th class="recess-col" rowspan="{{ matrix.class_rows|length|add:'1' }}">
+                  <span class="recess-text">تفریح</span>
+                </th>
+              {% endif %}
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in matrix.class_rows %}
+          <tr>
+            <td style="background: #f8fafc; text-align: right;">
+              <a href="{% url 'dashboard:timetable-class' %}?class_id={{ row.class.id }}&year_id={{ selected_year.id }}" style="color: #1e3a8a; font-weight: 800; text-decoration: none;">
+                صنف {{ row.class.alpha_grade }} - {{ row.class.section }}
+              </a>
+            </td>
+            <td style="font-size: 12px; color: #475569;">
+              {{ row.class.guidence.name|default:"-" }}
+            </td>
+            {% for item in row.slots %}
+              <td>
+                {% if item.slot %}
+                  <div class="slot-mini-box">
+                    <span class="slot-mini-sub">{{ item.slot.subject.name }}</span>
+                    <span class="slot-mini-tea">استاد {{ item.slot.teacher.name }}</span>
+                  </div>
+                {% else %}
+                  <span style="color: #cbd5e1; font-size: 11px;">--</span>
+                {% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="9" style="text-align: center; padding: 40px; color: #94a3b8;">
+              هیچ صنفی در سامانه ثبت نگردیده است.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock content %}

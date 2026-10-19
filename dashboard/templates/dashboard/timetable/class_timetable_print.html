@@ -1,0 +1,354 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تقسیم اوقات رسمی دروس صنف {{ cls.alpha_grade }} - {{ cls.section }} | سال {{ year.year }}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    @font-face {
+      font-family: 'Vazirmatn';
+      src: local('Vazirmatn'), local('Tahoma'), sans-serif;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      padding: 20px;
+      direction: rtl;
+    }
+
+    .no-print-bar {
+      max-width: 1060px;
+      margin: 0 auto 16px auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .btn-primary {
+      background: #1e3a8a;
+      color: #ffffff;
+    }
+    .btn-surface {
+      background: #f1f5f9;
+      color: #334155;
+    }
+
+    /* Print Page Container (A4 Landscape) */
+    .print-sheet {
+      max-width: 1060px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 2px solid #0f172a;
+      border-radius: 8px;
+      padding: 24px 28px;
+      position: relative;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    }
+    .print-sheet::before {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      right: 4px;
+      bottom: 4px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 6px;
+      pointer-events: none;
+    }
+
+    /* Header */
+    .sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+    .school-title h1 {
+      font-size: 19px;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+    .school-title p {
+      font-size: 12px;
+      color: #475569;
+    }
+    .sheet-badge {
+      text-align: center;
+    }
+    .sheet-badge h2 {
+      font-size: 16px;
+      font-weight: 800;
+      background: #0f172a;
+      color: white;
+      padding: 6px 20px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .sheet-meta {
+      text-align: left;
+      font-size: 12px;
+    }
+
+    /* Info Bar */
+    .info-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+    .info-item {
+      display: flex;
+      gap: 6px;
+    }
+    .info-item span {
+      color: #64748b;
+    }
+    .info-item strong {
+      color: #0f172a;
+    }
+
+    /* Timetable Table */
+    .timetable-grid {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+      font-size: 12px;
+    }
+    .timetable-grid th, .timetable-grid td {
+      border: 1px solid #0f172a;
+      padding: 8px 6px;
+      text-align: center;
+    }
+    .timetable-grid th {
+      background: #f1f5f9;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .day-th {
+      background: #e2e8f0 !important;
+      width: 100px;
+      font-weight: 800;
+    }
+    .recess-th {
+      background: #fffbeb !important;
+      color: #b45309;
+      font-weight: 800;
+      width: 44px;
+      vertical-align: middle;
+      font-size: 12px;
+    }
+    .recess-v {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      letter-spacing: 2px;
+      display: inline-block;
+    }
+
+    .slot-cell {
+      min-height: 54px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .slot-cell-sub {
+      font-size: 12px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+    .slot-cell-tea {
+      font-size: 11px;
+      color: #334155;
+      font-weight: 600;
+    }
+
+    /* Signatures */
+    .signatures-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 36px;
+      text-align: center;
+      font-size: 12px;
+    }
+    .sig-box {
+      border-top: 1px dashed #64748b;
+      padding-top: 8px;
+    }
+    .sig-space {
+      height: 44px;
+    }
+
+    @media print {
+      body {
+        background: transparent;
+        padding: 0;
+      }
+      .no-print-bar {
+        display: none !important;
+      }
+      .print-sheet {
+        border: 2px solid #000;
+        box-shadow: none;
+        max-width: 100%;
+        margin: 0;
+        padding: 16px;
+        page-break-inside: avoid;
+      }
+      .print-sheet::before {
+        display: none;
+      }
+      @page {
+        size: A4 landscape;
+        margin: 8mm;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Action Bar -->
+  <div class="no-print-bar">
+    <div>
+      <a href="{% url 'dashboard:timetable-class' %}?class_id={{ cls.id }}&year_id={{ year.id }}" class="btn btn-surface">
+        <i class="fa-solid fa-arrow-right"></i> بازگشت به سامانه
+      </a>
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <button class="btn btn-primary" onclick="window.print()">
+        <i class="fa-solid fa-print"></i> چاپ تقسیم اوقات دیواری (Ctrl + P)
+      </button>
+    </div>
+  </div>
+
+  <!-- Printable Wall Sheet -->
+  <div class="print-sheet">
+    <div class="sheet-header">
+      <div class="school-title">
+        <h1>مکتب خصوصی و لیسه عالی معارف</h1>
+        <p>مدیریت تدریسی و امور تعلیمی مکتب</p>
+      </div>
+      <div class="sheet-badge">
+        <h2>جدول تقسیم اوقات رسمی دروس</h2>
+        <div style="font-size: 12px; margin-top: 4px; font-weight: 700; color: #334155;">نسخه دیواری صنف</div>
+      </div>
+      <div class="sheet-meta">
+        <div>سال تعلیمی: <strong>{{ year.year }}</strong></div>
+        <div>تاریخ صدور: <strong>{{ today_str }}</strong></div>
+        <div>کد صنف: <strong>{{ cls.id }}</strong></div>
+      </div>
+    </div>
+
+    <!-- Info Bar -->
+    <div class="info-bar">
+      <div class="info-item">
+        <span>صنف و شعبه:</span>
+        <strong>صنف {{ cls.alpha_grade }} - {{ cls.section }}</strong>
+      </div>
+      <div class="info-item">
+        <span>استاد نگران صنف:</span>
+        <strong>{{ cls.guidence.name|default:"تعیین نشده" }}</strong>
+      </div>
+      <div class="info-item">
+        <span>نوبت درسی:</span>
+        <strong>{{ cls.turn|default:"صبحانه" }}</strong>
+      </div>
+      <div class="info-item">
+        <span>تعداد ساعات هفتگی:</span>
+        <strong>{{ matrix.total_assigned }} ساعت درسی</strong>
+      </div>
+    </div>
+
+    <!-- Timetable Grid Table -->
+    <table class="timetable-grid">
+      <thead>
+        <tr>
+          <th class="day-th">روز / ساعت</th>
+          {% for p in periods %}
+            <th>
+              <div>{{ p.name }}</div>
+              <div style="font-size: 10px; color: #475569; font-weight: 600;">{{ p.time }}</div>
+            </th>
+            {% if p.num == 3 %}
+              <th class="recess-th" rowspan="7">
+                <span class="recess-v">تفریح</span>
+              </th>
+            {% endif %}
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for day_row in matrix.weekly_grid %}
+        <tr>
+          <td class="day-th">
+            <strong>{{ day_row.day.name }}</strong>
+          </td>
+          {% for item in day_row.slots %}
+            <td>
+              {% if item.slot %}
+                <div class="slot-cell">
+                  <span class="slot-cell-sub">{{ item.slot.subject.name }}</span>
+                  <span class="slot-cell-tea">استاد {{ item.slot.teacher.name }}</span>
+                </div>
+              {% else %}
+                <span style="color: #cbd5e1; font-size: 11px;">--</span>
+              {% endif %}
+            </td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Signatures -->
+    <div class="signatures-row">
+      <div class="sig-box">
+        <div class="sig-space"></div>
+        <strong>امضای استاد نگران صنف</strong>
+      </div>
+      <div class="sig-box">
+        <div class="sig-space"></div>
+        <strong>امضای سرمعلم و مدیر تدریسی</strong>
+      </div>
+      <div class="sig-box">
+        <div class="sig-space"></div>
+        <strong>امضاء و مهر آمر / مدیر عمومی مکتب</strong>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

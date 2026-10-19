@@ -15,7 +15,7 @@ from .models import (
     Student, Teacher, Classes, Job, StudentClass,
     AcademiceYear, Degree, Attendance, Assessment,
     ExamResult, Exam, Month, Language, Subject, Fee,
-    ExamMark, ExamAttendance, Shaqqa, Expense
+    ExamMark, ExamAttendance, Shaqqa, Expense, TimeTable
 )
 from .forms import StudentForm, TeacherForm, ClassForm
 from .services.exam_service import (
@@ -29,6 +29,15 @@ from .services.finance_service import (
     number_to_dari_words,
     calculate_finance_kpis,
     calculate_financial_report,
+)
+from .services.timetable_service import (
+    get_class_timetable_matrix,
+    get_teacher_timetable_matrix,
+    validate_timetable_slot,
+    get_master_timetable_matrix,
+    DAYS,
+    PERIODS,
+    RECESS_INFO,
 )
 
 
@@ -2079,5 +2088,297 @@ def finance_report_view(request):
         "today_str": get_current_jalali_date_str(),
     }
     return render(request, "dashboard/finance/finance_report.html", context)
+
+
+# -----------------------------------------------------------------------------
+#####
+#####
+######### -------------- Timetable & Schedule Management SECTION --------------###
+#####
+#####
+# ---------------------------------------------------------------------------
+
+@is_admin
+def timetable_class_view(request):
+    """
+    Weekly Timetable view for a specific Class (تقسیم اوقات درسی صنف).
+    """
+    years = AcademiceYear.objects.all().order_by("-year")
+    classes = Classes.objects.all().order_by("grade", "section")
+
+    year_id = request.GET.get("year_id")
+    class_id = request.GET.get("class_id")
+
+    if year_id and str(year_id).isdigit():
+        selected_year = AcademiceYear.objects.filter(id=int(year_id)).first()
+    else:
+        selected_year = AcademiceYear.objects.filter(year=1403).first() or years.first()
+
+    if class_id and str(class_id).isdigit():
+        selected_class = Classes.objects.filter(id=int(class_id)).first()
+    else:
+        # Default to Class 10-A (دهم الف) or first class
+        selected_class = (
+            Classes.objects.filter(alpha_grade="دهم", section="الف").first()
+            or classes.first()
+        )
+
+    matrix_data = {}
+    class_subjects = []
+    if selected_class and selected_year:
+        matrix_data = get_class_timetable_matrix(selected_class.id, selected_year.id)
+        class_subjects = list(selected_class.subjects.all().order_by("name"))
+        if not class_subjects:
+            class_subjects = list(Subject.objects.all().order_by("name"))
+
+    active_teachers = Teacher.objects.filter(status__id=1).order_by("name")
+
+    context = {
+        "selected_class": selected_class,
+        "selected_year": selected_year,
+        "classes": classes,
+        "years": years,
+        "matrix": matrix_data,
+        "class_subjects": class_subjects,
+        "teachers": active_teachers,
+        "days": DAYS,
+        "periods": PERIODS,
+        "recess_info": RECESS_INFO,
+        "today_str": get_current_jalali_date_str(),
+    }
+    return render(request, "dashboard/timetable/class_timetable.html", context)
+
+
+@is_admin
+def timetable_teacher_view(request):
+    """
+    Weekly Timetable view for a specific Teacher (تقسیم اوقات کاری استاد).
+    """
+    years = AcademiceYear.objects.all().order_by("-year")
+    teachers = Teacher.objects.filter(status__id=1).order_by("name")
+    classes = Classes.objects.all().order_by("grade", "section")
+    subjects = Subject.objects.all().order_by("name")
+
+    year_id = request.GET.get("year_id")
+    teacher_id = request.GET.get("teacher_id")
+
+    if year_id and str(year_id).isdigit():
+        selected_year = AcademiceYear.objects.filter(id=int(year_id)).first()
+    else:
+        selected_year = AcademiceYear.objects.filter(year=1403).first() or years.first()
+
+    if teacher_id and str(teacher_id).isdigit():
+        selected_teacher = Teacher.objects.filter(id=int(teacher_id)).first()
+    else:
+        selected_teacher = teachers.first()
+
+    matrix_data = {}
+    if selected_teacher and selected_year:
+        matrix_data = get_teacher_timetable_matrix(selected_teacher.id, selected_year.id)
+
+    context = {
+        "selected_teacher": selected_teacher,
+        "selected_year": selected_year,
+        "teachers": teachers,
+        "years": years,
+        "classes": classes,
+        "subjects": subjects,
+        "matrix": matrix_data,
+        "days": DAYS,
+        "periods": PERIODS,
+        "recess_info": RECESS_INFO,
+        "today_str": get_current_jalali_date_str(),
+    }
+    return render(request, "dashboard/timetable/teacher_timetable.html", context)
+
+
+@is_admin
+def timetable_master_view(request):
+    """
+    Master School Schedule Matrix across all classes (جدول عمومی تقسیم اوقات مکتب).
+    """
+    years = AcademiceYear.objects.all().order_by("-year")
+    year_id = request.GET.get("year_id")
+    day_num = request.GET.get("day", 1)
+
+    try:
+        day_num = int(day_num)
+        if day_num < 1 or day_num > 6:
+            day_num = 1
+    except (ValueError, TypeError):
+        day_num = 1
+
+    if year_id and str(year_id).isdigit():
+        selected_year = AcademiceYear.objects.filter(id=int(year_id)).first()
+    else:
+        selected_year = AcademiceYear.objects.filter(year=1403).first() or years.first()
+
+    matrix_data = get_master_timetable_matrix(selected_year.id, day_num)
+
+    context = {
+        "matrix": matrix_data,
+        "selected_day_num": day_num,
+        "selected_year": selected_year,
+        "years": years,
+        "days": DAYS,
+        "periods": PERIODS,
+        "today_str": get_current_jalali_date_str(),
+    }
+    return render(request, "dashboard/timetable/master_timetable.html", context)
+
+
+@is_admin
+def timetable_slot_save(request):
+    """
+    Save or update a timetable slot with conflict checking.
+    """
+    if request.method == "POST":
+        class_id = request.POST.get("class_id")
+        teacher_id = request.POST.get("teacher_id")
+        subject_id = request.POST.get("subject_id")
+        day_of_week = request.POST.get("day_of_week")
+        period = request.POST.get("period")
+        year_id = request.POST.get("year_id")
+        room_number = request.POST.get("room_number") or "اتاق صنف"
+        notes = request.POST.get("notes") or ""
+        slot_id = request.POST.get("slot_id")
+        redirect_to = request.POST.get("redirect_to", "class")
+
+        try:
+            class_id = int(class_id)
+            teacher_id = int(teacher_id)
+            subject_id = int(subject_id)
+            day_of_week = int(day_of_week)
+            period = int(period)
+            year_id = int(year_id)
+            exclude_id = int(slot_id) if slot_id and str(slot_id).isdigit() else None
+
+            # Validate conflicts
+            is_valid, conflict_msg = validate_timetable_slot(
+                class_id=class_id,
+                teacher_id=teacher_id,
+                day_of_week=day_of_week,
+                period=period,
+                academic_year_id=year_id,
+                exclude_slot_id=exclude_id,
+            )
+
+            if not is_valid:
+                messages.error(request, conflict_msg)
+            else:
+                cls_obj = get_object_or_404(Classes, id=class_id)
+                teacher_obj = get_object_or_404(Teacher, id=teacher_id)
+                subject_obj = get_object_or_404(Subject, id=subject_id)
+                year_obj = get_object_or_404(AcademiceYear, id=year_id)
+
+                if exclude_id:
+                    slot = get_object_or_404(TimeTable, id=exclude_id)
+                    slot.classs = cls_obj
+                    slot.teacher = teacher_obj
+                    slot.subject = subject_obj
+                    slot.day_of_week = day_of_week
+                    slot.period = period
+                    slot.academic_year = year_obj
+                    slot.room_number = room_number.strip()
+                    slot.notes = notes.strip()
+                    slot.save()
+                    messages.success(request, f"ساعت درسی {slot.day_name} ({slot.period_name}) با موفقیت به‌روزرسانی شد.")
+                else:
+                    slot, created = TimeTable.objects.update_or_create(
+                        classs=cls_obj,
+                        day_of_week=day_of_week,
+                        period=period,
+                        academic_year=year_obj,
+                        defaults={
+                            "teacher": teacher_obj,
+                            "subject": subject_obj,
+                            "room_number": room_number.strip(),
+                            "notes": notes.strip(),
+                        }
+                    )
+                    messages.success(request, f"ساعت درسی برای روز {slot.day_name} ({slot.period_name}) با موفقیت ثبت شد.")
+
+        except Exception as e:
+            messages.error(request, f"خطا در ثبت ساعت درسی: {str(e)}")
+
+        if redirect_to == "teacher":
+            return redirect(f"{reverse('dashboard:timetable-teacher')}?teacher_id={teacher_id}&year_id={year_id}")
+        return redirect(f"{reverse('dashboard:timetable-class')}?class_id={class_id}&year_id={year_id}")
+
+    return redirect(reverse("dashboard:timetable-class"))
+
+
+@is_admin
+def timetable_slot_delete(request, id):
+    """
+    Delete a timetable slot.
+    """
+    slot = get_object_or_404(TimeTable, id=id)
+    class_id = slot.classs_id
+    teacher_id = slot.teacher_id
+    year_id = slot.academic_year_id
+    day_name = slot.day_name
+    period_name = slot.period_name
+    redirect_to = request.GET.get("redirect_to", "class")
+
+    slot.delete()
+    messages.success(request, f"ساعت درسی {day_name} ({period_name}) با موفقیت حذف گردید.")
+
+    if redirect_to == "teacher":
+        return redirect(f"{reverse('dashboard:timetable-teacher')}?teacher_id={teacher_id}&year_id={year_id}")
+    return redirect(f"{reverse('dashboard:timetable-class')}?class_id={class_id}&year_id={year_id}")
+
+
+@is_admin
+def timetable_class_print(request, class_id):
+    """
+    Official Afghan Wall Timetable for Classroom (تقسیم اوقات دیواری صنف) - A4 Landscape Print.
+    """
+    cls = get_object_or_404(Classes.objects.select_related("guidence", "academice_year"), id=class_id)
+    year_id = request.GET.get("year_id")
+    if year_id and str(year_id).isdigit():
+        year = AcademiceYear.objects.filter(id=int(year_id)).first() or cls.academice_year
+    else:
+        year = cls.academice_year or AcademiceYear.objects.filter(year=1403).first() or AcademiceYear.objects.first()
+
+    matrix_data = get_class_timetable_matrix(cls.id, year.id)
+
+    context = {
+        "cls": cls,
+        "year": year,
+        "matrix": matrix_data,
+        "days": DAYS,
+        "periods": PERIODS,
+        "recess_info": RECESS_INFO,
+        "today_str": get_current_jalali_date_str(),
+    }
+    return render(request, "dashboard/timetable/class_timetable_print.html", context)
+
+
+@is_admin
+def timetable_teacher_print(request, teacher_id):
+    """
+    Official Teacher Timetable Schedule Card (کارت تقسیم اوقات کاری استاد) - A4 Print.
+    """
+    teacher = get_object_or_404(Teacher, id=teacher_id)
+    year_id = request.GET.get("year_id")
+    if year_id and str(year_id).isdigit():
+        year = AcademiceYear.objects.filter(id=int(year_id)).first()
+    else:
+        year = AcademiceYear.objects.filter(year=1403).first() or AcademiceYear.objects.first()
+
+    matrix_data = get_teacher_timetable_matrix(teacher.id, year.id)
+
+    context = {
+        "teacher": teacher,
+        "year": year,
+        "matrix": matrix_data,
+        "days": DAYS,
+        "periods": PERIODS,
+        "recess_info": RECESS_INFO,
+        "today_str": get_current_jalali_date_str(),
+    }
+    return render(request, "dashboard/timetable/teacher_timetable_print.html", context)
+
 
     

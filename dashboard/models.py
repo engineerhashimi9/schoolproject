@@ -544,16 +544,96 @@ class Expense(models.Model):
         return f"{self.title} - {self.amount} AFN"
 
 
-"""
-class EducationalDay(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50)
-
 class TimeTable(models.Model):
+    """
+    Weekly School Timetable & Schedule (تقسیم اوقات رسمی دروس صنوف و اساتید)
+    Strictly follows Afghanistan Ministry of Education:
+    - 6 Days: شنبه، یک‌شنبه، دوشنبه، سه‌شنبه، چهارشنبه، پنج‌شنبه (جمعه رخصتی)
+    - 6 Periods per day: ساعت اول تا ساعت ششم به همراه زنگ تفریح
+    - Unique constraints to prevent teacher double-booking & class double-booking.
+    """
+    DAY_CHOICES = [
+        (1, "شنبه"),
+        (2, "یک‌شنبه"),
+        (3, "دوشنبه"),
+        (4, "سه‌شنبه"),
+        (5, "چهارشنبه"),
+        (6, "پنج‌شنبه"),
+    ]
+
+    PERIOD_CHOICES = [
+        (1, "ساعت اول"),
+        (2, "ساعت دوم"),
+        (3, "ساعت سوم"),
+        (4, "ساعت چهارم"),
+        (5, "ساعت پنجم"),
+        (6, "ساعت ششم"),
+    ]
+
+    DAY_NAMES = {
+        1: "شنبه",
+        2: "یک‌شنبه",
+        3: "دوشنبه",
+        4: "سه‌شنبه",
+        5: "چهارشنبه",
+        6: "پنج‌شنبه",
+    }
+
+    PERIOD_NAMES = {
+        1: "ساعت اول",
+        2: "ساعت دوم",
+        3: "ساعت سوم",
+        4: "ساعت چهارم",
+        5: "ساعت پنجم",
+        6: "ساعت ششم",
+    }
+
+    PERIOD_TIMES = {
+        1: "۰۸:۰۰ - ۰۸:۴۵",
+        2: "۰۸:۴۵ - ۰۹:۳۰",
+        3: "۰۹:۳۰ - ۱۰:۱۵",
+        4: "۱۰:۳۵ - ۱۱:۲۰",
+        5: "۱۱:۲۰ - ۱۲:۰۵",
+        6: "۱۲:۰۵ - ۱۲:۵۰",
+    }
+
     id = models.AutoField(primary_key=True)
-    day=models.ForeignKey(EducationalDay,on_delete=models.DO_NOTHING)
-    hour=models.IntegerField()
-    Subject=models.ForeignKey(Subject,  on_delete=models.DO_NOTHING)
-    teacher=models.ForeignKey(Teacher,on_delete=models.DO_NOTHING)
-    classs=models.ForeignKey(Classes,on_delete=models.DO_NOTHING)
-"""
+    classs = models.ForeignKey(Classes, on_delete=models.CASCADE, related_name="timetables")
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name="timetables")
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="timetables")
+    academic_year = models.ForeignKey(AcademiceYear, on_delete=models.CASCADE, related_name="timetables")
+    day_of_week = models.PositiveSmallIntegerField(choices=DAY_CHOICES)
+    period = models.PositiveSmallIntegerField(choices=PERIOD_CHOICES)
+    room_number = models.CharField(max_length=50, blank=True, null=True, default="اتاق صنف")
+    notes = models.CharField(max_length=150, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "تقسیم اوقات"
+        verbose_name_plural = "تقسیم اوقات درسی مکتب"
+        ordering = ["academic_year", "classs", "day_of_week", "period"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["classs", "day_of_week", "period", "academic_year"],
+                name="unique_class_timetable_slot"
+            ),
+            models.UniqueConstraint(
+                fields=["teacher", "day_of_week", "period", "academic_year"],
+                name="unique_teacher_timetable_slot"
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.classs} - {self.day_name} {self.period_name}: {self.subject} ({self.teacher})"
+
+    @property
+    def day_name(self):
+        return self.DAY_NAMES.get(self.day_of_week, "")
+
+    @property
+    def period_name(self):
+        return self.PERIOD_NAMES.get(self.period, "")
+
+    @property
+    def period_time(self):
+        return self.PERIOD_TIMES.get(self.period, "")
+

@@ -56,4 +56,13 @@ urlpatterns = [
     path("finance/expenses/", views.expenses_view, name="finance-expenses"),
     path("finance/expenses/<int:id>/delete/", views.expense_delete, name="expense-delete"),
     path("finance/report/", views.finance_report_view, name="finance-report"),
+    # timetable urls (تقسیم اوقات درسی صنوف و اساتید)
+    path("timetable/class/", views.timetable_class_view, name="timetable-class"),
+    path("timetable/teacher/", views.timetable_teacher_view, name="timetable-teacher"),
+    path("timetable/master/", views.timetable_master_view, name="timetable-master"),
+    path("timetable/slot/save/", views.timetable_slot_save, name="timetable-slot-save"),
+    path("timetable/slot/<int:id>/delete/", views.timetable_slot_delete, name="timetable-slot-delete"),
+    path("timetable/class/<int:class_id>/print/", views.timetable_class_print, name="timetable-class-print"),
+    path("timetable/teacher/<int:teacher_id>/print/", views.timetable_teacher_print, name="timetable-teacher-print"),
 ]
+

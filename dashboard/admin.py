@@ -25,5 +25,6 @@ admin.site.register(Status)
 admin.site.register(ExamMark)
 admin.site.register(ExamAttendance)
 admin.site.register(Expense)
+admin.site.register(TimeTable)
 
 
