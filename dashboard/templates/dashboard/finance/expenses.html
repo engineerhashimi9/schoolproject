@@ -1,0 +1,574 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}
+مدیریت مصارف و مخارج مکتب | سامانه جامع مدیریت تعلیمی
+{% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/finance.css' %}" />
+<style>
+  .finance-nav-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 4px;
+    overflow-x: auto;
+  }
+  .finance-nav-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #64748b;
+    border-radius: 10px 10px 0 0;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -6px;
+    white-space: nowrap;
+  }
+  .finance-nav-tab:hover {
+    color: #0f172a;
+    background: #f1f5f9;
+  }
+  .finance-nav-tab.active {
+    color: #1e3a8a;
+    border-bottom-color: #1e3a8a;
+    background: #eff6ff;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(5px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+  }
+  .modal-overlay.show {
+    display: flex;
+  }
+  .modal-content {
+    background: #ffffff;
+    border-radius: 18px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    animation: modalSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(-16px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .modal-header {
+    background: linear-gradient(135deg, #091426, #1e293b);
+    color: #ffffff;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .modal-header h3 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 800;
+  }
+  .modal-header p {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: #94a3b8;
+  }
+  .modal-form {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .action-btn-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+  .action-btn-delete {
+    background: #fef2f2;
+    color: #b91c1c;
+  }
+  .action-btn-delete:hover {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+  .category-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    background: #f1f5f9;
+    color: #334155;
+  }
+</style>
+{% endblock style %}
+
+{% block content %}
+<div class="container">
+  <!-- Finance Sub-Navigation Tabs -->
+  <div class="finance-nav-tabs">
+    <a href="{% url 'dashboard:finance-list' %}" class="finance-nav-tab">
+      <i class="fa-solid fa-receipt"></i> دفتر شهریه و دریافت‌ها
+    </a>
+    <a href="{% url 'dashboard:finance-expenses' %}" class="finance-nav-tab active">
+      <i class="fa-solid fa-money-bill-wave"></i> مصارف و هزینه‌های مکتب
+    </a>
+    <a href="{% url 'dashboard:finance-report' %}" class="finance-nav-tab">
+      <i class="fa-solid fa-chart-pie"></i> بیلان مالی و تراز سود/زیان
+    </a>
+  </div>
+
+  <!-- Hero Header -->
+  <div class="hero-header">
+    <div class="hero-title-area">
+      <div class="system-badge">
+        <span class="dot" style="background-color: #ef4444"></span>
+        مدیریت مصارف، هزینه‌های جاری و حقوق پرسونل
+      </div>
+      <h1>دفتر روزنامه مصارف و هزینه‌های مکتب</h1>
+      <p>
+        ثبت و تفکیک کلیه هزینه‌های عملیاتی مکتب شامل معاشات اساتید، کرایه تعمیر، قبض برق و انترنت، قرطاسیه و نگهداری تأسیسات.
+      </p>
+    </div>
+    <div class="hero-actions">
+      <button class="btn btn-primary" id="openExpenseModalBtn">
+        <i class="fa-solid fa-circle-plus"></i> ثبت هزینه جدید
+      </button>
+      <a href="{% url 'dashboard:finance-report' %}" class="btn btn-surface">
+        <i class="fa-solid fa-chart-pie"></i> مشاهده بیلان مالی
+      </a>
+      <button class="btn btn-outline-dark" onclick="window.print()">
+        <i class="fa-solid fa-print"></i> چاپ دفتر مصارف
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI Stats Grid -->
+  <div class="stats-grid">
+    <!-- Card 1 -->
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-title">کل مصارف ثبت شده<br />مجموع پرداخت‌های دوره</div>
+        <div class="stat-icon" style="background-color: #fef2f2; color: #dc2626;">
+          <i class="fa-solid fa-money-bill-trend-up"></i>
+        </div>
+      </div>
+      <div class="stat-value" style="color: #dc2626;">
+        {{ total_expenses|floatformat:0 }} <small style="font-size: 14px; font-weight: 600; color: #64748b;">AFN</small>
+      </div>
+      <div class="stat-footer">
+        <span class="badge-stat" style="background: #fee2e2; color: #b91c1c;">{{ expenses_count }} سند پرداخت</span>
+        <span style="color: #64748b; font-size: 12px;">ارز پایه: افغانی</span>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-title">معاشات اساتید و کارمندان<br />بزرگ‌ترین سهم هزینه</div>
+        <div class="stat-icon" style="background-color: #eff6ff; color: #1e3a8a;">
+          <i class="fa-solid fa-user-tie"></i>
+        </div>
+      </div>
+      <div class="stat-value" style="color: #1e3a8a;">
+        {{ salaries_total|floatformat:0 }} <small style="font-size: 14px; font-weight: 600; color: #64748b;">AFN</small>
+      </div>
+      <div class="stat-footer">
+        <span class="badge-stat" style="background: #e0f2fe; color: #0369a1;">حقوق و دستمزد</span>
+        <span style="color: #1e3a8a; font-size: 12px;">تسويه ماهیانه پرسونل</span>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-title">کرایه تعمیر و قبوض خدماتی<br />برق، آب، گرمایش، انترنت</div>
+        <div class="stat-icon" style="background-color: #fffbeb; color: #d97706;">
+          <i class="fa-solid fa-building"></i>
+        </div>
+      </div>
+      <div class="stat-value" style="color: #d97706;">
+        {{ rent_utilities_total|floatformat:0 }} <small style="font-size: 14px; font-weight: 600; color: #64748b;">AFN</small>
+      </div>
+      <div class="stat-footer">
+        <span class="badge-stat" style="background: #fef3c7; color: #92400e;">هزینه‌های ثابت</span>
+        <span style="color: #d97706; font-size: 12px;">تأسیسات و نگهداری</span>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-title">قرطاسیه، چاپ و ترمیمات<br />لوازم آموزشی و حفظ ساختمان</div>
+        <div class="stat-icon" style="background-color: #faf5ff; color: #7c3aed;">
+          <i class="fa-solid fa-boxes-packing"></i>
+        </div>
+      </div>
+      <div class="stat-value" style="color: #7c3aed;">
+        {{ supplies_total|floatformat:0 }} <small style="font-size: 14px; color: #64748b;">AFN</small>
+      </div>
+      <div class="stat-footer">
+        <span class="badge-stat" style="background: #f3e8ff; color: #6b21a8;">هزینه‌های متغیر</span>
+        <span style="color: #64748b; font-size: 12px;">پشتیبانی تدریس</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <div class="filters-header">
+      <div class="filters-title">
+        <i class="fa-solid fa-filter text-primary"></i> فیلترهای دفتر هزینه‌ها و مخارج
+      </div>
+    </div>
+    <form action="{% url 'dashboard:finance-expenses' %}" method="get">
+      <div class="filter-row">
+        <div class="input-group" style="flex: 2;">
+          <label>جستجو در مصارف:</label>
+          <input
+            name="search"
+            value="{{ search|default:'' }}"
+            type="text"
+            class="input-control"
+            placeholder="جستجوی عنوان هزینه، تحویل‌گیرنده، شماره سند..."
+          />
+        </div>
+        <div class="input-group" style="flex: 1.5;">
+          <label>دسته‌بندی هزینه:</label>
+          <select name="category" onchange="this.form.submit()" class="input-control">
+            <option value="all">همه دسته‌بندی‌ها</option>
+            {% for cat in expense_categories %}
+              <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>
+                {{ cat }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="input-group" style="flex: 1;">
+          <label>ماه مربوطه:</label>
+          <select name="month_id" onchange="this.form.submit()" class="input-control">
+            <option value="">همه ماه‌ها</option>
+            {% for m in months %}
+              <option value="{{ m.id }}" {% if selected_month_id == m.id|stringformat:"s" %}selected{% endif %}>
+                {{ m.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="input-group" style="flex: 1;">
+          <label>سال تعلیمی:</label>
+          <select name="year_id" onchange="this.form.submit()" class="input-control">
+            <option value="all" {% if selected_year_id == 'all' %}selected{% endif %}>همه سال‌ها</option>
+            {% for y in years %}
+              <option value="{{ y.id }}" {% if selected_year_id == y.id|stringformat:"s" %}selected{% endif %}>
+                سال تعلیمی {{ y.year }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Data Table Section -->
+  <div class="table-section">
+    <div class="table-header">
+      <div class="table-title">
+        <div class="table-icon" style="background: #fef2f2; color: #dc2626;">
+          <i class="fa-solid fa-receipt"></i>
+        </div>
+        <div class="table-info">
+          <h2>دفتر روزنامه هزینه‌ها و اسناد پرداخت مکتب</h2>
+          <p>کلیه اقلام هزینه و حواله‌های مالی صادره</p>
+        </div>
+      </div>
+      <div class="table-actions">
+        <button class="btn btn-surface" onclick="window.print()">
+          <i class="fa-solid fa-print"></i> چاپ جدول مصارف
+        </button>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width: 60px;"># سند</th>
+            <th>عنوان و شرح هزینه</th>
+            <th>دسته‌بندی</th>
+            <th>مبلغ پرداختی</th>
+            <th>تحویل‌گیرنده / ذینفع</th>
+            <th>روش پرداخت</th>
+            <th>تاریخ پرداخت</th>
+            <th>ماه / سال</th>
+            <th style="width: 80px; text-align: center;">عملیات</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for exp in expenses %}
+          <tr>
+            <td class="font-bold" style="color: #64748b;">
+              {{ exp.receipt_number|default:exp.id }}
+            </td>
+            <td>
+              <strong style="color: #0f172a; display: block; font-size: 14px;">{{ exp.title }}</strong>
+              {% if exp.notes %}
+                <span style="font-size: 12px; color: #64748b;">{{ exp.notes }}</span>
+              {% endif %}
+            </td>
+            <td>
+              <span class="category-pill">{{ exp.category }}</span>
+            </td>
+            <td class="font-bold" style="color: #dc2626; font-size: 14px;">
+              {{ exp.amount|floatformat:0 }} افغانی
+            </td>
+            <td>
+              <strong style="color: #334155; font-size: 13px;">{{ exp.recipient|default:"-" }}</strong>
+            </td>
+            <td>
+              <span style="font-size: 12px; color: #475569;">{{ exp.payment_method|default:"نقدی" }}</span>
+            </td>
+            <td>
+              <span style="font-size: 12px; font-weight: 600; color: #0f172a;">
+                {{ exp.payment_date|date:"Y/m/d" }}
+              </span>
+            </td>
+            <td>
+              <span style="font-size: 12px; color: #64748b;">
+                {{ exp.month.name|default:"-" }} {{ exp.academice_year.year|default:"" }}
+              </span>
+            </td>
+            <td style="text-align: center;">
+              <a
+                href="{% url 'dashboard:expense-delete' exp.id %}"
+                class="action-btn-circle action-btn-delete btn-trigger-confirm"
+                data-confirm-url="{% url 'dashboard:expense-delete' exp.id %}"
+                data-confirm-title="تأیید حذف سند هزینه"
+                data-confirm-message="آیا از حذف این سند هزینه اطمینان دارید؟ این مبلغ از محاسبات بیلان کسر خواهد شد."
+                data-confirm-name="سند «{{ exp.title }}» به مبلغ {{ exp.amount }} افغانی"
+                data-confirm-btn="بله، حذف کن"
+                title="حذف سند هزینه"
+              >
+                <i class="fa-solid fa-trash-can"></i>
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="9" style="text-align: center; padding: 48px; color: #94a3b8;">
+              <i class="fa-solid fa-inbox" style="font-size: 40px; margin-bottom: 12px; color: #cbd5e1; display: block;"></i>
+              هیچ سند هزینه‌ای با فیلترهای جاری یافت نشد.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal: Add Expense -->
+  <div class="modal-overlay" id="expenseModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h3><i class="fa-solid fa-receipt" style="margin-left: 8px;"></i> ثبت سند هزینه و مخارج جدید</h3>
+          <p>ثبت فاکتورها، حواله‌های خرید و پرداخت معاشات پرسونل</p>
+        </div>
+        <button type="button" id="closeExpenseModalBtn" style="background: none; border: none; color: #ffffff; font-size: 20px; cursor: pointer;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form action="{% url 'dashboard:finance-expenses' %}" method="POST" class="modal-form">
+        {% csrf_token %}
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="input-group">
+            <label>دسته‌بندی هزینه <span style="color: #dc2626;">*</span></label>
+            <select name="category" class="input-control font-bold" required>
+              {% for cat in expense_categories %}
+                <option value="{{ cat }}">{{ cat }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group">
+            <label>مبلغ هزینه (AFN) <span style="color: #dc2626;">*</span></label>
+            <input
+              type="number"
+              name="amount"
+              class="input-control font-bold"
+              placeholder="مثال: 18000"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>عنوان و شرح هزینه <span style="color: #dc2626;">*</span></label>
+          <input
+            type="text"
+            name="title"
+            class="input-control font-bold"
+            placeholder="مثال: معاش ماه قوس استاد صبور، خرید ۲۰ بسته ورق A4"
+            required
+          />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="input-group">
+            <label>تحویل‌گیرنده / شرکت ذینفع:</label>
+            <input
+              type="text"
+              name="recipient"
+              class="input-control"
+              placeholder="نام شخص یا شرکت..."
+            />
+          </div>
+          <div class="input-group">
+            <label>روش پرداخت:</label>
+            <select name="payment_method" class="input-control">
+              <option value="نقدی (صندوق مکتب)" selected>نقد (صندوق مکتب)</option>
+              <option value="واریز به حساب بانکی">واریز به حساب بانکی</option>
+              <option value="حواله صرافی">حواله صرافی</option>
+              <option value="چک">چک تضمینی</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="input-group">
+            <label>سال تعلیمی <span style="color: #dc2626;">*</span></label>
+            <select name="year_id" class="input-control font-bold" required>
+              {% for y in years %}
+                <option value="{{ y.id }}" {% if selected_year_id == y.id|stringformat:"s" %}selected{% endif %}>
+                  سال تعلیمی {{ y.year }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group">
+            <label>ماه مربوطه:</label>
+            <select name="month_id" class="input-control">
+              <option value="">-- بدون ماه خاص --</option>
+              {% for m in months %}
+                <option value="{{ m.id }}">{{ m.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="input-group">
+            <label>تاریخ پرداخت:</label>
+            <input
+              type="date"
+              name="payment_date"
+              class="input-control"
+              value="{% now 'Y-m-d' %}"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label>شماره سند / فاکتور:</label>
+            <input
+              type="text"
+              name="receipt_number"
+              class="input-control font-bold"
+              value="{{ auto_receipt_number }}"
+            />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>توضیحات و ملاحظات سند:</label>
+          <input
+            type="text"
+            name="notes"
+            class="input-control"
+            placeholder="توضیحات تکمیلی اختیاری..."
+          />
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-surface" id="cancelExpenseModalBtn">
+            انصراف
+          </button>
+          <button type="submit" class="btn btn-primary" style="background: #dc2626; border-color: #dc2626;">
+            <i class="fa-solid fa-check"></i> تأیید و ثبت در دفتر مصارف
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block js %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('expenseModal');
+    const openBtn = document.getElementById('openExpenseModalBtn');
+    const closeBtn = document.getElementById('closeExpenseModalBtn');
+    const cancelBtn = document.getElementById('cancelExpenseModalBtn');
+
+    function openModal() {
+      if (modal) {
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+    function closeModal() {
+      if (modal) {
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+    }
+
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+    }
+  });
+</script>
+{% endblock js %}

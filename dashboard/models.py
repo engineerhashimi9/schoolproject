@@ -112,6 +112,7 @@ class Teacher(models.Model):
 class Subject(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
+    classes = models.ManyToManyField('Classes', blank=True, related_name="subjects")
 
     def __str__(self) -> str:
         return f"{self.name}"
@@ -342,8 +343,130 @@ class ExamResult(models.Model):
             return "ضعیف"
     
     
-# class FinalResult(models.Model) :
-#     id=models.AutoField(primary_key=True)
+class ExamMark(models.Model):
+    """
+    Official Afghan Ministry of Education Exam Mark Sheet (شقه نمرات امتحانات)
+    - Midterm (امتحان چهارونیم ماهه): Max 40, Passing threshold 16
+    - Final (امتحان سالانه): Max 60, Passing threshold 24
+    - Total Subject Score: Midterm + Final = Max 100, Passing threshold 40
+    - Conditional Exam (امتحان مشروطی): For failed subjects (1-3 subjects)
+    - Status flags: is_mahroom (محروم), is_mazrati (معذرتی)
+    """
+    id = models.AutoField(primary_key=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="exam_marks")
+    classs = models.ForeignKey(Classes, on_delete=models.CASCADE, related_name="exam_marks")
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="exam_marks")
+    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.CASCADE, related_name="exam_marks")
+
+    midterm_marks = models.DecimalField(max_digits=5, decimal_places=1, default=0, null=True, blank=True)
+    final_marks = models.DecimalField(max_digits=5, decimal_places=1, default=0, null=True, blank=True)
+    conditional_marks = models.DecimalField(max_digits=5, decimal_places=1, null=True, blank=True)
+
+    is_mahroom = models.BooleanField(default=False)
+    is_mazrati = models.BooleanField(default=False)
+    notes = models.CharField(max_length=200, blank=True, null=True)
+
+    class Meta:
+        unique_together = ('student', 'classs', 'subject', 'academice_year')
+        verbose_name = "نمره امتحان (شقه)"
+        verbose_name_plural = "شقه نمرات امتحانات"
+
+    def __str__(self) -> str:
+        return f"{self.student.name} - {self.subject.name}: {self.total_marks}"
+
+    @property
+    def total_marks(self):
+        m = float(self.midterm_marks or 0)
+        f = float(self.final_marks or 0)
+        return round(m + f, 1)
+
+    @property
+    def effective_marks(self):
+        if self.conditional_marks is not None:
+            return round(float(self.conditional_marks), 1)
+        return self.total_marks
+
+    @property
+    def is_midterm_passed(self):
+        return float(self.midterm_marks or 0) >= 16.0
+
+    @property
+    def is_final_passed(self):
+        return float(self.final_marks or 0) >= 24.0
+
+    @property
+    def is_passed(self):
+        if self.is_mahroom or self.is_mazrati:
+            return False
+        if self.conditional_marks is not None:
+            return float(self.conditional_marks) >= 40.0
+        return self.total_marks >= 40.0 and self.is_final_passed
+
+    @property
+    def status_label(self):
+        if self.is_mahroom:
+            return "محروم"
+        if self.is_mazrati:
+            return "معذرتی"
+        if self.conditional_marks is not None:
+            return "کامیاب (مشروطی)" if float(self.conditional_marks) >= 40.0 else "ناکام"
+        if self.is_passed:
+            return "کامیاب"
+        return "ناکام"
+
+
+Shaqqa = ExamMark
+
+
+class ExamAttendance(models.Model):
+    """
+    Exam Attendance Registry (ضوابط حاضری امتحانات)
+    Tracks present, absent, sick, and excused/leave days for Midterm and Annual periods.
+    """
+    id = models.AutoField(primary_key=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="exam_attendances")
+    classs = models.ForeignKey(Classes, on_delete=models.CASCADE, related_name="exam_attendances")
+    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.CASCADE, related_name="exam_attendances")
+
+    # Midterm period attendance (چهارونیم ماهه)
+    midterm_present = models.IntegerField(default=0)
+    midterm_absent = models.IntegerField(default=0)
+    midterm_sick = models.IntegerField(default=0)
+    midterm_leave = models.IntegerField(default=0)
+
+    # Final period attendance (سالانه)
+    final_present = models.IntegerField(default=0)
+    final_absent = models.IntegerField(default=0)
+    final_sick = models.IntegerField(default=0)
+    final_leave = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ('student', 'classs', 'academice_year')
+        verbose_name = "حاضری امتحانات"
+        verbose_name_plural = "ضوابط حاضری امتحانات"
+
+    def __str__(self) -> str:
+        return f"{self.student.name} - حاضری امتحانات {self.classs}"
+
+    @property
+    def total_present(self):
+        return (self.midterm_present or 0) + (self.final_present or 0)
+
+    @property
+    def total_absent(self):
+        return (self.midterm_absent or 0) + (self.final_absent or 0)
+
+    @property
+    def total_sick(self):
+        return (self.midterm_sick or 0) + (self.final_sick or 0)
+
+    @property
+    def total_leave(self):
+        return (self.midterm_leave or 0) + (self.final_leave or 0)
+
+    @property
+    def total_days(self):
+        return self.total_present + self.total_absent + self.total_sick + self.total_leave
     
         
 
@@ -351,21 +474,74 @@ class ExamResult(models.Model):
 class Fee(models.Model):
     id = models.AutoField(primary_key=True)
     student = models.ForeignKey(Student, on_delete=models.DO_NOTHING)
-    class_section=models.ForeignKey(Classes, on_delete=models.DO_NOTHING,null=True,blank=True)
-    month: models.ForeignKey = models.ForeignKey(
-        Month, on_delete=models.DO_NOTHING)
+    class_section = models.ForeignKey(Classes, on_delete=models.DO_NOTHING, null=True, blank=True)
+    month: models.ForeignKey = models.ForeignKey(Month, on_delete=models.DO_NOTHING)
     amount = models.IntegerField()
     paied = models.IntegerField()
     payment_date = models.DateField(auto_now=False, auto_now_add=False)
-    academice_year = models.ForeignKey(
-        AcademiceYear, on_delete=models.DO_NOTHING)
-    def get_status(self) :
-        if self.amount==self.paied :
+    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.DO_NOTHING)
+    receipt_number = models.CharField(max_length=50, blank=True, null=True)
+    payment_method = models.CharField(max_length=50, default="نقدی", blank=True)
+    fee_category = models.CharField(max_length=50, default="شهریه ماهوار", blank=True)
+    notes = models.CharField(max_length=250, blank=True, null=True)
+
+    def __str__(self) -> str:
+        return f"{self.student} - {self.month}: {self.paied}/{self.amount}"
+
+    def get_status(self):
+        if self.amount == self.paied:
             return 1
-        else : 
+        return 0
+
+    def get_percent(self):
+        if not self.amount or self.amount <= 0:
             return 0
-    def get_percent(self) :
-        return int((self.paied/self.amount)*100)
+        return int((self.paied / self.amount) * 100)
+
+    @property
+    def remaining(self):
+        return max(0, (self.amount or 0) - (self.paied or 0))
+
+    @property
+    def status_label(self):
+        if (self.paied or 0) >= (self.amount or 0):
+            return "تسویه کامل"
+        elif (self.paied or 0) > 0:
+            return "پرداخت قسطی"
+        return "معوقه و بدهکار"
+
+    @property
+    def status_class(self):
+        if (self.paied or 0) >= (self.amount or 0):
+            return "badge-active"
+        elif (self.paied or 0) > 0:
+            return "badge-warning"
+        return "badge-inactive"
+
+
+class Expense(models.Model):
+    """
+    School Expenditures & Costs (دفتر مصارف و هزینه‌های مکتب)
+    Tracks salaries, rent, utilities, stationery, maintenance, etc.
+    """
+    id = models.AutoField(primary_key=True)
+    category = models.CharField(max_length=100, default="متفرقه")
+    title = models.CharField(max_length=200)
+    amount = models.IntegerField()
+    payment_date = models.DateField()
+    recipient = models.CharField(max_length=150, blank=True, null=True)
+    receipt_number = models.CharField(max_length=50, blank=True, null=True)
+    payment_method = models.CharField(max_length=50, default="نقدی", blank=True)
+    academice_year = models.ForeignKey(AcademiceYear, on_delete=models.DO_NOTHING, null=True, blank=True)
+    month = models.ForeignKey(Month, on_delete=models.DO_NOTHING, null=True, blank=True)
+    notes = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "مصرف مکتب"
+        verbose_name_plural = "مصارف و مخارج مکتب"
+
+    def __str__(self):
+        return f"{self.title} - {self.amount} AFN"
 
 
 """

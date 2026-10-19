@@ -1,0 +1,472 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}
+مدیریت امتحانات و نتایج | سامانه جامع تعلیمی معارف
+{% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/exam.css' %}" />
+<style>
+  /* Exam Navigation Tabs */
+  .exam-nav-tabs {
+    display: flex;
+    gap: 8px;
+    background: #ffffff;
+    padding: 8px;
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .exam-nav-tab {
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+  }
+  .exam-nav-tab:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+  .exam-nav-tab.active {
+    background: #1e3a8a;
+    color: #ffffff;
+    box-shadow: 0 4px 8px rgba(30, 58, 138, 0.25);
+  }
+
+  /* Honor Roll Cards */
+  .honor-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .honor-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 16px 20px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .honor-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 6px;
+  }
+  .honor-card.rank-1::before { background: #eab308; }
+  .honor-card.rank-2::before { background: #94a3b8; }
+  .honor-card.rank-3::before { background: #b45309; }
+
+  .honor-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  .honor-badge.rank-1 { background: #fef9c3; color: #a16207; }
+  .honor-badge.rank-2 { background: #f1f5f9; color: #475569; }
+  .honor-badge.rank-3 { background: #ffedd5; color: #c2410c; }
+
+  .honor-info h4 {
+    margin: 0 0 4px 0;
+    font-size: 15px;
+    color: var(--text-main);
+    font-weight: 800;
+  }
+  .honor-info span {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .honor-score {
+    margin-right: auto;
+    text-align: left;
+  }
+  .honor-score .score-val {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1e3a8a;
+  }
+  .honor-score .score-pct {
+    font-size: 12px;
+    color: #059669;
+    font-weight: 700;
+  }
+
+  /* Status Badges */
+  .badge-status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .badge-passed { background: #dcfce7; color: #15803d; }
+  .badge-conditional { background: #fef3c7; color: #b45309; }
+  .badge-failed { background: #fee2e2; color: #b91c1c; }
+  .badge-mahroom { background: #f1f5f9; color: #475569; }
+  .badge-mazrati { background: #e0f2fe; color: #0369a1; }
+
+  @media (max-width: 992px) {
+    .honor-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock style %}
+
+{% block content %}
+<div class="container">
+
+  <!-- Exam Sub-Navigation Bar -->
+  <div class="exam-nav-tabs">
+    <a href="{% url 'dashboard:exam-dashboard' %}" class="exam-nav-tab active">
+      <i class="fa-solid fa-trophy"></i> داشبورد امتحانات
+    </a>
+    <a href="{% url 'dashboard:exam-shaqqa' %}{% if selected_class and selected_year %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}{% endif %}" class="exam-nav-tab">
+      <i class="fa-solid fa-file-signature"></i> ثبت شقه نمرات
+    </a>
+    <a href="{% url 'dashboard:exam-jadwal-nataij' %}{% if selected_class and selected_year %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}{% endif %}" class="exam-nav-tab">
+      <i class="fa-solid fa-table-cells"></i> جدول نتایج صنف
+    </a>
+    <a href="{% url 'dashboard:exam-etlanama' %}{% if selected_class and selected_year %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}{% endif %}" class="exam-nav-tab">
+      <i class="fa-solid fa-id-card"></i> اطلاعنامه نمرات شاگرد
+    </a>
+    <a href="{% url 'dashboard:exam-attendance' %}{% if selected_class and selected_year %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}{% endif %}" class="exam-nav-tab">
+      <i class="fa-solid fa-clipboard-user"></i> ضوابط حاضری امتحانات
+    </a>
+    <a href="{% url 'dashboard:exam-subjects' %}{% if selected_class %}?class_id={{ selected_class.id }}{% endif %}" class="exam-nav-tab">
+      <i class="fa-solid fa-book-bookmark"></i> مضامین رسمی تعلیمی
+    </a>
+  </div>
+
+  <!-- Hero Header -->
+  <div class="hero-header">
+    <div class="hero-content">
+      <div class="system-badge">
+        <span class="dot" style="background-color: #38bdf8"></span>
+        مدیریت رسمی امتحانات بر اساس طرزالعمل وزارت معارف افغانستان
+      </div>
+      <div class="hero-title-area">
+        <h1>مدیریت و نتایج امتحانات رسمی <span>(چهارونیم ماهه و سالانه)</span></h1>
+        <p>
+          محاسبه دقیق نمرات چهارونیم ماهه (۴۰) و سالانه (۶۰)، تعیین نتایج نهایی (کامیاب، مشروط، ناکام، محروم، معذرتی)، درجه‌بندی الف تا و، و رتبه‌بندی شاگردان ممتاز.
+        </p>
+      </div>
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <i class="fa-solid fa-school"></i>
+          <span>صنف فعال: <strong>{% if selected_class %}{{ selected_class.alpha_grade }} - شعبه {{ selected_class.section }}{% else %}انتخاب نشده{% endif %}</strong></span>
+        </div>
+        <div class="hero-meta-item">
+          <i class="fa-solid fa-calendar-days"></i>
+          <span>سال تعلیمی: <strong>{% if selected_year %}{{ selected_year.year }}{% else %}-{% endif %}</strong></span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <a href="{% url 'dashboard:exam-shaqqa' %}{% if selected_class and selected_year %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}{% endif %}" class="btn btn-primary" style="text-decoration: none;">
+        <i class="fa-solid fa-plus"></i> ثبت شقه نمرات
+      </a>
+      <a href="{% url 'dashboard:exam-jadwal-nataij' %}{% if selected_class and selected_year %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}{% endif %}" class="btn btn-outline-dark" style="text-decoration: none;">
+        <i class="fa-solid fa-table-cells"></i> جدول نتایج
+      </a>
+      <a href="{% url 'dashboard:exam-etlanama' %}?batch=1{% if selected_class and selected_year %}&class_id={{ selected_class.id }}&year_id={{ selected_year.id }}{% endif %}" class="btn btn-outline-dark" style="text-decoration: none;" target="_blank">
+        <i class="fa-solid fa-print"></i> چاپ کارنامه‌ها
+      </a>
+    </div>
+  </div>
+
+  <!-- Filter Selector Section -->
+  <div class="filters-section">
+    <div class="filters-header">
+      <div class="filters-title">
+        <i class="fa-solid fa-filter" style="color: #2563eb;"></i> فیلتر و انتخاب صنف و سال تعلیمی
+      </div>
+      <div class="legend-row">
+        <div class="legend-item"><span class="dot" style="background-color: #10b981"></span> کامیاب (ارتقاء)</div>
+        <div class="legend-item"><span class="dot" style="background-color: #f59e0b"></span> مشروط (۱ تا ۳ مضمون)</div>
+        <div class="legend-item"><span class="dot" style="background-color: #ef4444"></span> ناکام (۴ مضمون+)</div>
+        <div class="legend-item"><span class="dot" style="background-color: #64748b"></span> محروم / معذرتی</div>
+      </div>
+    </div>
+    <form method="GET" action="{% url 'dashboard:exam-dashboard' %}" class="filter-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+      <div class="input-group">
+        <label><i class="fa-solid fa-chalkboard"></i> صنف تحصیلی:</label>
+        <select name="class_id" class="input-control font-bold" onchange="this.form.submit()">
+          {% for c in classes %}
+            <option value="{{ c.id }}" {% if selected_class and selected_class.id == c.id %}selected{% endif %}>
+              صنف {{ c.alpha_grade }} - شعبه {{ c.section }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="input-group">
+        <label><i class="fa-solid fa-graduation-cap"></i> سال تعلیمی:</label>
+        <select name="year_id" class="input-control font-bold" onchange="this.form.submit()">
+          {% for y in academic_years %}
+            <option value="{{ y.id }}" {% if selected_year and selected_year.id == y.id %}selected{% endif %}>
+              سال تعلیمی {{ y.year }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="input-group" style="display: flex; align-items: flex-end;">
+        <button type="submit" class="btn btn-primary" style="width: 100%; height: 42px;">
+          <i class="fa-solid fa-rotate"></i> به‌روزرسانی گزارش
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Stats Grid -->
+  {% if results_data %}
+  <div class="stats-grid">
+    <!-- Card 1: Total Students -->
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-title">مجموع شاملین امتحان<br />شاگردان حاضر در صنف</div>
+        <div class="stat-icon" style="background-color: #eff6ff; color: #1e3a8a;">
+          <i class="fa-solid fa-users"></i>
+        </div>
+      </div>
+      <div class="stat-value" style="color: #0f172a;">{{ results_data.stats.total_students }} <small style="font-size: 14px; color: #64748b;">نفر</small></div>
+      <div class="stat-footer">
+        <span class="badge-stat" style="background: #e0f2fe; color: #0369a1;">پوشش کامل</span>
+        <span style="color: #64748b; font-size: 12px;">صنف {{ selected_class.alpha_grade }}</span>
+      </div>
+    </div>
+
+    <!-- Card 2: Passed -->
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-title">کامیاب و ارتقاء صنف<br />بدون مضمون ناکام</div>
+        <div class="stat-icon" style="background-color: #ecfdf5; color: #059669;">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+      </div>
+      <div class="stat-value" style="color: #059669;">{{ results_data.stats.passed_count }} <small style="font-size: 14px; color: #64748b;">نفر ({{ results_data.stats.pass_percentage }}٪)</small></div>
+      <div class="stat-footer">
+        <span class="badge-stat" style="background: #dcfce7; color: #15803d;">موفق</span>
+        <span style="color: #059669; font-size: 12px; font-weight: 700;">ارتقاء به صنف بعدی</span>
+      </div>
+    </div>
+
+    <!-- Card 3: Conditional -->
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-title">مشروط در امتحانات<br />ناکام در ۱ الی ۳ مضمون</div>
+        <div class="stat-icon" style="background-color: #fffbeb; color: #d97706;">
+          <i class="fa-solid fa-hourglass-half"></i>
+        </div>
+      </div>
+      <div class="stat-value" style="color: #d97706;">{{ results_data.stats.conditional_count }} <small style="font-size: 14px; color: #64748b;">نفر</small></div>
+      <div class="stat-footer">
+        <span class="badge-stat" style="background: #fef3c7; color: #b45309;">چانس مشروطی</span>
+        <span style="color: #d97706; font-size: 12px;">امتحان چانس دوم</span>
+      </div>
+    </div>
+
+    <!-- Card 4: Failed & Mahroom -->
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-title">ناکام و محروم<br />تکرار صنف / عدم ارتقاء</div>
+        <div class="stat-icon" style="background-color: #fef2f2; color: #dc2626;">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+      </div>
+      <div class="stat-value" style="color: #dc2626;">{{ results_data.stats.failed_count|add:results_data.stats.mahroom_count }} <small style="font-size: 14px; color: #64748b;">نفر</small></div>
+      <div class="stat-footer">
+        <span class="badge-stat" style="background: #fee2e2; color: #b91c1c;">ناکام: {{ results_data.stats.failed_count }} | محروم: {{ results_data.stats.mahroom_count }}</span>
+        <span style="color: #dc2626; font-size: 12px;">تکرار صنف</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top 3 Honor Roll (اول نمره، دوم نمره، سوم نمره) -->
+  {% if results_data.stats.top_three %}
+  <div class="section-card" style="margin-bottom: 20px;">
+    <div class="section-header" style="margin-bottom: 16px;">
+      <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #1e3a8a; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-medal" style="color: #eab308;"></i> شاگردان ممتاز صنف (نمرات اول، دوم و سوم)
+      </h3>
+    </div>
+    <div class="honor-grid">
+      {% for top_std in results_data.stats.top_three %}
+      <div class="honor-card rank-{{ top_std.rank }}">
+        <div class="honor-badge rank-{{ top_std.rank }}">
+          <i class="fa-solid fa-trophy"></i>
+        </div>
+        <div class="honor-info">
+          <h4>{{ top_std.student.name }}</h4>
+          <span>ولد: {{ top_std.student.fname }} | اساس: {{ top_std.student.school_id }}</span>
+          <div style="margin-top: 4px;">
+            <span class="badge-stat" style="background: #eff6ff; color: #1e3a8a; font-weight: 700;">
+              {{ top_std.rank_title }}
+            </span>
+          </div>
+        </div>
+        <div class="honor-score">
+          <div class="score-val">{{ top_std.grand_total }}</div>
+          <div class="score-pct">{{ top_std.percentage }}٪ ({{ top_std.grade }})</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Students Results Master Table -->
+  <div class="table-section">
+    <div class="table-header">
+      <div class="table-title">
+        <div class="table-icon">
+          <i class="fa-solid fa-clipboard-check"></i>
+        </div>
+        <div class="table-info">
+          <h2>کارنامه نمرات نهایی شاگردان صنف {{ selected_class.alpha_grade }} - شعبه {{ selected_class.section }}</h2>
+          <p>
+            تعداد مضامین رسمی: {{ results_data.subjects|length }} مضمون | اوسط فیصدی صنف: {{ results_data.stats.class_average_percentage }}٪
+          </p>
+        </div>
+      </div>
+      <div class="table-actions">
+        <a href="{% url 'dashboard:exam-shaqqa' %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}" class="btn btn-primary" style="font-size: 0.85rem; text-decoration: none;">
+          <i class="fa-solid fa-pen-to-square"></i> ورود / اصلاح شقه
+        </a>
+        <a href="{% url 'dashboard:exam-jadwal-nataij' %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}" class="btn btn-table-action" style="font-size: 0.85rem; text-decoration: none;">
+          <i class="fa-solid fa-table"></i> جدول کامل نتایج
+        </a>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width: 40px">#</th>
+            <th>اساس</th>
+            <th style="text-align: right;">مشخصات شاگرد</th>
+            <th>مجموع نمرات</th>
+            <th>سقف کل</th>
+            <th>فیصدی</th>
+            <th>درجه</th>
+            <th>ناکام</th>
+            <th>نتیجه نهایی</th>
+            <th>مقام</th>
+            <th style="width: 120px;">عملیات</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in results_data.students_results %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td dir="ltr" style="font-weight: 700; color: #64748b;">#{{ r.student.school_id|default:r.student.id }}</td>
+            <td style="text-align: right;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 36px; height: 36px; border-radius: 8px; background: #e0f2fe; color: #0369a1; display: flex; align-items: center; justify-content: center; font-weight: 800;">
+                  {{ r.student.name|first }}
+                </div>
+                <div>
+                  <strong style="color: #0f172a; display: block;">{{ r.student.name }}</strong>
+                  <span style="font-size: 11.5px; color: #64748b;">ولد: {{ r.student.fname }}</span>
+                </div>
+              </div>
+            </td>
+            <td><strong style="font-size: 15px; color: #0f172a;">{{ r.grand_total }}</strong></td>
+            <td style="color: #64748b;">{{ r.max_possible }}</td>
+            <td>
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <span dir="ltr" style="font-weight: 800; color: #1e3a8a;">{{ r.percentage }}%</span>
+                <div style="height: 5px; background: #e2e8f0; border-radius: 3px; overflow: hidden; width: 80px; margin: 0 auto;">
+                  <div style="width: {{ r.percentage }}%; height: 100%; background: {{ r.grade_color }};"></div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="badge-stat" style="background: #f1f5f9; color: {{ r.grade_color }}; font-weight: 800;">
+                {{ r.grade }}
+              </span>
+            </td>
+            <td>
+              {% if r.failed_count > 0 %}
+                <span style="color: #dc2626; font-weight: 700;">{{ r.failed_count }} مضمون</span>
+              {% else %}
+                <span style="color: #059669; font-weight: 600;">-</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if r.result_status == "کامیاب" %}
+                <span class="badge-status badge-passed"><i class="fa-solid fa-check"></i> کامیاب</span>
+              {% elif r.result_status == "مشروط" %}
+                <span class="badge-status badge-conditional"><i class="fa-solid fa-triangle-exclamation"></i> مشروط</span>
+              {% elif r.result_status == "ناکام" %}
+                <span class="badge-status badge-failed"><i class="fa-solid fa-xmark"></i> ناکام</span>
+              {% elif r.result_status == "محروم" %}
+                <span class="badge-status badge-mahroom"><i class="fa-solid fa-ban"></i> محروم</span>
+              {% else %}
+                <span class="badge-status badge-mazrati">{{ r.result_status }}</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if r.rank %}
+                <span class="badge-stat" style="background: #eff6ff; color: #1e3a8a; font-weight: 800;">
+                  {{ r.rank_title }}
+                </span>
+              {% else %}
+                <span style="color: #94a3b8;">-</span>
+              {% endif %}
+            </td>
+            <td>
+              <div class="row-actions" style="display: flex; gap: 6px; justify-content: center;">
+                <a href="{% url 'dashboard:exam-etlanama-student' r.student.id %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}" class="action-btn" title="مشاهده و چاپ اطلاعنامه" target="_blank" style="text-decoration: none; color: #0284c7;">
+                  <i class="fa-solid fa-id-card"></i>
+                </a>
+                <a href="{% url 'dashboard:exam-shaqqa' %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}" class="action-btn" title="ویرایش نمرات در شقه" style="text-decoration: none; color: #d97706;">
+                  <i class="fa-solid fa-pen"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="11" style="text-align: center; padding: 40px; color: #64748b;">
+              <i class="fa-solid fa-inbox" style="font-size: 32px; color: #94a3b8; margin-bottom: 12px; display: block;"></i>
+              هنوز هیچ شاگردی در این صنف برای سال تعلیمی انتخابی ثبت‌نام نشده است.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="table-section" style="text-align: center; padding: 60px 20px;">
+    <i class="fa-solid fa-chalkboard-user" style="font-size: 48px; color: #94a3b8; margin-bottom: 16px;"></i>
+    <h3 style="color: #1e293b;">صنف یا سال تعلیمی انتخاب نشده است</h3>
+    <p style="color: #64748b; font-size: 14px;">لطفاً از بخش فیلترها، یک صنف و سال تعلیمی را انتخاب کنید.</p>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock content %}

@@ -8,6 +8,40 @@
 {% block style %}
 <link rel="stylesheet" href="{% static 'dashboard/css/finance.css' %}" />
 <style>
+  /* Navigation Tabs */
+  .finance-nav-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 4px;
+    overflow-x: auto;
+  }
+  .finance-nav-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #64748b;
+    border-radius: 10px 10px 0 0;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -6px;
+    white-space: nowrap;
+  }
+  .finance-nav-tab:hover {
+    color: #0f172a;
+    background: #f1f5f9;
+  }
+  .finance-nav-tab.active {
+    color: #1e3a8a;
+    border-bottom-color: #1e3a8a;
+    background: #eff6ff;
+  }
+
   /* Academic polish for finance modal & tables */
   .modal-overlay {
     position: fixed;
@@ -15,8 +49,8 @@
     right: 0;
     left: 0;
     bottom: 0;
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(4px);
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(5px);
     display: none;
     align-items: center;
     justify-content: center;
@@ -28,28 +62,32 @@
   }
   .modal-content {
     background: #ffffff;
-    border-radius: 16px;
+    border-radius: 18px;
     width: 100%;
-    max-width: 540px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-    animation: modalSlideIn 0.25s ease-out;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    animation: modalSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
   @keyframes modalSlideIn {
     from { opacity: 0; transform: translateY(-16px) scale(0.98); }
     to { opacity: 1; transform: translateY(0) scale(1); }
   }
   .modal-header {
-    background: #0f172a;
+    background: linear-gradient(135deg, #091426, #1e293b);
     color: #ffffff;
     padding: 20px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
   .modal-header h3 {
     margin: 0;
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 800;
   }
   .modal-header p {
@@ -67,31 +105,107 @@
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    margin-top: 10px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+  }
+  .action-btn-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+  .action-btn-receipt {
+    background: #eff6ff;
+    color: #1d4ed8;
+  }
+  .action-btn-receipt:hover {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+  .action-btn-edit {
+    background: #f0fdf4;
+    color: #15803d;
+  }
+  .action-btn-edit:hover {
+    background: #dcfce7;
+    color: #166534;
+  }
+  .action-btn-delete {
+    background: #fef2f2;
+    color: #b91c1c;
+  }
+  .action-btn-delete:hover {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  /* Status Badges */
+  .badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .badge-status.badge-active {
+    background: #dcfce7;
+    color: #166534;
+  }
+  .badge-status.badge-warning {
+    background: #fef3c7;
+    color: #b45309;
+  }
+  .badge-status.badge-inactive {
+    background: #fee2e2;
+    color: #991b1b;
   }
 </style>
 {% endblock style %}
 
 {% block content %}
 <div class="container">
+  <!-- Finance Sub-Navigation Tabs -->
+  <div class="finance-nav-tabs">
+    <a href="{% url 'dashboard:finance-list' %}" class="finance-nav-tab active">
+      <i class="fa-solid fa-receipt"></i> دفتر شهریه و دریافت‌ها
+    </a>
+    <a href="{% url 'dashboard:finance-expenses' %}" class="finance-nav-tab">
+      <i class="fa-solid fa-money-bill-wave"></i> مصارف و هزینه‌های مکتب
+    </a>
+    <a href="{% url 'dashboard:finance-report' %}" class="finance-nav-tab">
+      <i class="fa-solid fa-chart-pie"></i> بیلان مالی و تراز سود/زیان
+    </a>
+  </div>
+
   <!-- Hero Header -->
   <div class="hero-header">
     <div class="hero-title-area">
       <div class="system-badge">
         <span class="dot" style="background-color: #10b981"></span>
-        سامانه جامع مدیریت عواید، حسابداری و شهریه شاگردان
+        سامانه جامع امور مالی، حسابداری و شهریه شاگردان
       </div>
       <h1>مدیریت و وصول شهریه شاگردان</h1>
       <p>
-        ثبت اقساط ماهانه، صدور رسید رسمی پرداخت، پیگیری مطالبات و مانده بدهی به تفکیک صنف و سال تعلیمی.
+        ثبت اقساط ماهانه، صدور رسید رسمی پرداخت با حروف، پیگیری مطالبات و مانده بدهی به تفکیک صنف و سال تعلیمی.
       </p>
     </div>
     <div class="hero-actions">
       <button class="btn btn-primary" id="openModalBtn">
         <i class="fa-solid fa-circle-plus"></i> ثبت پرداخت جدید
       </button>
+      <a href="{% url 'dashboard:finance-expenses' %}" class="btn btn-surface">
+        <i class="fa-solid fa-money-bill-transfer"></i> ثبت مصارف مکتب
+      </a>
       <button class="btn btn-outline-dark" onclick="window.print()">
-        <i class="fa-solid fa-file-pdf"></i> خروجی صورت‌حساب
+        <i class="fa-solid fa-print"></i> چاپ کارنامه مالی
       </button>
     </div>
   </div>
@@ -101,15 +215,17 @@
     <!-- Card 1 -->
     <div class="stat-card">
       <div class="stat-header">
-        <div class="stat-title">کل عواید مصوب ماهانه<br />مجموع تعهد صنف‌ها</div>
+        <div class="stat-title">کل عواید مصوب<br />مجموع تعهد مالی دوره</div>
         <div class="stat-icon" style="background-color: #eff6ff; color: #1e3a8a;">
           <i class="fa-solid fa-building-columns"></i>
         </div>
       </div>
-      <div class="stat-value" style="color: #0f172a;">۲,۴۵۰,۰۰۰ <small style="font-size: 14px; font-weight: 600; color: #64748b;">AFN</small></div>
+      <div class="stat-value" style="color: #0f172a;">
+        {{ kpis.total_approved|floatformat:0 }} <small style="font-size: 14px; font-weight: 600; color: #64748b;">AFN</small>
+      </div>
       <div class="stat-footer">
-        <span class="badge-stat" style="background: #e0f2fe; color: #0369a1;">۱۰۰٪ پوشش مالی</span>
-        <span style="color: #64748b; font-size: 12px;">سیکل: ماه قوس</span>
+        <span class="badge-stat" style="background: #e0f2fe; color: #0369a1;">{{ kpis.total_transactions }} قبض ثبت شده</span>
+        <span style="color: #64748b; font-size: 12px;">ارز پایه: افغانی</span>
       </div>
     </div>
 
@@ -121,10 +237,12 @@
           <i class="fa-solid fa-circle-check"></i>
         </div>
       </div>
-      <div class="stat-value" style="color: #059669;">۲,۱۰۰,۰۰۰ <small style="font-size: 14px; font-weight: 600; color: #64748b;">AFN</small></div>
+      <div class="stat-value" style="color: #059669;">
+        {{ kpis.total_collected|floatformat:0 }} <small style="font-size: 14px; font-weight: 600; color: #64748b;">AFN</small>
+      </div>
       <div class="stat-footer">
-        <span class="badge-stat" style="background: #dcfce7; color: #15803d;">۸۵.۷٪ وصولی</span>
-        <span style="color: #059669; font-size: 12px;">+۴.۵٪ نسبت به ماه قبل</span>
+        <span class="badge-stat" style="background: #dcfce7; color: #15803d;">{{ kpis.settlement_rate }}٪ وصولی</span>
+        <span style="color: #059669; font-size: 12px;">تحقق درآمدهای مکتب</span>
       </div>
     </div>
 
@@ -136,25 +254,29 @@
           <i class="fa-solid fa-clock-rotate-left"></i>
         </div>
       </div>
-      <div class="stat-value" style="color: #dc2626;">۳۵۰,۰۰۰ <small style="font-size: 14px; font-weight: 600; color: #64748b;">AFN</small></div>
+      <div class="stat-value" style="color: #dc2626;">
+        {{ kpis.total_remaining|floatformat:0 }} <small style="font-size: 14px; font-weight: 600; color: #64748b;">AFN</small>
+      </div>
       <div class="stat-footer">
-        <span class="badge-stat" style="background: #fee2e2; color: #b91c1c;">۵ شاگرد بدهکار</span>
-        <span style="color: #dc2626; font-size: 12px;">نیازمند صدور اخطاریه</span>
+        <span class="badge-stat" style="background: #fee2e2; color: #b91c1c;">{{ kpis.indebted_count }} مورد طلبکار</span>
+        <span style="color: #dc2626; font-size: 12px;">نیازمند پیگیری اولیا</span>
       </div>
     </div>
 
     <!-- Card 4 -->
     <div class="stat-card">
       <div class="stat-header">
-        <div class="stat-title">نرخ تسویه کامل<br />وضعیت شاگردان صنف</div>
+        <div class="stat-title">وضعیت تسویه کامل<br />شاگردان خوش‌حساب</div>
         <div class="stat-icon" style="background-color: #faf5ff; color: #7c3aed;">
           <i class="fa-solid fa-shield-halved"></i>
         </div>
       </div>
-      <div class="stat-value" style="color: #7c3aed;">۲۷ <small style="font-size: 14px; color: #64748b;">/ ۳۲ شاگرد</small></div>
+      <div class="stat-value" style="color: #7c3aed;">
+        {{ kpis.fully_paid_count }} <small style="font-size: 14px; color: #64748b;">/ {{ kpis.total_transactions }} قبض</small>
+      </div>
       <div class="stat-footer">
-        <span class="badge-stat" style="background: #f3e8ff; color: #6b21a8;">۸۴.۴٪ تکمیل</span>
-        <span style="color: #64748b; font-size: 12px;">صنف دهم الف</span>
+        <span class="badge-stat" style="background: #f3e8ff; color: #6b21a8;">{{ kpis.settlement_rate }}٪ تصفیه</span>
+        <span style="color: #64748b; font-size: 12px;">انضباط مالی شاگردان</span>
       </div>
     </div>
   </div>
@@ -167,58 +289,60 @@
       </div>
     </div>
     <form action="{% url 'dashboard:finance-list' %}" method="get">
-      
-    <div class="filter-row">
-      <div class="input-group" style="flex: 2;">
-        <label>جستجوی شاگرد:</label>
-        <input name="search" value="{{ search }}"
-          type="text"
-          class="input-control"
-          placeholder="جستجوی نام شاگرد، ولد، کد اساس..."
-        />
-      </div>
-      <div class="input-group" style="flex: 1.2;">
-        <label>صنف تحصیلی:</label>
-        <select name="class_id" onchange="this.form.submit()" class="input-control">
-          <option>همه صنف‌ها</option>  
-          {% for c in classes %}
+      <div class="filter-row">
+        <div class="input-group" style="flex: 2;">
+          <label>جستجوی شاگرد یا قبض:</label>
+          <input
+            name="search"
+            value="{{ search }}"
+            type="text"
+            class="input-control"
+            placeholder="جستجوی نام شاگرد، ولد، کد اساس، شماره رسید..."
+          />
+        </div>
+        <div class="input-group" style="flex: 1.2;">
+          <label>صنف تحصیلی:</label>
+          <select name="class_id" onchange="this.form.submit()" class="input-control">
+            <option value="">همه صنف‌ها</option>
+            {% for c in classes %}
               <option value="{{ c.id }}" {% if selected_class_id == c.id|stringformat:"s" %}selected{% endif %}>
                 {{ c.alpha_grade }} - {{ c.section }}
               </option>
             {% endfor %}
-        </select>
-      </div>
-      <div class="input-group" style="flex: 1;">
-        <label>ماه پرداخت:</label>
-        <select name="month_id" onchange="this.form.submit()" class="input-control">
-          <option>همه ماه ها</option>
-          {% for m in months %}
+          </select>
+        </div>
+        <div class="input-group" style="flex: 1;">
+          <label>ماه پرداخت:</label>
+          <select name="month_id" onchange="this.form.submit()" class="input-control">
+            <option value="">همه ماه‌ها</option>
+            {% for m in months %}
               <option value="{{ m.id }}" {% if selected_month_id == m.id|stringformat:"s" %}selected{% endif %}>
                 {{ m.name }}
               </option>
             {% endfor %}
-        </select>
-      </div>
-      <div class="input-group" style="flex: 1;">
-        <label>سال تعلیمی :</label>
-        <select name="year_id" onchange="this.form.submit()" class="input-control">
-          <option>همه سال ها</option>
-          {% for y in years %}
+          </select>
+        </div>
+        <div class="input-group" style="flex: 1;">
+          <label>سال تعلیمی:</label>
+          <select name="year_id" onchange="this.form.submit()" class="input-control">
+            <option value="all" {% if selected_year_id == 'all' %}selected{% endif %}>همه سال‌ها</option>
+            {% for y in years %}
               <option value="{{ y.id }}" {% if selected_year_id == y.id|stringformat:"s" %}selected{% endif %}>
-                {{ y.name }}
+                سال تعلیمی {{ y.year }}
               </option>
             {% endfor %}
-        </select>
+          </select>
+        </div>
+        <div class="input-group" style="flex: 1;">
+          <label>وضعیت تسویه:</label>
+          <select name="fee_type" onchange="this.form.submit()" class="input-control">
+            <option value="">همگی وضعیت‌ها</option>
+            <option value="1" {% if selected_fee_type == '1' %}selected{% endif %}>تسویه کامل</option>
+            <option value="2" {% if selected_fee_type == '2' %}selected{% endif %}>پرداخت قسطی</option>
+            <option value="3" {% if selected_fee_type == '3' %}selected{% endif %}>معوقه / طلبکار</option>
+          </select>
+        </div>
       </div>
-      <div class="input-group" style="flex: 1;">
-        <label>وضعیت تسویه:</label>
-        <select name="fee_type" onchange="this.form.submit()" class="input-control">
-          <option>همگی وضعیت‌ها</option>
-          <option value="1">تسویه کامل</option>
-          <option value="3">معوقه / پرداخت‌نشده</option>
-        </select>
-      </div>
-    </div>
     </form>
   </div>
 
@@ -231,7 +355,7 @@
         </div>
         <div class="table-info">
           <h2>دفتر روزنامه، قبوض و کارنامه مالی شاگردان</h2>
-          <p>صنف دهم الف | سال تعلیمی ۱۴۰۳ - ارز پایه: افغانی (AFN)</p>
+          <p>ارز پایه محاسبات: افغانی (AFN) | تاریخ جاری: {{ today_str }}</p>
         </div>
       </div>
       <div class="table-actions">
@@ -243,118 +367,113 @@
 
     <div class="table-responsive">
       <table class="data-table">
-      <thead>
-        <tr>
-          <th style="width: 50px;">#</th>
-          <th>مشخصات دانش‌آموز</th>
-          <th>مبلغ کل مصوب</th>
-          <th>پرداخت‌شده</th>
-          <th>مانده بدهی</th>
-          <th>وضعیت تسویه</th>
-          <th style="width: 120px;">عملیات</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Row 1: Fully Paid -->
-        <tr>
-          <td class="font-bold" style="color: #64748b;">۱</td>
-          <td>
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div style="width: 38px; height: 38px; border-radius: 10px; background: #e0f2fe; color: #0369a1; display: flex; align-items: center; justify-content: center; font-weight: 700;">
-                ا
+        <thead>
+          <tr>
+            <th style="width: 50px;">#</th>
+            <th>مشخصات دانش‌آموز</th>
+            <th>صنف / دوره</th>
+            <th>نوعیت فیس</th>
+            <th>مبلغ کل مصوب</th>
+            <th>پرداخت‌شده</th>
+            <th>مانده بدهی</th>
+            <th>وضعیت تسویه</th>
+            <th>روش و تاریخ واریز</th>
+            <th style="width: 140px; text-align: center;">عملیات</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for fee in fees %}
+          <tr>
+            <td class="font-bold" style="color: #64748b;">
+              {{ fee.receipt_number|default:fee.id }}
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 38px; height: 38px; border-radius: 10px; background: #e0f2fe; color: #0369a1; display: flex; align-items: center; justify-content: center; font-weight: 700;">
+                  {{ fee.student.name|slice:":1" }}
+                </div>
+                <div>
+                  <strong style="color: #0f172a; display: block;">{{ fee.student.name }}</strong>
+                  <span style="font-size: 12px; color: #64748b;">
+                    ولد: {{ fee.student.fname|default:"-" }} | اساس: {{ fee.student.school_id|default:"-" }}
+                  </span>
+                </div>
               </div>
-              <div>
-                <strong style="color: #0f172a; display: block;">احمد پوپلزی</strong>
-                <span style="font-size: 12px; color: #64748b;">ولد: محمدحسین | اساس: ۵۴۲۰</span>
+            </td>
+            <td>
+              <strong style="color: #1e293b; font-size: 13px;">
+                {% if fee.class_section %}
+                  {{ fee.class_section.alpha_grade }} - {{ fee.class_section.section }}
+                {% else %}
+                  -
+                {% endif %}
+              </strong>
+              <span style="display: block; font-size: 11px; color: #64748b;">
+                {{ fee.month.name }} {{ fee.academice_year.year }}
+              </span>
+            </td>
+            <td>
+              <span style="font-size: 12px; font-weight: 600; color: #334155;">
+                {{ fee.fee_category|default:"شهریه ماهوار" }}
+              </span>
+            </td>
+            <td class="font-bold">{{ fee.amount|floatformat:0 }} افغانی</td>
+            <td class="font-bold" style="color: #059669;">{{ fee.paied|floatformat:0 }} افغانی</td>
+            <td class="font-bold" style="color: {% if fee.remaining > 0 %}#dc2626{% else %}#059669{% endif %};">
+              {{ fee.remaining|floatformat:0 }} افغانی
+            </td>
+            <td>
+              <span class="badge-status {{ fee.status_class }}">
+                {% if fee.get_status == 1 %}
+                  <i class="fa-solid fa-check"></i> تسویه کامل
+                {% elif fee.paied > 0 %}
+                  <i class="fa-solid fa-chart-pie"></i> پرداخت قسطی
+                {% else %}
+                  <i class="fa-solid fa-clock"></i> معوقه و بدهکار
+                {% endif %}
+              </span>
+            </td>
+            <td>
+              <span style="display: block; font-size: 12px; font-weight: 600; color: #475569;">
+                {{ fee.payment_method|default:"نقدی" }}
+              </span>
+              <span style="font-size: 11px; color: #94a3b8;">
+                {{ fee.payment_date|date:"Y/m/d" }}
+              </span>
+            </td>
+            <td>
+              <div class="action-btns-group" style="display: flex; gap: 6px; justify-content: center;">
+                <a href="{% url 'dashboard:fee-receipt' fee.id %}" class="action-btn-circle action-btn-receipt" title="مشاهده و چاپ رسید رسمی">
+                  <i class="fa-solid fa-receipt"></i>
+                </a>
+                <a href="{% url 'dashboard:fee-edite' fee.id %}" class="action-btn-circle action-btn-edit" title="ویرایش قبض">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+                <a
+                  href="{% url 'dashboard:fee-delete' fee.id %}"
+                  class="action-btn-circle action-btn-delete btn-trigger-confirm"
+                  data-confirm-url="{% url 'dashboard:fee-delete' fee.id %}"
+                  data-confirm-title="تأیید حذف قبض مالی"
+                  data-confirm-message="آیا از حذف دایمی این قبض پرداختی اطمینان دارید؟ این عمل قابل بازگشت نیست."
+                  data-confirm-name="قبض شماره {{ fee.receipt_number|default:fee.id }} متعلق به شاگرد «{{ fee.student.name }}» (مبلغ {{ fee.paied }} افغانی)"
+                  data-confirm-btn="بله، حذف کن"
+                  title="حذف قبض"
+                >
+                  <i class="fa-solid fa-trash-can"></i>
+                </a>
               </div>
-            </div>
-          </td>
-          <td class="font-bold">۵,۰۰۰ افغانی</td>
-          <td class="font-bold" style="color: #059669;">۵,۰۰۰ افغانی</td>
-          <td style="color: #64748b;">۰</td>
-          <td>
-            <span class="badge-status badge-active">
-              <i class="fa-solid fa-check"></i> تسویه کامل
-            </span>
-          </td>
-          <td>
-            <div class="action-btns-group">
-              <button class="action-btn-circle" title="چاپ رسید رسمی">
-                <i class="fa-solid fa-receipt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Row 2: Partial Paid -->
-        <tr>
-          <td class="font-bold" style="color: #64748b;">۲</td>
-          <td>
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div style="width: 38px; height: 38px; border-radius: 10px; background: #fef3c7; color: #b45309; display: flex; align-items: center; justify-content: center; font-weight: 700;">
-                م
-              </div>
-              <div>
-                <strong style="color: #0f172a; display: block;">مریم محمدی</strong>
-                <span style="font-size: 12px; color: #64748b;">ولد: علی‌رضا | اساس: ۵۴۸۸</span>
-              </div>
-            </div>
-          </td>
-          <td class="font-bold">۵,۰۰۰ افغانی</td>
-          <td class="font-bold" style="color: #1e3a8a;">۳,۰۰۰ افغانی</td>
-          <td class="font-bold" style="color: #d97706;">۲,۰۰۰ افغانی</td>
-          <td>
-            <span class="badge-status badge-warning">
-              <i class="fa-solid fa-clock"></i> پرداخت قسطی
-            </span>
-          </td>
-          <td>
-            <div class="action-btns-group">
-              <button class="action-btn-circle" title="ثبت قسط بعدی">
-                <i class="fa-solid fa-plus"></i>
-              </button>
-              <button class="action-btn-circle" title="چاپ رسید">
-                <i class="fa-solid fa-receipt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-
-        <!-- Row 3: Unpaid -->
-        <tr style="background: #fef2f2;">
-          <td class="font-bold" style="color: #dc2626;">۳</td>
-          <td>
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <div style="width: 38px; height: 38px; border-radius: 10px; background: #fee2e2; color: #b91c1c; display: flex; align-items: center; justify-content: center; font-weight: 700;">
-                س
-              </div>
-              <div>
-                <strong style="color: #0f172a; display: block;">سهراب نعیمی</strong>
-                <span style="font-size: 12px; color: #64748b;">ولد: عبدالقدیر | اساس: ۵۳۹۱</span>
-              </div>
-            </div>
-          </td>
-          <td class="font-bold">۵,۰۰۰ افغانی</td>
-          <td class="font-bold" style="color: #dc2626;">۰</td>
-          <td class="font-bold" style="color: #dc2626;">۵,۰۰۰ افغانی</td>
-          <td>
-            <span class="badge-status badge-inactive">
-              <i class="fa-solid fa-triangle-exclamation"></i> معوقه و طلبکار
-            </span>
-          </td>
-          <td>
-            <div class="action-btns-group">
-              <button class="action-btn-circle" title="ثبت پرداخت" style="color: #059669; border-color: #059669;">
-                <i class="fa-solid fa-coins"></i>
-              </button>
-              <button class="action-btn-circle" title="ارسال پیامک اخطاریه" style="color: #dc2626; border-color: #dc2626;">
-                <i class="fa-solid fa-bell"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="10" style="text-align: center; padding: 48px; color: #94a3b8;">
+              <i class="fa-solid fa-file-invoice-dollar" style="font-size: 40px; margin-bottom: 12px; color: #cbd5e1; display: block;"></i>
+              هیچ قبض پرداختی با فیلترهای انتخابی یافت نشد.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -364,54 +483,148 @@
       <div class="modal-header">
         <div>
           <h3><i class="fa-solid fa-receipt" style="margin-left: 8px;"></i> ثبت قبض و دریافت شهریه</h3>
-          <p>صدور سند واریزی و به‌روزرسانی مانده حساب شاگرد</p>
+          <p>صدور سند واریزی، محاسبه مانده بدهی و امکان چاپ آنی رسید رسمی</p>
         </div>
         <button type="button" id="closeModalBtn" style="background: none; border: none; color: #ffffff; font-size: 20px; cursor: pointer;">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <form class="modal-form">
+      <form action="{% url 'dashboard:fee-create' %}" method="POST" class="modal-form" id="createFeeForm">
+        {% csrf_token %}
+
         <div class="input-group">
           <label>انتخاب دانش‌آموز <span style="color: #dc2626;">*</span></label>
-          <select class="input-control font-bold">
-            <option>سهراب نعیمی (کد اساس: ۵۳۹۱ - مانده معوقه: ۵,۰۰۰ افغانی)</option>
-            <option>مریم محمدی (کد اساس: ۵۴۸۸ - مانده معوقه: ۲,۰۰۰ افغانی)</option>
-            <option>احمد پوپلزی (کد اساس: ۵۴۲۰ - تسویه شده)</option>
+          <select name="student_id" id="modalStudentSelect" class="input-control font-bold" required>
+            <option value="">-- انتخاب دانش‌آموز از لیست فعال --</option>
+            {% for s in students_for_modal %}
+              <option value="{{ s.id }}" data-class-id="{{ s.class_id }}" data-class-name="{{ s.class_name }}">
+                {{ s.name }} (ولد: {{ s.fname }} | اساس: {{ s.school_id }}) [{{ s.class_name }}]
+              </option>
+            {% endfor %}
           </select>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
           <div class="input-group">
-            <label>مبلغ کل مصوب</label>
-            <input class="input-control font-bold" type="number" value="5000" disabled style="background: #f1f5f9;" />
+            <label>صنف تحصیلی شاگرد:</label>
+            <select name="class_id" id="modalClassSelect" class="input-control font-bold">
+              <option value="">-- تشخیص خودکار صنف --</option>
+              {% for c in classes %}
+                <option value="{{ c.id }}">{{ c.alpha_grade }} - {{ c.section }}</option>
+              {% endfor %}
+            </select>
           </div>
           <div class="input-group">
-            <label>مبلغ پرداختی این قسط <span style="color: #dc2626;">*</span></label>
+            <label>سال تعلیمی <span style="color: #dc2626;">*</span></label>
+            <select name="year_id" class="input-control font-bold" required>
+              {% for y in years %}
+                <option value="{{ y.id }}" {% if selected_year_id == y.id|stringformat:"s" %}selected{% endif %}>
+                  سال تعلیمی {{ y.year }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="input-group">
+            <label>ماه مربوطه <span style="color: #dc2626;">*</span></label>
+            <select name="month_id" class="input-control font-bold" required>
+              {% for m in months %}
+                <option value="{{ m.id }}" {% if m.id == 1 %}selected{% endif %}>{{ m.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group">
+            <label>نوعیت فیس / دریافت:</label>
+            <select name="fee_category" class="input-control font-bold">
+              <option value="شهریه ماهوار" selected>شهریه ماهوار</option>
+              <option value="فیس داخله">فیس داخله</option>
+              <option value="ترانسپورت">ترانسپورت و سرویس</option>
+              <option value="کتاب و قرطاسیه">کتاب و قرطاسیه</option>
+              <option value="لباس فرم">لباس و یونفورم</option>
+              <option value="متفرقه">متفرقه و خدمات</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="input-group">
+            <label>مبلغ کل مصوب (AFN) <span style="color: #dc2626;">*</span></label>
             <input
               class="input-control font-bold"
               type="number"
-              placeholder="مثال: 2500"
+              name="amount"
+              id="modalAmountInput"
+              value="4500"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label>مبلغ پرداختی این قسط (AFN) <span style="color: #dc2626;">*</span></label>
+            <input
+              class="input-control font-bold"
+              type="number"
+              name="paied"
+              id="modalPaidInput"
+              value="4500"
               required
             />
           </div>
         </div>
 
-        <div class="input-group">
-          <label>نوع پرداخت و روش دریافت</label>
-          <select class="input-control">
-            <option>نقد (تحویل به صندوق مکتب)</option>
-            <option>واریز به حساب بانکی / درگاه الکترونیکی</option>
-            <option>حواله / چک تضمینی</option>
-          </select>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="input-group">
+            <label>روش دریافت وجه:</label>
+            <select name="payment_method" class="input-control">
+              <option value="نقدی (صندوق مکتب)" selected>نقد (تحویل به صندوق مکتب)</option>
+              <option value="واریز به حساب بانکی">واریز به حساب بانکی مکتب</option>
+              <option value="حواله صرافی">حواله صرافی / الکترونیکی</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>تاریخ پرداخت:</label>
+            <input
+              type="date"
+              name="payment_date"
+              class="input-control"
+              value="{% now 'Y-m-d' %}"
+              required
+            />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+          <div class="input-group">
+            <label>شماره قبض / سند رسمی:</label>
+            <input
+              type="text"
+              name="receipt_number"
+              class="input-control font-bold"
+              value="{{ auto_receipt_number }}"
+            />
+          </div>
+          <div class="input-group">
+            <label>توضیحات و ملاحظات:</label>
+            <input
+              type="text"
+              name="notes"
+              class="input-control"
+              placeholder="مثال: قسط اول ماه قوس، باقی‌مانده هفته بعد"
+            />
+          </div>
         </div>
 
         <div class="modal-actions">
           <button type="button" class="btn btn-surface" id="cancelModalBtn">
             انصراف
           </button>
-          <button type="button" class="btn btn-primary" onclick="alert('قبض با موفقیت صادر گردید.'); document.getElementById('paymentModal').classList.remove('show');">
-            <i class="fa-solid fa-check"></i> تأیید و صدور قبض رسمی
+          <button type="submit" name="action" value="save" class="btn btn-primary">
+            <i class="fa-solid fa-check"></i> ثبت و ذخیره قبض
+          </button>
+          <button type="submit" name="action" value="save_and_print" class="btn btn-outline-dark" style="background: #1e293b; color: white;">
+            <i class="fa-solid fa-print"></i> ثبت و چاپ رسید
           </button>
         </div>
       </form>
@@ -422,4 +635,21 @@
 
 {% block js %}
 <script src="{% static 'dashboard/js/finance.js' %}"></script>
+<script>
+  // Dynamic student-class auto selection
+  document.addEventListener('DOMContentLoaded', () => {
+    const studentSelect = document.getElementById('modalStudentSelect');
+    const classSelect = document.getElementById('modalClassSelect');
+
+    if (studentSelect && classSelect) {
+      studentSelect.addEventListener('change', function() {
+        const selectedOpt = this.options[this.selectedIndex];
+        const classId = selectedOpt.getAttribute('data-class-id');
+        if (classId) {
+          classSelect.value = classId;
+        }
+      });
+    }
+  });
+</script>
 {% endblock js %}

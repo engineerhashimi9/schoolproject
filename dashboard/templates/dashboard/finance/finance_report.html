@@ -1,0 +1,428 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}
+بیلان مالی، تراز عواید و مصارف مکتب | سامانه جامع مدیریت تعلیمی
+{% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/finance.css' %}" />
+<style>
+  .finance-nav-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 4px;
+    overflow-x: auto;
+  }
+  .finance-nav-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #64748b;
+    border-radius: 10px 10px 0 0;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -6px;
+    white-space: nowrap;
+  }
+  .finance-nav-tab:hover {
+    color: #0f172a;
+    background: #f1f5f9;
+  }
+  .finance-nav-tab.active {
+    color: #1e3a8a;
+    border-bottom-color: #1e3a8a;
+    background: #eff6ff;
+  }
+
+  /* Financial Statement Cards */
+  .balance-card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 1024px) {
+    .balance-card-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 640px) {
+    .balance-card-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .balance-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 20px 24px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  }
+  .balance-card-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 8px;
+  }
+  .balance-card-value {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .balance-card-footer {
+    font-size: 12px;
+    color: #94a3b8;
+  }
+
+  /* Two Column Split */
+  .report-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 768px) {
+    .report-columns {
+      grid-template-columns: 1fr;
+    }
+  }
+  .report-box {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  }
+  .report-box h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Progress bars */
+  .cat-item {
+    margin-bottom: 14px;
+  }
+  .cat-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .cat-progress-bg {
+    background: #f1f5f9;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .cat-progress-fill {
+    height: 100%;
+    border-radius: 4px;
+  }
+
+  /* Official Audit Signatures */
+  .audit-signatures {
+    margin-top: 32px;
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    text-align: center;
+  }
+  .audit-sig-space {
+    height: 50px;
+  }
+  .audit-sig-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+    border-top: 1px dashed #cbd5e1;
+    padding-top: 8px;
+  }
+
+  @media print {
+    .finance-nav-tabs, .hero-actions, .filters-section, .no-print {
+      display: none !important;
+    }
+    .container {
+      padding: 0 !important;
+      max-width: 100% !important;
+    }
+    .balance-card, .report-box, .table-section, .audit-signatures {
+      box-shadow: none !important;
+      border: 1px solid #000 !important;
+    }
+  }
+</style>
+{% endblock style %}
+
+{% block content %}
+<div class="container">
+  <!-- Finance Sub-Navigation Tabs -->
+  <div class="finance-nav-tabs">
+    <a href="{% url 'dashboard:finance-list' %}" class="finance-nav-tab">
+      <i class="fa-solid fa-receipt"></i> دفتر شهریه و دریافت‌ها
+    </a>
+    <a href="{% url 'dashboard:finance-expenses' %}" class="finance-nav-tab">
+      <i class="fa-solid fa-money-bill-wave"></i> مصارف و هزینه‌های مکتب
+    </a>
+    <a href="{% url 'dashboard:finance-report' %}" class="finance-nav-tab active">
+      <i class="fa-solid fa-chart-pie"></i> بیلان مالی و تراز سود/زیان
+    </a>
+  </div>
+
+  <!-- Hero Header -->
+  <div class="hero-header">
+    <div class="hero-title-area">
+      <div class="system-badge">
+        <span class="dot" style="background-color: #3b82f6"></span>
+        صورت‌حساب جامع و بیلان مالی سال تعلیمی {{ selected_year.year }}
+      </div>
+      <h1>بیلان مالی، تراز عواید و مصارف مکتب</h1>
+      <p>
+        ترازنامه جامع درآمدهای حاصل از شهریه شاگردان در مقایسه با کلیه هزینه‌های جاری و عملیاتی مکتب.
+      </p>
+    </div>
+    <div class="hero-actions">
+      <!-- Year Switcher -->
+      <form method="GET" style="display: inline-block;">
+        <select name="year_id" onchange="this.form.submit()" class="input-control font-bold" style="background: white; border: 1px solid #cbd5e1; height: 42px;">
+          {% for y in years %}
+            <option value="{{ y.id }}" {% if selected_year.id == y.id %}selected{% endif %}>
+              سال تعلیمی {{ y.year }}
+            </option>
+          {% endfor %}
+        </select>
+      </form>
+      <button class="btn btn-primary" onclick="window.print()">
+        <i class="fa-solid fa-print"></i> چاپ رسمی بیلان مالی
+      </button>
+    </div>
+  </div>
+
+  <!-- Master Balance Cards Grid -->
+  <div class="balance-card-grid">
+    <!-- Card 1: Revenues Collected -->
+    <div class="balance-card">
+      <div class="balance-card-label">
+        <i class="fa-solid fa-arrow-down-left" style="color: #059669; margin-left: 4px;"></i> مجموع عواید وصولی
+      </div>
+      <div class="balance-card-value" style="color: #059669;">
+        {{ report.total_revenue_collected|floatformat:0 }} <small style="font-size: 14px; color: #64748b;">AFN</small>
+      </div>
+      <div class="balance-card-footer">
+        از کل عواید مصوب {{ report.total_revenue_approved|floatformat:0 }} افغانی
+      </div>
+    </div>
+
+    <!-- Card 2: Operating Expenses -->
+    <div class="balance-card">
+      <div class="balance-card-label">
+        <i class="fa-solid fa-arrow-up-right" style="color: #dc2626; margin-left: 4px;"></i> مجموع مصارف و مخارج
+      </div>
+      <div class="balance-card-value" style="color: #dc2626;">
+        {{ report.total_expenses|floatformat:0 }} <small style="font-size: 14px; color: #64748b;">AFN</small>
+      </div>
+      <div class="balance-card-footer">
+        {{ report.expenses_count }} قلم هزینه عملیاتی پرداخت شده
+      </div>
+    </div>
+
+    <!-- Card 3: Net Operating Profit / Loss -->
+    <div class="balance-card" style="border-right: 4px solid {% if report.is_profit %}#059669{% else %}#dc2626{% endif %};">
+      <div class="balance-card-label">
+        <i class="fa-solid fa-scale-balanced" style="color: #1e3a8a; margin-left: 4px;"></i> تراز عملیاتی (سود / زیان)
+      </div>
+      <div class="balance-card-value" style="color: {% if report.is_profit %}#059669{% else %}#dc2626{% endif %};">
+        {% if report.is_profit %}+{% else %}-{% endif %}{{ report.net_operating_balance|floatformat:0 }} <small style="font-size: 14px; color: #64748b;">AFN</small>
+      </div>
+      <div class="balance-card-footer">
+        {% if report.is_profit %}
+          <span style="color: #059669; font-weight: 700;">مازاد عواید (سود عملیاتی)</span>
+        {% else %}
+          <span style="color: #dc2626; font-weight: 700;">کسری بودجه عملیاتی</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Card 4: Outstanding Receivables -->
+    <div class="balance-card">
+      <div class="balance-card-label">
+        <i class="fa-solid fa-hand-holding-dollar" style="color: #d97706; margin-left: 4px;"></i> مطالبات معوقه شاگردان
+      </div>
+      <div class="balance-card-value" style="color: #d97706;">
+        {{ report.total_outstanding_debt|floatformat:0 }} <small style="font-size: 14px; color: #64748b;">AFN</small>
+      </div>
+      <div class="balance-card-footer">
+        باقی‌داری قابل وصول از اولیا
+      </div>
+    </div>
+  </div>
+
+  <!-- Monthly Breakdown Table -->
+  <div class="table-section">
+    <div class="table-header">
+      <div class="table-title">
+        <div class="table-icon">
+          <i class="fa-solid fa-calendar-days"></i>
+        </div>
+        <div class="table-info">
+          <h2>گردش ماهانه و تراز عملیاتی عواید در برابر مصارف</h2>
+          <p>سال تعلیمی {{ selected_year.year }} | کلیه مبالغ به افغانی (AFN)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ماه</th>
+            <th>عواید وصولی شهریه</th>
+            <th>مصارف عملیاتی مکتب</th>
+            <th>تراز ماهانه (مازاد / کسری)</th>
+            <th>وضعیت تراز</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in report.monthly_summary %}
+          <tr>
+            <td>
+              <strong style="color: #0f172a; font-size: 14px;">ماه {{ m.month.name }}</strong>
+            </td>
+            <td class="font-bold" style="color: #059669;">
+              {{ m.revenue|floatformat:0 }} افغانی
+            </td>
+            <td class="font-bold" style="color: #dc2626;">
+              {{ m.expense|floatformat:0 }} افغانی
+            </td>
+            <td class="font-bold" style="color: {% if m.is_positive %}#059669{% else %}#dc2626{% endif %}; direction: ltr; text-align: right;">
+              {% if m.is_positive %}+{% endif %}{{ m.net|floatformat:0 }} AFN
+            </td>
+            <td>
+              {% if m.is_positive %}
+                <span class="badge-status badge-active">
+                  <i class="fa-solid fa-arrow-trend-up"></i> مازاد درآمد
+                </span>
+              {% else %}
+                <span class="badge-status badge-inactive">
+                  <i class="fa-solid fa-arrow-trend-down"></i> کسری بودجه
+                </span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 32px; color: #94a3b8;">
+              اطلاعات مالی ماهانه برای سال تعلیمی {{ selected_year.year }} ثبت نگردیده است.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Two Column Breakdown -->
+  <div class="report-columns" style="margin-top: 24px;">
+    <!-- Box 1: Expense Breakdown -->
+    <div class="report-box">
+      <h3>
+        <i class="fa-solid fa-chart-pie" style="color: #dc2626;"></i>
+        تفکیک سرفصل‌های هزینه مکتب
+      </h3>
+      {% for cat, amt in report.expense_categories.items %}
+      <div class="cat-item">
+        <div class="cat-header">
+          <span style="color: #334155;">{{ cat }}</span>
+          <span style="color: #dc2626;">{{ amt|floatformat:0 }} افغانی</span>
+        </div>
+        <div class="cat-progress-bg">
+          <div
+            class="cat-progress-fill"
+            style="width: {% if report.total_expenses > 0 %}{% widthratio amt report.total_expenses 100 %}{% else %}0{% endif %}%; background: #ef4444;"
+          ></div>
+        </div>
+      </div>
+      {% empty %}
+      <p style="color: #94a3b8; font-size: 13px;">هیچ هزینه‌ای ثبت نشده است.</p>
+      {% endfor %}
+    </div>
+
+    <!-- Box 2: Tuition Collection Ratio -->
+    <div class="report-box">
+      <h3>
+        <i class="fa-solid fa-vault" style="color: #059669;"></i>
+        تحقق درآمد و وصولی شهریه شاگردان
+      </h3>
+      <div style="margin-bottom: 20px;">
+        <div class="cat-header">
+          <span>شهریه وصول‌شده در صندوق مکتب</span>
+          <span style="color: #059669;">{{ report.total_revenue_collected|floatformat:0 }} افغانی</span>
+        </div>
+        <div class="cat-progress-bg" style="height: 12px;">
+          <div
+            class="cat-progress-fill"
+            style="width: {% if report.total_revenue_approved > 0 %}{% widthratio report.total_revenue_collected report.total_revenue_approved 100 %}{% else %}0{% endif %}%; background: #10b981;"
+          ></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="cat-header">
+          <span>مانده مطالبات معوقه از اولیای شاگردان</span>
+          <span style="color: #d97706;">{{ report.total_outstanding_debt|floatformat:0 }} افغانی</span>
+        </div>
+        <div class="cat-progress-bg" style="height: 12px;">
+          <div
+            class="cat-progress-fill"
+            style="width: {% if report.total_revenue_approved > 0 %}{% widthratio report.total_outstanding_debt report.total_revenue_approved 100 %}{% else %}0{% endif %}%; background: #f59e0b;"
+          ></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 24px; padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 13px; color: #475569;">
+        <i class="fa-solid fa-circle-info" style="color: #1e3a8a; margin-left: 6px;"></i>
+        درصد تحقق وصولی شهریه: <strong>
+          {% if report.total_revenue_approved > 0 %}
+            {% widthratio report.total_revenue_collected report.total_revenue_approved 100 %}٪
+          {% else %}
+            ۰٪
+          {% endif %}
+        </strong> از مجموع بودجه مصوب.
+      </div>
+    </div>
+  </div>
+
+  <!-- Official Audit Signatures -->
+  <div class="audit-signatures">
+    <div>
+      <div class="audit-sig-space"></div>
+      <div class="audit-sig-title">امضاء و تایید مدیر مالی و محاسبات مکتب</div>
+    </div>
+    <div>
+      <div class="audit-sig-space"></div>
+      <div class="audit-sig-title">امضاء هیئت نظارت و تفتیش مالی</div>
+    </div>
+    <div>
+      <div class="audit-sig-space"></div>
+      <div class="audit-sig-title">امضاء و مهر ریاست / مدیریت عمومی مکتب</div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

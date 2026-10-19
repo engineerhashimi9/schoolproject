@@ -68,14 +68,39 @@
                 <i class="fa-regular fa-file-lines"></i> ارزیابی‌های ماهوار
               </a>
             </li>
-            <li class="{% if 'exam' in request.resolver_match.url_name %}active{% endif %}">
-              <a href="{% url 'dashboard:exam-list' %}">
-                <i class="fa-solid fa-trophy"></i> امتحانات
+            <li class="{% if request.resolver_match.url_name in 'exam-list exam-dashboard' %}active{% endif %}">
+              <a href="{% url 'dashboard:exam-dashboard' %}">
+                <i class="fa-solid fa-trophy"></i> مدیریت امتحانات
               </a>
             </li>
-            <li class="{% if 'finance' in request.resolver_match.url_name %}active{% endif %}">
+            <li class="{% if 'shaqqa' in request.resolver_match.url_name %}active{% endif %}">
+              <a href="{% url 'dashboard:exam-shaqqa' %}">
+                <i class="fa-solid fa-file-signature"></i> ثبت شقه نمرات
+              </a>
+            </li>
+            <li class="{% if 'jadwal' in request.resolver_match.url_name %}active{% endif %}">
+              <a href="{% url 'dashboard:exam-jadwal-nataij' %}">
+                <i class="fa-solid fa-table-cells"></i> جدول نتایج صنف
+              </a>
+            </li>
+            <li class="{% if 'etlanama' in request.resolver_match.url_name %}active{% endif %}">
+              <a href="{% url 'dashboard:exam-etlanama' %}">
+                <i class="fa-solid fa-id-card"></i> اطلاعنامه شاگرد
+              </a>
+            </li>
+            <li class="{% if 'finance-list' in request.resolver_match.url_name or 'fee-' in request.resolver_match.url_name %}active{% endif %}">
               <a href="{% url 'dashboard:finance-list' %}">
                 <i class="fa-solid fa-coins"></i> امور مالی و شهریه
+              </a>
+            </li>
+            <li class="{% if 'finance-expenses' in request.resolver_match.url_name or 'expense-' in request.resolver_match.url_name %}active{% endif %}">
+              <a href="{% url 'dashboard:finance-expenses' %}">
+                <i class="fa-solid fa-money-bill-wave"></i> مصارف و هزینه‌ها
+              </a>
+            </li>
+            <li class="{% if 'finance-report' in request.resolver_match.url_name %}active{% endif %}">
+              <a href="{% url 'dashboard:finance-report' %}">
+                <i class="fa-solid fa-chart-pie"></i> بیلان مالی مکتب
               </a>
             </li>
             <li>

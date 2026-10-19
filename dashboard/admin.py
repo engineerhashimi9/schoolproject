@@ -22,3 +22,8 @@ admin.site.register(Exam)
 admin.site.register(ExamResult)
 admin.site.register(Fee)
 admin.site.register(Status)
+admin.site.register(ExamMark)
+admin.site.register(ExamAttendance)
+admin.site.register(Expense)
+
+

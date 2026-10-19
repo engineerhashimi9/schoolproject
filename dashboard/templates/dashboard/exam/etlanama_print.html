@@ -1,0 +1,484 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}
+اطلاعنامه نمرات شاگرد | سامانه جامع تعلیمی معارف
+{% endblock title %}
+
+{% block style %}
+<style>
+  /* Screen styles */
+  .etlanama-wrapper {
+    max-width: 900px;
+    margin: 0 auto 30px auto;
+  }
+  .etlanama-card {
+    background: #ffffff;
+    border: 3px double #1e3a8a;
+    border-radius: 12px;
+    padding: 32px 36px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    position: relative;
+    page-break-after: always;
+    margin-bottom: 30px;
+  }
+
+  .etlanama-header {
+    text-align: center;
+    border-bottom: 2px solid #1e3a8a;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .etlanama-header-center h2 {
+    font-size: 20px;
+    font-weight: 900;
+    color: #0f172a;
+    margin: 0 0 4px 0;
+  }
+  .etlanama-header-center h3 {
+    font-size: 16px;
+    font-weight: 800;
+    color: #1e3a8a;
+    margin: 0;
+  }
+  .header-side-box {
+    font-size: 12px;
+    font-weight: 700;
+    color: #334155;
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  .student-bio-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px 16px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 12px 18px;
+    margin-bottom: 20px;
+    font-size: 13px;
+  }
+  .bio-item {
+    display: flex;
+    gap: 6px;
+  }
+  .bio-label {
+    color: #64748b;
+    font-weight: 600;
+  }
+  .bio-val {
+    color: #0f172a;
+    font-weight: 800;
+  }
+
+  /* Table styling */
+  .table-etlanama {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .table-etlanama th, .table-etlanama td {
+    border: 1px solid #94a3b8;
+    padding: 6px 4px;
+    vertical-align: middle;
+  }
+  .table-etlanama thead th {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    font-weight: 800;
+  }
+  .table-etlanama tbody tr:nth-child(even) {
+    background-color: #f8fafc;
+  }
+
+  /* Summary Section */
+  .summary-boxes-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .summary-table th, .summary-table td {
+    border: 1px solid #94a3b8;
+    padding: 6px 10px;
+  }
+  .summary-table th {
+    background-color: #f8fafc;
+    text-align: right;
+    width: 50%;
+    color: #334155;
+    font-weight: 700;
+  }
+  .summary-table td {
+    text-align: center;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  /* Signatures Grid */
+  .signatures-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    text-align: center;
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px dashed #94a3b8;
+  }
+  .sig-col {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+  .sig-title {
+    font-size: 12.5px;
+    font-weight: 800;
+    color: #1e293b;
+  }
+  .sig-space {
+    border-top: 1px solid #64748b;
+    padding-top: 4px;
+    font-size: 11px;
+    color: #64748b;
+  }
+
+  /* Print Styles */
+  @media print {
+    aside, .header, .exam-nav-tabs, .no-print, .filters-section, .btn {
+      display: none !important;
+    }
+    body {
+      background: #ffffff !important;
+      direction: rtl;
+    }
+    .base-container {
+      margin: 0 !important;
+      padding: 0 !important;
+      max-width: 100% !important;
+    }
+    .etlanama-wrapper {
+      max-width: 100% !important;
+      margin: 0 !important;
+    }
+    .etlanama-card {
+      border: 2px solid #000000 !important;
+      box-shadow: none !important;
+      padding: 20px 24px !important;
+      margin-bottom: 0 !important;
+      page-break-after: always;
+    }
+    .table-etlanama th, .table-etlanama td, .summary-table th, .summary-table td {
+      border: 1px solid #000000 !important;
+      color: #000000 !important;
+    }
+    .table-etlanama thead th, .summary-table th {
+      background-color: #f1f5f9 !important;
+      -webkit-print-color-adjust: exact;
+    }
+    @page {
+      size: A4 portrait;
+      margin: 10mm;
+    }
+  }
+</style>
+{% endblock style %}
+
+{% block content %}
+<div class="container">
+
+  <!-- Sub Navigation -->
+  <div class="exam-nav-tabs no-print" style="display: flex; gap: 8px; background: #ffffff; padding: 8px; border-radius: 14px; border: 1px solid var(--border-color); margin-bottom: 20px; overflow-x: auto;">
+    <a href="{% url 'dashboard:exam-dashboard' %}{% if selected_class and selected_year %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}{% endif %}" class="exam-nav-tab" style="padding: 10px 18px; border-radius: 10px; font-size: 13.5px; font-weight: 700; color: #64748b; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+      <i class="fa-solid fa-trophy"></i> داشبورد امتحانات
+    </a>
+    <a href="{% url 'dashboard:exam-shaqqa' %}{% if selected_class and selected_year %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}{% endif %}" class="exam-nav-tab" style="padding: 10px 18px; border-radius: 10px; font-size: 13.5px; font-weight: 700; color: #64748b; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+      <i class="fa-solid fa-file-signature"></i> ثبت شقه نمرات
+    </a>
+    <a href="{% url 'dashboard:exam-jadwal-nataij' %}{% if selected_class and selected_year %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}{% endif %}" class="exam-nav-tab" style="padding: 10px 18px; border-radius: 10px; font-size: 13.5px; font-weight: 700; color: #64748b; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+      <i class="fa-solid fa-table-cells"></i> جدول نتایج صنف
+    </a>
+    <a href="{% url 'dashboard:exam-etlanama' %}{% if selected_class and selected_year %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}{% endif %}" class="exam-nav-tab active" style="padding: 10px 18px; border-radius: 10px; font-size: 13.5px; font-weight: 700; background: #1e3a8a; color: #ffffff; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+      <i class="fa-solid fa-id-card"></i> اطلاعنامه نمرات شاگرد
+    </a>
+    <a href="{% url 'dashboard:exam-attendance' %}{% if selected_class and selected_year %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}{% endif %}" class="exam-nav-tab" style="padding: 10px 18px; border-radius: 10px; font-size: 13.5px; font-weight: 700; color: #64748b; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+      <i class="fa-solid fa-clipboard-user"></i> ضوابط حاضری امتحانات
+    </a>
+    <a href="{% url 'dashboard:exam-subjects' %}{% if selected_class %}?class_id={{ selected_class.id }}{% endif %}" class="exam-nav-tab" style="padding: 10px 18px; border-radius: 10px; font-size: 13.5px; font-weight: 700; color: #64748b; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+      <i class="fa-solid fa-book-bookmark"></i> مضامین رسمی تعلیمی
+    </a>
+  </div>
+
+  <!-- Selector Form (No-Print) -->
+  <div class="filters-section no-print" style="background: #ffffff; border-radius: 14px; padding: 20px; border: 1px solid var(--border-color); margin-bottom: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: gap: 12px;">
+      <h3 style="margin: 0; font-size: 15px; font-weight: 800; color: #1e3a8a;">
+        <i class="fa-solid fa-id-card-clip"></i> انتخاب شاگرد و تنظیمات چاپ اطلاعنامه
+      </h3>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-primary" onclick="window.print()">
+          <i class="fa-solid fa-print"></i> چاپ کارنامه فعلی (A4)
+        </button>
+        {% if not is_batch %}
+        <a href="{% url 'dashboard:exam-etlanama' %}?batch=1&class_id={{ selected_class.id }}&year_id={{ selected_year.id }}" class="btn btn-outline-dark" style="text-decoration: none; border-color: #cbd5e1; color: #1e3a8a;">
+          <i class="fa-solid fa-layer-group"></i> چاپ یکجای تمام شاگردان صنف
+        </a>
+        {% else %}
+        <a href="{% url 'dashboard:exam-etlanama' %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}" class="btn btn-outline-dark" style="text-decoration: none; border-color: #cbd5e1; color: #1e3a8a;">
+          <i class="fa-solid fa-user"></i> حالت نمایش انفرادی
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <form method="GET" action="{% url 'dashboard:exam-etlanama' %}" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+      <div class="input-group">
+        <label><i class="fa-solid fa-chalkboard"></i> صنف تحصیلی:</label>
+        <select name="class_id" class="input-control font-bold" onchange="this.form.submit()">
+          {% for c in classes %}
+            <option value="{{ c.id }}" {% if selected_class and selected_class.id == c.id %}selected{% endif %}>
+              صنف {{ c.alpha_grade }} - شعبه {{ c.section }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label><i class="fa-solid fa-graduation-cap"></i> سال تعلیمی:</label>
+        <select name="year_id" class="input-control font-bold" onchange="this.form.submit()">
+          {% for y in academic_years %}
+            <option value="{{ y.id }}" {% if selected_year and selected_year.id == y.id %}selected{% endif %}>
+              سال تعلیمی {{ y.year }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      {% if not is_batch %}
+      <div class="input-group">
+        <label><i class="fa-solid fa-user-graduate"></i> انتخاب شاگرد:</label>
+        <select name="student_id" class="input-control font-bold" onchange="this.form.submit()">
+          {% for s in all_students_in_class %}
+            <option value="{{ s.id }}" {% if selected_student and selected_student.id == s.id %}selected{% endif %}>
+              {{ s.name }} (ولد: {{ s.fname }} | اساس: {{ s.school_id }})
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
+    </form>
+  </div>
+
+  <!-- Printable Report Cards Container -->
+  <div class="etlanama-wrapper">
+    {% for card in report_cards %}
+    <div class="etlanama-card">
+
+      <!-- Official Header -->
+      <div class="etlanama-header">
+        <div class="header-side-box">
+          <div>امارت اسلامی افغانستان</div>
+          <div>وزارت معارف</div>
+          <div>ریاست معارف ولایت</div>
+        </div>
+        <div class="etlanama-header-center">
+          <h2>اطلاعنامه نمرات تعلیمی شاگرد</h2>
+          <h3>امتحانات چهارونیم ماهه و سالانه - سال تعلیمی {{ card.academic_year.year }}</h3>
+        </div>
+        <div class="header-side-box" style="text-align: left;">
+          <div>مکتب / لیسه عالی</div>
+          <div>نوبت: {{ card.class.turn }}</div>
+          <div>تاریخ: {{ today_jalali }}</div>
+        </div>
+      </div>
+
+      <!-- Student Bio Details Box -->
+      <div class="student-bio-grid">
+        <div class="bio-item">
+          <span class="bio-label">نام شاگرد:</span>
+          <span class="bio-val">{{ card.student.name }}</span>
+        </div>
+        <div class="bio-item">
+          <span class="bio-label">نام پدر (ولد):</span>
+          <span class="bio-val">{{ card.student.fname }}</span>
+        </div>
+        <div class="bio-item">
+          <span class="bio-label">نام پدرکلان:</span>
+          <span class="bio-val">{{ card.student.gfname|default:"-" }}</span>
+        </div>
+        <div class="bio-item">
+          <span class="bio-label">نمبر اساس:</span>
+          <span class="bio-val" dir="ltr">#{{ card.student.school_id|default:card.student.id }}</span>
+        </div>
+        <div class="bio-item">
+          <span class="bio-label">صنف و شعبه:</span>
+          <span class="bio-val">{{ card.class.alpha_grade }} - {{ card.class.section }}</span>
+        </div>
+        <div class="bio-item">
+          <span class="bio-label">تذکره / تابعیت:</span>
+          <span class="bio-val">{{ card.student.card_id|default:"-" }}</span>
+        </div>
+      </div>
+
+      <!-- Marks Table -->
+      <table class="table-etlanama">
+        <thead>
+          <tr>
+            <th style="width: 35px;">#</th>
+            <th style="text-align: right; width: 170px;">مضامین درسی</th>
+            <th style="width: 85px;">چهارونیم ماهه<br /><small style="font-size: 10px;">سقف: ۴۰ (پوره: ۱۶)</small></th>
+            <th style="width: 85px;">امتحان سالانه<br /><small style="font-size: 10px;">سقف: ۶۰ (پوره: ۲۴)</small></th>
+            <th style="width: 80px;">مجموع نمره<br /><small style="font-size: 10px;">سقف: ۱۰۰ (پاس: ۴۰)</small></th>
+            <th style="width: 75px;">مشروطی</th>
+            <th style="width: 75px;">نمره نهایی</th>
+            <th style="width: 90px;">نتیجه مضمون</th>
+            <th>ملاحظات</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in card.subject_rows %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td style="text-align: right; font-weight: 700;">{{ r.subject.name }}</td>
+            <td>
+              {% if r.is_mahroom %}محروم{% elif r.is_mazrati %}معذرتی{% else %}{{ r.midterm|floatformat:1 }}{% endif %}
+            </td>
+            <td>
+              {% if r.is_mahroom %}-{% elif r.is_mazrati %}-{% else %}{{ r.final|floatformat:1 }}{% endif %}
+            </td>
+            <td style="font-weight: 800; color: #1e3a8a;">
+              {% if r.is_mahroom %}-{% elif r.is_mazrati %}-{% else %}{{ r.total|floatformat:1 }}{% endif %}
+            </td>
+            <td>
+              {% if r.conditional is not None %}{{ r.conditional|floatformat:1 }}{% else %}-{% endif %}
+            </td>
+            <td style="font-weight: 800;">
+              {{ r.effective|floatformat:1 }}
+            </td>
+            <td>
+              {% if r.is_mahroom %}
+                <span style="color: #64748b; font-weight: 700;">محروم</span>
+              {% elif r.is_mazrati %}
+                <span style="color: #0369a1; font-weight: 700;">معذرتی</span>
+              {% elif r.is_passed %}
+                <span style="color: #059669; font-weight: 700;">کامیاب</span>
+              {% else %}
+                <span style="color: #dc2626; font-weight: 700;">ناکام</span>
+              {% endif %}
+            </td>
+            <td style="font-size: 11px; color: #64748b;">
+              {{ r.notes|default:"-" }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Summary Tables Grid (Results Summary + Attendance Summary) -->
+      <div class="summary-boxes-grid">
+        <!-- Results Summary -->
+        <table class="summary-table">
+          <tbody>
+            <tr>
+              <th>مجموع کل نمرات:</th>
+              <td style="font-size: 15px; color: #1e3a8a;">{{ card.grand_total }}</td>
+            </tr>
+            <tr>
+              <th>سقف اعظمی نمرات:</th>
+              <td>{{ card.max_possible }}</td>
+            </tr>
+            <tr>
+              <th>اوسط / فیصدی نمرات:</th>
+              <td dir="ltr">{{ card.percentage }}%</td>
+            </tr>
+            <tr>
+              <th>درجه تعلیمی:</th>
+              <td style="color: {{ card.grade_color }};">{{ card.grade_full }}</td>
+            </tr>
+            <tr>
+              <th>نتیجه نهایی امتحان:</th>
+              <td style="font-size: 14px; color: {% if card.result_status == 'کامیاب' %}#059669{% elif card.result_status == 'مشروط' %}#d97706{% else %}#dc2626{% endif %};">
+                {{ card.result_status }}
+              </td>
+            </tr>
+            <tr>
+              <th>مقام در صنف:</th>
+              <td style="color: #1e3a8a; font-weight: 900;">{{ card.rank_title|default:"-" }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Attendance Summary -->
+        <table class="summary-table">
+          <tbody>
+            <tr>
+              <th>مجموع ایام تعلیمی:</th>
+              <td>{% if card.attendance %}{{ card.attendance.total_days }}{% else %}۱۸۰ روز{% endif %}</td>
+            </tr>
+            <tr>
+              <th>ایام حاضری:</th>
+              <td>{% if card.attendance %}{{ card.attendance.total_present }}{% else %}-{% endif %}</td>
+            </tr>
+            <tr>
+              <th>ایام غیرحاضری:</th>
+              <td>{% if card.attendance %}{{ card.attendance.total_absent }}{% else %}-{% endif %}</td>
+            </tr>
+            <tr>
+              <th>ایام رخصتی قانونی:</th>
+              <td>{% if card.attendance %}{{ card.attendance.total_leave }}{% else %}-{% endif %}</td>
+            </tr>
+            <tr>
+              <th>ایام مریضی:</th>
+              <td>{% if card.attendance %}{{ card.attendance.total_sick }}{% else %}-{% endif %}</td>
+            </tr>
+            <tr>
+              <th>ملاحظات انضباطی:</th>
+              <td>عالی و باانضباط</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Signatures Row -->
+      <div class="signatures-row">
+        <div class="sig-col">
+          <div class="sig-title">امضای نگران صنف</div>
+          <div class="sig-space">محل امضاء</div>
+        </div>
+        <div class="sig-col">
+          <div class="sig-title">امضای سرمعلم تدریسی</div>
+          <div class="sig-space">محل امضاء</div>
+        </div>
+        <div class="sig-col">
+          <div class="sig-title">مهر و امضای آمر / مدیر مکتب</div>
+          <div class="sig-space">محل امضاء و مهر</div>
+        </div>
+        <div class="sig-col">
+          <div class="sig-title">شست و امضای ولی شاگرد</div>
+          <div class="sig-space">محل امضاء و شست</div>
+        </div>
+      </div>
+
+    </div>
+    {% empty %}
+    <div style="background: white; border-radius: 12px; padding: 48px; text-align: center; border: 1px solid var(--border-color);">
+      <i class="fa-solid fa-id-card" style="font-size: 40px; color: #94a3b8; margin-bottom: 12px; display: block;"></i>
+      <h3 style="color: #1e293b;">هیچ شاگرد یا کارنامه‌ای برای نمایش یافت نشد</h3>
+      <p style="color: #64748b;">لطفاً از انتخاب صنف، سال تعلیمی و ثبت‌نام شاگردان در صنف اطمینان حاصل فرمایید.</p>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock content %}

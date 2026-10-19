@@ -1,0 +1,248 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}
+مدیریت و تخصیص مضامین رسمی صنوف | سامانه جامع تعلیمی معارف
+{% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/exam.css' %}" />
+<style>
+  /* Exam Navigation Tabs */
+  .exam-nav-tabs {
+    display: flex;
+    gap: 8px;
+    background: #ffffff;
+    padding: 8px;
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .exam-nav-tab {
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+  }
+  .exam-nav-tab:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+  .exam-nav-tab.active {
+    background: #1e3a8a;
+    color: #ffffff;
+    box-shadow: 0 4px 8px rgba(30, 58, 138, 0.25);
+  }
+
+  /* Subject checklist grid */
+  .subjects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+    margin-top: 16px;
+  }
+  .subject-card-item {
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .subject-card-item:hover {
+    background: #eff6ff;
+    border-color: #93c5fd;
+  }
+  .subject-card-item.selected {
+    background: #eff6ff;
+    border-color: #2563eb;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
+  }
+  .subject-card-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+  .subject-name-lbl {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
+    flex-grow: 1;
+  }
+</style>
+{% endblock style %}
+
+{% block content %}
+<div class="container">
+
+  <!-- Sub Navigation -->
+  <div class="exam-nav-tabs">
+    <a href="{% url 'dashboard:exam-dashboard' %}{% if selected_class %}?class_id={{ selected_class.id }}{% endif %}" class="exam-nav-tab">
+      <i class="fa-solid fa-trophy"></i> داشبورد امتحانات
+    </a>
+    <a href="{% url 'dashboard:exam-shaqqa' %}{% if selected_class %}?class_id={{ selected_class.id }}{% endif %}" class="exam-nav-tab">
+      <i class="fa-solid fa-file-signature"></i> ثبت شقه نمرات
+    </a>
+    <a href="{% url 'dashboard:exam-jadwal-nataij' %}{% if selected_class %}?class_id={{ selected_class.id }}{% endif %}" class="exam-nav-tab">
+      <i class="fa-solid fa-table-cells"></i> جدول نتایج صنف
+    </a>
+    <a href="{% url 'dashboard:exam-etlanama' %}{% if selected_class %}?class_id={{ selected_class.id }}{% endif %}" class="exam-nav-tab">
+      <i class="fa-solid fa-id-card"></i> اطلاعنامه نمرات شاگرد
+    </a>
+    <a href="{% url 'dashboard:exam-attendance' %}{% if selected_class %}?class_id={{ selected_class.id }}{% endif %}" class="exam-nav-tab">
+      <i class="fa-solid fa-clipboard-user"></i> ضوابط حاضری امتحانات
+    </a>
+    <a href="{% url 'dashboard:exam-subjects' %}{% if selected_class %}?class_id={{ selected_class.id }}{% endif %}" class="exam-nav-tab active">
+      <i class="fa-solid fa-book-bookmark"></i> مضامین رسمی تعلیمی
+    </a>
+  </div>
+
+  <!-- Hero Header -->
+  <div class="hero-header">
+    <div class="hero-content">
+      <div class="system-badge">
+        <span class="dot" style="background-color: #38bdf8"></span>
+        مدیریت نصاب تعلیمی و مضامین رسمی صنوف
+      </div>
+      <div class="hero-title-area">
+        <h1>تخصیص مضامین رسمی صنف: <span>{{ selected_class.alpha_grade }} - شعبه {{ selected_class.section }}</span></h1>
+        <p>
+          تعیین مضامین شامل در شقه نمرات، جدول نتایج و اطلاعنامه نمرات این صنف طبق لوایح وزارت معارف افغانستان.
+        </p>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <button type="submit" form="assign-subjects-form" class="btn btn-primary">
+        <i class="fa-solid fa-floppy-disk"></i> ذخیره تخصیص مضامین
+      </button>
+    </div>
+  </div>
+
+  <!-- Class Selector -->
+  <div class="filters-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div style="display: flex; align-items: center; gap: 12px; width: 100%; max-width: 400px;">
+        <label style="font-weight: 700; white-space: nowrap; color: #1e3a8a;"><i class="fa-solid fa-chalkboard"></i> انتخاب صنف:</label>
+        <form method="GET" action="{% url 'dashboard:exam-subjects' %}" style="width: 100%;">
+          <select name="class_id" class="input-control font-bold" onchange="this.form.submit()">
+            {% for c in classes %}
+              <option value="{{ c.id }}" {% if selected_class and selected_class.id == c.id %}selected{% endif %}>
+                صنف {{ c.alpha_grade }} - شعبه {{ c.section }}
+              </option>
+            {% endfor %}
+          </select>
+        </form>
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <button type="button" class="btn btn-table-action" onclick="toggleAllSubjects(true)">
+          <i class="fa-solid fa-check-square"></i> انتخاب همه مضامین
+        </button>
+        <button type="button" class="btn btn-table-action" onclick="toggleAllSubjects(false)">
+          <i class="fa-solid fa-square"></i> لغو انتخاب همه
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subjects Assignment Card -->
+  <div class="table-section">
+    <form method="POST" id="assign-subjects-form" action="{% url 'dashboard:exam-subjects' %}">
+      {% csrf_token %}
+      <input type="hidden" name="action_assign" value="1" />
+      <input type="hidden" name="class_id" value="{{ selected_class.id }}" />
+
+      <h3 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0 0 16px 0;">
+        لیست مضامین شامل در کارنامه صنف {{ selected_class.alpha_grade }} (مجموع: <span id="selected-counter">{{ current_assigned_ids|length }}</span> مضمون انتخاب‌شده)
+      </h3>
+
+      <div class="subjects-grid">
+        {% for subj in all_subjects %}
+        <label class="subject-card-item {% if subj.id in current_assigned_ids %}selected{% endif %}" id="card-subj-{{ subj.id }}">
+          <input
+            type="checkbox"
+            name="subject_ids"
+            value="{{ subj.id }}"
+            class="subj-checkbox"
+            onchange="updateSubjectCard('{{ subj.id }}')"
+            {% if subj.id in current_assigned_ids %}checked{% endif %}
+          />
+          <span class="subject-name-lbl">{{ subj.name }}</span>
+          <i class="fa-solid fa-book" style="color: #94a3b8; font-size: 14px;"></i>
+        </label>
+        {% endfor %}
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+        <button type="submit" class="btn btn-primary" style="padding: 12px 28px; font-weight: 800;">
+          <i class="fa-solid fa-floppy-disk"></i> ثبت تغییرات مضامین صنف
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Add New Subject Card -->
+  <div class="filters-section" style="margin-top: 24px;">
+    <h3 style="font-size: 15px; font-weight: 800; color: #1e3a8a; margin: 0 0 12px 0;">
+      <i class="fa-solid fa-circle-plus"></i> تعریف مضمون رسمی جدید در سیستم
+    </h3>
+    <form method="POST" action="{% url 'dashboard:exam-subjects' %}" style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;">
+      {% csrf_token %}
+      <input type="hidden" name="action_new_subject" value="1" />
+      <input type="hidden" name="class_id" value="{{ selected_class.id }}" />
+      <div class="input-group" style="flex-grow: 1; min-width: 280px;">
+        <label>نام مضمون درسی جدید:</label>
+        <input type="text" name="new_subject_name" class="input-control" placeholder="مثلاً: رسم و نقاشی، خطاطی، اقتصاد..." required />
+      </div>
+      <button type="submit" class="btn btn-primary" style="height: 42px;">
+        <i class="fa-solid fa-plus"></i> افزودن مضمون
+      </button>
+    </form>
+  </div>
+
+</div>
+
+<script>
+  function updateSubjectCard(id) {
+    const card = document.getElementById('card-subj-' + id);
+    const chk = card.querySelector('.subj-checkbox');
+    if (chk.checked) {
+      card.classList.add('selected');
+    } else {
+      card.classList.remove('selected');
+    }
+    updateCounter();
+  }
+
+  function updateCounter() {
+    const count = document.querySelectorAll('.subj-checkbox:checked').length;
+    const counterEl = document.getElementById('selected-counter');
+    if (counterEl) counterEl.innerText = count;
+  }
+
+  function toggleAllSubjects(checked) {
+    document.querySelectorAll('.subj-checkbox').forEach(chk => {
+      chk.checked = checked;
+      const card = chk.closest('.subject-card-item');
+      if (checked) {
+        card.classList.add('selected');
+      } else {
+        card.classList.remove('selected');
+      }
+    });
+    updateCounter();
+  }
+</script>
+{% endblock content %}

@@ -1,0 +1,426 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}
+جدول نتایج عمومی امتحانات صنف | سامانه جامع تعلیمی معارف
+{% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/exam.css' %}" />
+<style>
+  /* Exam Navigation Tabs */
+  .exam-nav-tabs {
+    display: flex;
+    gap: 8px;
+    background: #ffffff;
+    padding: 8px;
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .exam-nav-tab {
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+  }
+  .exam-nav-tab:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+  .exam-nav-tab.active {
+    background: #1e3a8a;
+    color: #ffffff;
+    box-shadow: 0 4px 8px rgba(30, 58, 138, 0.25);
+  }
+
+  /* Master Spreadsheet Table Styles */
+  .jadwal-container {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .jadwal-official-header {
+    text-align: center;
+    border-bottom: 2px solid #1e3a8a;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+  }
+  .jadwal-official-header h2 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 6px 0;
+  }
+  .jadwal-official-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin: 0 0 12px 0;
+  }
+  .jadwal-meta-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #334155;
+    font-weight: 600;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: #f8fafc;
+    padding: 8px 16px;
+    border-radius: 8px;
+  }
+
+  .table-jadwal {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    text-align: center;
+  }
+  .table-jadwal th, .table-jadwal td {
+    border: 1px solid #cbd5e1;
+    padding: 6px 4px;
+    vertical-align: middle;
+  }
+  .table-jadwal thead th {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    font-weight: 700;
+  }
+  .table-jadwal .sub-th {
+    font-size: 10.5px;
+    font-weight: 600;
+    background-color: #f8fafc;
+  }
+  .table-jadwal tbody tr:hover {
+    background-color: #f8fafc;
+  }
+
+  .score-cell {
+    font-weight: 700;
+  }
+  .score-danger {
+    color: #dc2626;
+    background-color: #fef2f2;
+  }
+  .score-pass {
+    color: #0f172a;
+  }
+  .score-total {
+    font-weight: 800;
+    color: #1e3a8a;
+    background-color: #f0f7ff;
+  }
+
+  /* Official Signature Box */
+  .signatures-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px dashed #cbd5e1;
+    text-align: center;
+  }
+  .signature-box {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .signature-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e293b;
+  }
+  .signature-line {
+    font-size: 12px;
+    color: #64748b;
+    border-top: 1px solid #94a3b8;
+    padding-top: 6px;
+  }
+
+  /* Print specific rules */
+  @media print {
+    body {
+      background: #ffffff !important;
+      direction: rtl;
+    }
+    aside, .header, .exam-nav-tabs, .filters-section, .hero-actions, .btn, .no-print {
+      display: none !important;
+    }
+    .base-container {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+    .jadwal-container {
+      border: none !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
+    .table-jadwal {
+      font-size: 9.5px !important;
+    }
+    .table-jadwal th, .table-jadwal td {
+      padding: 3px 2px !important;
+      border: 1px solid #000000 !important;
+    }
+    .table-jadwal thead th {
+      background-color: #e2e8f0 !important;
+      color: #000000 !important;
+      -webkit-print-color-adjust: exact;
+    }
+    @page {
+      size: landscape;
+      margin: 8mm;
+    }
+  }
+</style>
+{% endblock style %}
+
+{% block content %}
+<div class="container">
+
+  <!-- Sub Navigation -->
+  <div class="exam-nav-tabs no-print">
+    <a href="{% url 'dashboard:exam-dashboard' %}{% if selected_class and selected_year %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}{% endif %}" class="exam-nav-tab">
+      <i class="fa-solid fa-trophy"></i> داشبورد امتحانات
+    </a>
+    <a href="{% url 'dashboard:exam-shaqqa' %}{% if selected_class and selected_year %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}{% endif %}" class="exam-nav-tab">
+      <i class="fa-solid fa-file-signature"></i> ثبت شقه نمرات
+    </a>
+    <a href="{% url 'dashboard:exam-jadwal-nataij' %}{% if selected_class and selected_year %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}{% endif %}" class="exam-nav-tab active">
+      <i class="fa-solid fa-table-cells"></i> جدول نتایج صنف
+    </a>
+    <a href="{% url 'dashboard:exam-etlanama' %}{% if selected_class and selected_year %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}{% endif %}" class="exam-nav-tab">
+      <i class="fa-solid fa-id-card"></i> اطلاعنامه نمرات شاگرد
+    </a>
+    <a href="{% url 'dashboard:exam-attendance' %}{% if selected_class and selected_year %}?class_id={{ selected_class.id }}&year_id={{ selected_year.id }}{% endif %}" class="exam-nav-tab">
+      <i class="fa-solid fa-clipboard-user"></i> ضوابط حاضری امتحانات
+    </a>
+    <a href="{% url 'dashboard:exam-subjects' %}{% if selected_class %}?class_id={{ selected_class.id }}{% endif %}" class="exam-nav-tab">
+      <i class="fa-solid fa-book-bookmark"></i> مضامین رسمی تعلیمی
+    </a>
+  </div>
+
+  <!-- Scope Filter Form -->
+  <div class="filters-section no-print">
+    <div class="filters-header">
+      <div class="filters-title">
+        <i class="fa-solid fa-filter text-primary"></i> انتخاب صنف و سال تعلیمی جهت صدور جدول نتایج
+      </div>
+      <div class="table-actions">
+        <button class="btn btn-primary" onclick="window.print()">
+          <i class="fa-solid fa-print"></i> چاپ جدول رسمی نتایج (A4 افقی)
+        </button>
+      </div>
+    </div>
+    <form method="GET" action="{% url 'dashboard:exam-jadwal-nataij' %}" class="filter-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+      <div class="input-group">
+        <label><i class="fa-solid fa-chalkboard"></i> صنف تحصیلی:</label>
+        <select name="class_id" class="input-control font-bold" onchange="this.form.submit()">
+          {% for c in classes %}
+            <option value="{{ c.id }}" {% if selected_class and selected_class.id == c.id %}selected{% endif %}>
+              صنف {{ c.alpha_grade }} - شعبه {{ c.section }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label><i class="fa-solid fa-graduation-cap"></i> سال تعلیمی:</label>
+        <select name="year_id" class="input-control font-bold" onchange="this.form.submit()">
+          {% for y in academic_years %}
+            <option value="{{ y.id }}" {% if selected_year and selected_year.id == y.id %}selected{% endif %}>
+              سال تعلیمی {{ y.year }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </form>
+  </div>
+
+  <!-- Master Spreadsheet Output -->
+  {% if results_data %}
+  <div class="jadwal-container">
+
+    <!-- Official Afghanistan MoE Header -->
+    <div class="jadwal-official-header">
+      <h2>امارت اسلامی افغانستان - وزارت معارف</h2>
+      <h3>جدول نتایج امتحانات چهارونیم ماهه و سالانه (شقه نمرات عمومی)</h3>
+      <div class="jadwal-meta-row">
+        <span>صنف: <strong>{{ selected_class.alpha_grade }}</strong></span>
+        <span>شعبه: <strong>{{ selected_class.section }}</strong></span>
+        <span>سال تعلیمی: <strong>{{ selected_year.year }} هـ.ش</strong></span>
+        <span>نگران صنف: <strong>{% if selected_class.guidence %}{{ selected_class.guidence.name }} {{ selected_class.guidence.last_name }}{% else %}تعیین نشده{% endif %}</strong></span>
+        <span>تاریخ صدور: <strong>{{ today_jalali }}</strong></span>
+        <span>تعداد شاملین: <strong>{{ results_data.stats.total_students }} نفر</strong></span>
+      </div>
+    </div>
+
+    <!-- Master Spreadsheet Table -->
+    <div class="table-responsive" style="overflow-x: auto;">
+      <table class="table-jadwal">
+        <thead>
+          <!-- Header Row 1 -->
+          <tr>
+            <th rowspan="2" style="width: 25px;">#</th>
+            <th rowspan="2" style="width: 45px;">اساس</th>
+            <th rowspan="2" style="width: 130px; text-align: right;">نام و تخلص</th>
+            <th rowspan="2" style="width: 90px; text-align: right;">نام پدر</th>
+            {% for subj in results_data.subjects %}
+              <th colspan="3">{{ subj.name }}</th>
+            {% endfor %}
+            <th rowspan="2" style="width: 55px; background: #e0f2fe; color: #0369a1;">مجموع کل</th>
+            <th rowspan="2" style="width: 50px; background: #e0f2fe; color: #0369a1;">فیصدی</th>
+            <th rowspan="2" style="width: 40px;">درجه</th>
+            <th rowspan="2" style="width: 40px;">ناکام</th>
+            <th rowspan="2" style="width: 75px;">نتیجه نهایی</th>
+            <th rowspan="2" style="width: 65px; background: #fef9c3; color: #854d0e;">مقام</th>
+          </tr>
+
+          <!-- Header Row 2: Sub-columns per subject -->
+          <tr>
+            {% for subj in results_data.subjects %}
+              <th class="sub-th" title="چهارونیم ماهه">۴.۵</th>
+              <th class="sub-th" title="امتحان سالانه">سالانه</th>
+              <th class="sub-th" title="مجموع مضمون" style="font-weight: 800; color: #1e3a8a;">مجموع</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in results_data.students_results %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td dir="ltr" style="font-weight: 700; color: #475569;">{{ r.student.school_id|default:r.student.id }}</td>
+            <td style="text-align: right; font-weight: 700; color: #0f172a; white-space: nowrap;">
+              {{ r.student.name }}
+            </td>
+            <td style="text-align: right; color: #475569; white-space: nowrap;">
+              {{ r.student.fname }}
+            </td>
+
+            <!-- Subjects marks -->
+            {% for subj in results_data.subjects %}
+              {% with mark_row=r.subject_marks_map|dictsort:subj.id %}
+              {% endwith %}
+              {% for s_row in r.subject_rows %}
+                {% if s_row.subject.id == subj.id %}
+                  <td class="score-cell {% if s_row.midterm < 16 and s_row.midterm > 0 %}score-danger{% endif %}">
+                    {% if s_row.is_mahroom %}
+                      <span style="color: #64748b; font-size: 10px;">محروم</span>
+                    {% elif s_row.is_mazrati %}
+                      <span style="color: #0369a1; font-size: 10px;">معذرتی</span>
+                    {% else %}
+                      {{ s_row.midterm|floatformat:1 }}
+                    {% endif %}
+                  </td>
+                  <td class="score-cell {% if s_row.final < 24 and s_row.final > 0 %}score-danger{% endif %}">
+                    {% if s_row.is_mahroom %}
+                      -
+                    {% elif s_row.is_mazrati %}
+                      -
+                    {% else %}
+                      {{ s_row.final|floatformat:1 }}
+                    {% endif %}
+                  </td>
+                  <td class="score-cell score-total {% if not s_row.is_passed and not s_row.is_mahroom and not s_row.is_mazrati %}score-danger{% endif %}">
+                    {% if s_row.is_mahroom %}
+                      -
+                    {% elif s_row.is_mazrati %}
+                      -
+                    {% else %}
+                      {{ s_row.total|floatformat:1 }}
+                    {% endif %}
+                  </td>
+                {% endif %}
+              {% endfor %}
+            {% endfor %}
+
+            <!-- Summary Columns -->
+            <td class="score-cell score-total" style="font-size: 13px;">{{ r.grand_total }}</td>
+            <td dir="ltr" style="font-weight: 800; color: #1e3a8a;">{{ r.percentage }}%</td>
+            <td style="font-weight: 800; color: {{ r.grade_color }};">{{ r.grade }}</td>
+            <td>
+              {% if r.failed_count > 0 %}
+                <span style="color: #dc2626; font-weight: 800;">{{ r.failed_count }}</span>
+              {% else %}
+                <span style="color: #059669;">-</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if r.result_status == "کامیاب" %}
+                <strong style="color: #059669;">کامیاب</strong>
+              {% elif r.result_status == "مشروط" %}
+                <strong style="color: #d97706;">مشروط</strong>
+              {% elif r.result_status == "ناکام" %}
+                <strong style="color: #dc2626;">ناکام</strong>
+              {% elif r.result_status == "محروم" %}
+                <strong style="color: #64748b;">محروم</strong>
+              {% else %}
+                <strong>{{ r.result_status }}</strong>
+              {% endif %}
+            </td>
+            <td style="font-weight: 800; color: #1e3a8a;">
+              {{ r.rank_title|default:"-" }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Aggregate Statistics Bar -->
+    <div style="margin-top: 20px; padding: 12px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 13px; font-weight: 700;">
+      <span>شاملین: <strong style="color: #0f172a;">{{ results_data.stats.total_students }} نفر</strong></span>
+      <span>کامیاب: <strong style="color: #059669;">{{ results_data.stats.passed_count }} نفر</strong></span>
+      <span>مشروط: <strong style="color: #d97706;">{{ results_data.stats.conditional_count }} نفر</strong></span>
+      <span>ناکام: <strong style="color: #dc2626;">{{ results_data.stats.failed_count }} نفر</strong></span>
+      <span>محروم: <strong style="color: #64748b;">{{ results_data.stats.mahroom_count }} نفر</strong></span>
+      <span>فیصدی کامیابی صنف: <strong style="color: #1e3a8a;">{{ results_data.stats.pass_percentage }}٪</strong></span>
+      <span>اوسط عمومی نمرات: <strong style="color: #1e3a8a;">{{ results_data.stats.class_average_percentage }}٪</strong></span>
+    </div>
+
+    <!-- Official Signatures -->
+    <div class="signatures-grid">
+      <div class="signature-box">
+        <div class="signature-title">امضای نگران صنف</div>
+        <div class="signature-line">نام و امضاء</div>
+      </div>
+      <div class="signature-box">
+        <div class="signature-title">امضای هیئت ممتحن</div>
+        <div class="signature-line">نام و امضاء</div>
+      </div>
+      <div class="signature-box">
+        <div class="signature-title">امضای سرمعلم تدریسی</div>
+        <div class="signature-line">نام و امضاء</div>
+      </div>
+      <div class="signature-box">
+        <div class="signature-title">مهر و امضای مدیر مکتب</div>
+        <div class="signature-line">امضاء و مهر رسمی</div>
+      </div>
+    </div>
+
+  </div>
+  {% else %}
+  <div class="table-section" style="text-align: center; padding: 60px 20px;">
+    <i class="fa-solid fa-table" style="font-size: 48px; color: #94a3b8; margin-bottom: 16px;"></i>
+    <h3 style="color: #1e293b;">صنف یا سال تعلیمی انتخاب نشده است</h3>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock content %}
