@@ -1,0 +1,268 @@
+/* =======================================================
+   Antigravity Academic School System
+   Curriculum & Subject Management Stylesheet (RTL Dari)
+   ======================================================= */
+
+:root {
+  --color-islamic: #059669;
+  --bg-islamic: rgba(5, 150, 105, 0.1);
+  --color-literature: #2563eb;
+  --bg-literature: rgba(37, 99, 235, 0.1);
+  --color-science: #0891b2;
+  --bg-science: rgba(8, 145, 178, 0.1);
+  --color-math: #d97706;
+  --bg-math: rgba(217, 119, 6, 0.1);
+  --color-social: #7c3aed;
+  --bg-social: rgba(124, 58, 237, 0.1);
+  --color-tech: #0d9488;
+  --bg-tech: rgba(13, 148, 136, 0.1);
+  --color-sports: #e11d48;
+  --bg-sports: rgba(225, 29, 72, 0.1);
+  --color-default: #64748b;
+  --bg-default: rgba(100, 116, 139, 0.1);
+}
+
+/* Category Badges */
+.badge-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.badge-islamic {
+  background-color: var(--bg-islamic);
+  color: var(--color-islamic);
+  border: 1px solid rgba(5, 150, 105, 0.25);
+}
+
+.badge-literature {
+  background-color: var(--bg-literature);
+  color: var(--color-literature);
+  border: 1px solid rgba(37, 99, 235, 0.25);
+}
+
+.badge-science {
+  background-color: var(--bg-science);
+  color: var(--color-science);
+  border: 1px solid rgba(8, 145, 178, 0.25);
+}
+
+.badge-math {
+  background-color: var(--bg-math);
+  color: var(--color-math);
+  border: 1px solid rgba(217, 119, 6, 0.25);
+}
+
+.badge-social {
+  background-color: var(--bg-social);
+  color: var(--color-social);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+}
+
+.badge-tech {
+  background-color: var(--bg-tech);
+  color: var(--color-tech);
+  border: 1px solid rgba(13, 148, 136, 0.25);
+}
+
+.badge-sports {
+  background-color: var(--bg-sports);
+  color: var(--color-sports);
+  border: 1px solid rgba(225, 29, 72, 0.25);
+}
+
+.badge-default {
+  background-color: var(--bg-default);
+  color: var(--color-default);
+  border: 1px solid rgba(100, 116, 139, 0.25);
+}
+
+/* Level Badges */
+.badge-level {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.badge-level.primary {
+  background: #fef3c7;
+  color: #92400e;
+}
+.badge-level.middle {
+  background: #e0f2fe;
+  color: #075985;
+}
+.badge-level.high {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+.badge-level.general {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+/* Subject Code Pill */
+.subject-code-pill {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #0284c7;
+  border: 1px solid #cbd5e1;
+  letter-spacing: 0.5px;
+}
+
+/* Curriculum Class Checklist Grid */
+.curriculum-category-group {
+  margin-bottom: 24px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.curriculum-category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.curriculum-category-title {
+  font-size: 15px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.subjects-matrix-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.matrix-card-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.matrix-card-item:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  transform: translateY(-1px);
+}
+
+.matrix-card-item.selected {
+  background: #eff6ff;
+  border-color: #2563eb;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
+}
+
+.matrix-card-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #1e3a8a;
+}
+
+.matrix-info {
+  flex-grow: 1;
+}
+
+.matrix-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.matrix-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 3px;
+}
+
+/* Classes Checkbox Grid in Subject Form */
+.classes-checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.classes-checkbox-grid label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  margin: 0;
+}
+
+.classes-checkbox-grid input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #1e3a8a;
+}
+
+/* Detail Profile View */
+.profile-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.profile-meta-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+  text-align: center;
+}
+
+.profile-meta-box .num {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1e3a8a;
+  display: block;
+}
+
+.profile-meta-box .lbl {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 600;
+  margin-top: 4px;
+  display: block;
+}

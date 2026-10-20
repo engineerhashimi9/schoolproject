@@ -1,0 +1,152 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}سامانه تعلیمی لیسه عالی اهل بیت (ص){% endblock title %}</title>
+
+    <!-- FontAwesome & Core CSS -->
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}" />
+
+    {% block style %}{% endblock style %}
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Mobile Drawer Overlay -->
+      <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+      <!-- ================= SIDEBAR BLOCK ================= -->
+      {% block sidebar %}
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="logo-wrapper">
+            <img
+              class="side-logo"
+              src="{% static 'accounts/logo.png' %}"
+              alt="لوگوی مکتب"
+            />
+          </div>
+          <div class="brand-text">
+            <h4>لیسه عالی خصوصی اهل بیت (ص)</h4>
+            <span>سامانه جامع نظارت تعلیمی</span>
+          </div>
+          <button type="button" class="sidebar-close-btn" id="sidebar-close-btn" aria-label="بستن منو">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <nav class="sidebar-nav">
+          <ul>
+            <li class="{% if request.resolver_match.url_name == 'admin-dashboard' %}active{% endif %}">
+              <a href="{% url 'dashboard:admin-dashboard' %}">
+                <i class="fa-solid fa-table-columns"></i> داشبورد
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+      {% endblock sidebar %}
+
+      <!-- ================= MAIN VIEW CONTAINER ================= -->
+      <main class="base-container">
+        <!-- Top Header Navigation -->
+        <header class="top-header">
+          <div class="header-right-side">
+            <button type="button" class="btn-hamburger" id="mobile-toggle-btn" aria-label="منوی ناوبری">
+              <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="mobile-brand-title">
+              {% block mobile_brand %}لیسه عالی اهل بیت (ص){% endblock mobile_brand %}
+            </div>
+          </div>
+          <div class="left-actions">
+            {% block header_search %}
+            <div class="search-wrapper">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" placeholder="جستجو در سامانه..." />
+            </div>
+            {% endblock header_search %}
+            {% if jalali_date_str %}
+            <div class="academic-date-pill">
+              <i class="fa-regular fa-calendar-days"></i>
+              <span>امروز: {{ jalali_date_str }}</span>
+            </div>
+            {% endif %}
+            <a href="#" class="icon-btn" title="اعلان‌ها"><i class="fa-regular fa-bell"></i></a>
+            <a href="#" class="icon-btn" title="راهنما"><i class="fa-regular fa-circle-question"></i></a>
+          </div>
+          <a href="{% url 'accounts:logout' %}" class="btn-logout" title="خروج از حساب">
+            <span>خروج</span> <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          </a>
+        </header>
+
+        <!-- Flash Messages -->
+        {% if messages %}
+        <div class="messages-container">
+          {% for message in messages %}
+          <div class="alert alert-{{ message.tags|default:'info' }}">
+            <div class="alert-icon">
+              {% if message.tags == 'success' %}
+                <i class="fa-solid fa-circle-check"></i>
+              {% elif message.tags == 'error' or message.tags == 'danger' %}
+                <i class="fa-solid fa-circle-exclamation"></i>
+              {% elif message.tags == 'warning' %}
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              {% else %}
+                <i class="fa-solid fa-circle-info"></i>
+              {% endif %}
+              <span>{{ message }}</span>
+            </div>
+            <button type="button" class="alert-close" onclick="this.closest('.alert').remove()">&times;</button>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Content Area -->
+        {% block content %}{% endblock content %}
+      </main>
+    </div>
+
+    <!-- Global Custom Confirmation Modal -->
+    <div class="confirm-modal-overlay" id="confirmModalOverlay" aria-hidden="true">
+      <div class="confirm-modal-card" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+        <div class="confirm-modal-header">
+          <div class="confirm-modal-icon-badge" id="confirmModalIcon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <button type="button" class="confirm-modal-close-btn" id="confirmModalCloseBtn" aria-label="بستن">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="confirm-modal-content">
+          <h3 class="confirm-modal-title" id="confirmModalTitle">تأیید عملیات</h3>
+          <p class="confirm-modal-text" id="confirmModalMessage">آیا از انجام این عملیات اطمینان دارید؟</p>
+          <div class="confirm-modal-target-box" id="confirmModalTargetBox" style="display: none;">
+            <span class="confirm-modal-target-label">مورد انتخابی:</span>
+            <strong class="confirm-modal-target-name" id="confirmModalTargetName"></strong>
+          </div>
+          <div class="confirm-modal-subtext">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>این تغییر در سوابق سیستم ثبت می‌گردد.</span>
+          </div>
+        </div>
+        <div class="confirm-modal-actions">
+          <button type="button" class="btn btn-surface" id="confirmModalCancelBtn">
+            <i class="fa-solid fa-xmark"></i> انصراف
+          </button>
+          <a href="#" class="btn btn-danger" id="confirmModalProceedBtn">
+            <i class="fa-solid fa-check"></i> بله، تأیید و اجرا شود
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main JavaScript -->
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block js %}{% endblock js %}
+  </body>
+</html>

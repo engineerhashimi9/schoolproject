@@ -1,0 +1,353 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}ثبت ارزیابی‌های ماهوار شاگردان | پورتال استاد {{ teacher.name }}{% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/teacher.css' %}" />
+{% endblock style %}
+
+{% block content %}
+<div class="content-body">
+
+  <!-- Header Banner -->
+  <div class="teacher-hero-card">
+    <div class="teacher-hero-info">
+      <div class="teacher-avatar-circle">
+        <i class="fa-solid fa-star-half-stroke"></i>
+      </div>
+      <div>
+        <h1 class="teacher-details-title">
+          ثبت ارزیابی‌های ماهوار شاگردان
+          {% if selected_subject %}
+            <span class="teacher-guidance-badge" style="background: #10b981;">
+              <i class="fa-solid fa-book"></i> مضمون: {{ selected_subject.name }}
+            </span>
+          {% endif %}
+          {% if selected_class %}
+            <span class="teacher-guidance-badge">
+              <i class="fa-solid fa-chalkboard"></i> صنف {{ selected_class.alpha_grade }} - {{ selected_class.section }}
+            </span>
+          {% endif %}
+        </h1>
+        <div class="teacher-meta-row">
+          <span class="teacher-meta-item">
+            <i class="fa-solid fa-user-tie"></i> استاد: {{ teacher.name }} {{ teacher.last_name }}
+          </span>
+          <span class="teacher-meta-item">
+            <i class="fa-solid fa-calendar-alt"></i> ماه ارزیابی: {{ selected_month.name }} | سال {{ academic_year.year }}
+          </span>
+          <span class="teacher-meta-item">
+            <i class="fa-solid fa-users"></i> شاگردان ارزیابی شونده: {{ student_rows|length }} نفر
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Navigation / Admin Switcher -->
+    <div class="teacher-hero-actions">
+      {% if request.user.is_staff and all_teachers %}
+      <form method="GET" class="teacher-switcher-form">
+        <label for="admin-t-select"><i class="fa-solid fa-user-shield"></i> تعویض استاد:</label>
+        <select id="admin-t-select" name="teacher_id" onchange="this.form.submit()">
+          {% for t in all_teachers %}
+            <option value="{{ t.id }}" {% if t.id == teacher.id %}selected{% endif %}>{{ t.name }} {{ t.last_name }}</option>
+          {% endfor %}
+        </select>
+        {% if selected_class %}<input type="hidden" name="class_id" value="{{ selected_class.id }}">{% endif %}
+        {% if selected_subject %}<input type="hidden" name="subject_id" value="{{ selected_subject.id }}">{% endif %}
+        {% if selected_month %}<input type="hidden" name="month_id" value="{{ selected_month.id }}">{% endif %}
+      </form>
+      {% endif %}
+      <a href="{% url 'dashboard:teacher-portal' %}" class="btn-mini btn-mini-primary" style="background:#ffffff; color:#1e3a8a; padding: 8px 14px; font-size:13px;">
+        <i class="fa-solid fa-arrow-right"></i> بازگشت به کارتابل
+      </a>
+    </div>
+  </div>
+
+  <!-- Sub Navigation Bar -->
+  <div class="teacher-subnav">
+    <a href="{% url 'dashboard:teacher-portal' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-house-chimney"></i> کارتابل استاد
+    </a>
+    <a href="{% url 'dashboard:teacher-attendance' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-calendar-check"></i> ثبت حاضری صنف
+    </a>
+    <a href="{% url 'dashboard:teacher-assessment' %}" class="teacher-nav-pill active">
+      <i class="fa-solid fa-star-half-stroke"></i> ارزیابی ماهوار
+    </a>
+    <a href="{% url 'dashboard:teacher-shaqqa' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-file-signature"></i> شقه نمرات امتحانات
+    </a>
+    <a href="{% url 'dashboard:teacher-my-timetable' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-calendar-days"></i> تقسیم اوقات هفتگی
+    </a>
+    <a href="{% url 'dashboard:teacher-class-timetable' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-users-rectangle"></i> تقسیم اوقات صنف نگران
+    </a>
+    <a href="{% url 'dashboard:teacher-students' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-user-graduate"></i> لیست شاگردان
+    </a>
+  </div>
+
+  <!-- Filter Card -->
+  <div class="teacher-filter-card">
+    <form method="GET" class="filter-grid" id="assessmentFilterForm">
+      <div class="filter-group">
+        <label for="class-select"><i class="fa-solid fa-chalkboard"></i> انتخاب صنف:</label>
+        <select id="class-select" name="class_id" onchange="document.getElementById('assessmentFilterForm').submit()">
+          {% for c in assigned_classes %}
+            <option value="{{ c.id }}" {% if selected_class and selected_class.id == c.id %}selected{% endif %}>
+              صنف {{ c.alpha_grade }} - شعبه {{ c.section }}
+            </option>
+          {% empty %}
+            <option value="">صنفی یافت نشد</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="subject-select"><i class="fa-solid fa-book"></i> مضمون تدریسی:</label>
+        <select id="subject-select" name="subject_id" onchange="document.getElementById('assessmentFilterForm').submit()">
+          {% for s in assigned_subjects %}
+            <option value="{{ s.id }}" {% if selected_subject and selected_subject.id == s.id %}selected{% endif %}>
+              {{ s.name }}
+            </option>
+          {% empty %}
+            <option value="">مضمونی یافت نشد</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="month-select"><i class="fa-solid fa-calendar-alt"></i> ماه ارزیابی:</label>
+        <select id="month-select" name="month_id" onchange="document.getElementById('assessmentFilterForm').submit()">
+          {% for m in months %}
+            <option value="{{ m.id }}" {% if selected_month and selected_month.id == m.id %}selected{% endif %}>
+              {{ m.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="filter-group" style="display: flex; flex-direction: row; gap: 8px; align-items: flex-end;">
+        <button type="submit" class="btn-mini btn-mini-primary" style="padding: 10px 18px; font-size: 13.5px;">
+          <i class="fa-solid fa-filter"></i> بارگذاری لیست
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- MoE Assessment Guidelines -->
+  <div class="moe-guidelines-box">
+    <h4>
+      <i class="fa-solid fa-circle-info"></i> رهنمود ارزیابی‌های دوامدار صنفی (ارزیابی ماهوار معارف)
+    </h4>
+    <div class="moe-rules-grid">
+      <div class="moe-rule-item">
+        <span class="moe-rule-tag moe-tag-midterm">نمره اعظمی پیش‌فرض</span>
+        <span>۱۰۰ نمره (یا نمره اعظمی مدنظر استاد بر مبنای فعالیت صنفی)</span>
+      </div>
+      <div class="moe-rule-item">
+        <span class="moe-rule-tag moe-tag-final">معیار نمره‌دهی</span>
+        <span>کارخانگی، فعالیت صنفی، پرسش شفاهی و آزمون‌های کتبی ماهوار</span>
+      </div>
+      <div class="moe-rule-item">
+        <span class="moe-rule-tag moe-tag-total">رتبه‌بندی</span>
+        <span>۹۰-۱۰۰ عالی | ۸۰-۸۹ خوب جداً | ۷۰-۷۹ خوب | ۵۰-۶۹ متوسط | زیر ۵۰ ضعیف</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assessment Data Table & Save Form -->
+  {% if selected_class and selected_subject and selected_month %}
+    <form method="POST" action="{% url 'dashboard:teacher-assessment' %}">
+      {% csrf_token %}
+      <input type="hidden" name="class_id" value="{{ selected_class.id }}">
+      <input type="hidden" name="subject_id" value="{{ selected_subject.id }}">
+      <input type="hidden" name="month_id" value="{{ selected_month.id }}">
+
+      <div class="teacher-table-card">
+        <div class="table-header-bar">
+          <div>
+            <h3 class="section-title">
+              <i class="fa-solid fa-marker text-primary"></i> ورود نمرات ارزیابی ماه {{ selected_month.name }} | مضمون «{{ selected_subject.name }}»
+            </h3>
+            <span class="section-subtitle">
+              نمرات ثبت‌شده مستقیماً در کارنامه ارزیابی دوامدار شاگرد در دیتابیس ثبت می‌شود.
+            </span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <div style="display: inline-flex; align-items: center; gap: 6px; background: #f8fafc; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 8px;">
+              <label for="batch_score" style="font-size: 12px; font-weight: 700; color: #475569;">نمره پیش‌فرض همه:</label>
+              <input type="number" id="batch_score" min="0" max="100" class="table-input" style="width: 60px;" placeholder="مثلاً ۸۵">
+              <button type="button" class="btn-mini btn-mini-primary" onclick="applyBatchScore()">اعمال</button>
+            </div>
+            <button type="submit" class="btn-mini btn-mini-primary" style="background:#15803d; color:#ffffff; padding: 9px 18px; font-size:13.5px;">
+              <i class="fa-solid fa-floppy-disk"></i> ذخیره نمرات ارزیابی
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="teacher-data-table" id="assessmentTable">
+            <thead>
+              <tr>
+                <th style="width: 45px; text-align: center;">#</th>
+                <th>مشخصات شاگرد</th>
+                <th style="text-align: center;">نمبر اساس</th>
+                <th style="text-align: center; width: 130px;">نمره کسب‌شده</th>
+                <th style="text-align: center; width: 110px;">نمره اعظمی</th>
+                <th style="text-align: center; width: 120px;">فیصدی</th>
+                <th style="text-align: center; width: 130px;">درجه و ارزیابی</th>
+                <th style="text-align: center; width: 100px;">وضعیت ثبت</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in student_rows %}
+                {% with s=row.student %}
+                <tr id="row-{{ s.id }}">
+                  <td style="text-align: center; font-weight: 700; color: #94a3b8;">{{ forloop.counter }}</td>
+                  <td>
+                    <div class="student-table-cell">
+                      <div class="student-table-avatar">
+                        {% if s.photo %}
+                          <img src="{{ s.photo.url }}" alt="{{ s.name }}" />
+                        {% else %}
+                          <i class="fa-solid fa-user"></i>
+                        {% endif %}
+                      </div>
+                      <div>
+                        <div class="student-cell-name">{{ s.name }} {{ s.last_name|default:'' }}</div>
+                        <div class="student-cell-sub">ولد: {{ s.fname }} | ولدیت: {{ s.g_father_name|default:'-' }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td style="text-align: center; font-weight: 700; color: #475569;">
+                    {{ s.school_id|default:s.id }}
+                  </td>
+                  <td style="text-align: center;">
+                    <input type="number" name="score_{{ s.id }}" id="score_{{ s.id }}" value="{{ row.score }}" min="0" max="100" class="table-input" style="width: 90px; font-size: 15px; font-weight: 800; color: #1e3a8a;" oninput="calcAssessment({{ s.id }})" placeholder="-">
+                  </td>
+                  <td style="text-align: center;">
+                    <input type="number" name="max_{{ s.id }}" id="max_{{ s.id }}" value="{{ row.max_score }}" min="1" max="100" class="table-input" style="width: 75px;" oninput="calcAssessment({{ s.id }})">
+                  </td>
+                  <td style="text-align: center;">
+                    <span class="status-badge {% if row.percent >= 75 %}passed{% elif row.percent >= 50 %}conditional{% else %}failed{% endif %}" id="badge-pct-{{ s.id }}">
+                      <span id="pct-val-{{ s.id }}">{{ row.percent|floatformat:1 }}</span>%
+                    </span>
+                  </td>
+                  <td style="text-align: center;">
+                    <span id="grade-label-{{ s.id }}" style="font-weight: 800; font-size: 13px;">
+                      {% if row.percent >= 90 %}
+                        <span style="color:#15803d;"><i class="fa-solid fa-medal"></i> عالی</span>
+                      {% elif row.percent >= 80 %}
+                        <span style="color:#1d4ed8;"><i class="fa-solid fa-thumbs-up"></i> خوب جداً</span>
+                      {% elif row.percent >= 70 %}
+                        <span style="color:#0284c7;"><i class="fa-solid fa-circle-check"></i> خوب</span>
+                      {% elif row.percent >= 50 %}
+                        <span style="color:#b45309;"><i class="fa-solid fa-circle-dot"></i> متوسط</span>
+                      {% else %}
+                        <span style="color:#b91c1c;"><i class="fa-solid fa-triangle-exclamation"></i> ضعیف</span>
+                      {% endif %}
+                    </span>
+                  </td>
+                  <td style="text-align: center;">
+                    {% if row.has_record %}
+                      <span class="status-badge passed" style="font-size: 11px;">
+                        <i class="fa-solid fa-check"></i> ثبت‌شده
+                      </span>
+                    {% else %}
+                      <span class="status-badge" style="background:#f1f5f9; color:#64748b; font-size: 11px;">
+                        ثبت‌نشده
+                      </span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endwith %}
+              {% empty %}
+                <tr>
+                  <td colspan="8" style="text-align: center; padding: 30px; color: #64748b;">
+                    شاگردی در این صنف برای سال تعلیمی جاری یافت نشد.
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="submit" class="btn-primary" style="background:#15803d; padding: 11px 28px; font-size: 14.5px;">
+            <i class="fa-solid fa-floppy-disk"></i> ذخیره نمرات ارزیابی ماه {{ selected_month.name }}
+          </button>
+        </div>
+      </div>
+    </form>
+  {% else %}
+    <div class="teacher-table-card" style="text-align: center; padding: 40px;">
+      <i class="fa-solid fa-circle-info" style="font-size: 32px; color: #94a3b8; margin-bottom: 12px;"></i>
+      <p style="color: #64748b; font-size: 14px;">لطفاً صنف، مضمون تدریسی و ماه ارزیابی را انتخاب نمایید.</p>
+    </div>
+  {% endif %}
+
+</div>
+
+<script>
+  function calcAssessment(studentId) {
+    const scoreIn = document.getElementById('score_' + studentId);
+    const maxIn = document.getElementById('max_' + studentId);
+    const pctSpan = document.getElementById('pct-val-' + studentId);
+    const badge = document.getElementById('badge-pct-' + studentId);
+    const gradeLabel = document.getElementById('grade-label-' + studentId);
+
+    const score = parseFloat(scoreIn.value);
+    const maxScore = Math.max(1, parseFloat(maxIn.value) || 100);
+
+    if (isNaN(score)) {
+      if (pctSpan) pctSpan.innerText = '0.0';
+      if (gradeLabel) gradeLabel.innerHTML = '<span style="color:#94a3b8;">-</span>';
+      return;
+    }
+
+    const pct = Math.min(100, Math.max(0, ((score / maxScore) * 100))).toFixed(1);
+    if (pctSpan) pctSpan.innerText = pct;
+
+    if (badge && gradeLabel) {
+      badge.classList.remove('passed', 'conditional', 'failed');
+      if (pct >= 90) {
+        badge.classList.add('passed');
+        gradeLabel.innerHTML = '<span style="color:#15803d;"><i class="fa-solid fa-medal"></i> عالی</span>';
+      } else if (pct >= 80) {
+        badge.classList.add('passed');
+        gradeLabel.innerHTML = '<span style="color:#1d4ed8;"><i class="fa-solid fa-thumbs-up"></i> خوب جداً</span>';
+      } else if (pct >= 70) {
+        badge.classList.add('passed');
+        gradeLabel.innerHTML = '<span style="color:#0284c7;"><i class="fa-solid fa-circle-check"></i> خوب</span>';
+      } else if (pct >= 50) {
+        badge.classList.add('conditional');
+        gradeLabel.innerHTML = '<span style="color:#b45309;"><i class="fa-solid fa-circle-dot"></i> متوسط</span>';
+      } else {
+        badge.classList.add('failed');
+        gradeLabel.innerHTML = '<span style="color:#b91c1c;"><i class="fa-solid fa-triangle-exclamation"></i> ضعیف</span>';
+      }
+    }
+  }
+
+  function applyBatchScore() {
+    const val = document.getElementById('batch_score').value;
+    if (val === '') return;
+    const num = Math.min(100, Math.max(0, parseFloat(val) || 0));
+
+    {% for row in student_rows %}
+      (function(sid) {
+        const inp = document.getElementById('score_' + sid);
+        if (inp) {
+          inp.value = num;
+          calcAssessment(sid);
+        }
+      })({{ row.student.id }});
+    {% endfor %}
+  }
+</script>
+{% endblock content %}

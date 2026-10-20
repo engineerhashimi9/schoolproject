@@ -1,0 +1,372 @@
+:root {
+    --bg-main: #f4f6f8;
+    --bg-card: #ffffff;
+    --primary-blue: #0066cc;
+    --primary-blue-light: #eef6ff;
+    --text-dark: #333333;
+    --text-light: #777777;
+    --border-color: #e2e8f0;
+    --red: #dc3545;
+    --font: 'Vazirmatn', sans-serif;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --radius: 12px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font);
+}
+
+
+
+.container {
+    max-width: 1920px;
+    padding-top: 10px;
+    max-width: 1920px;
+    max-height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+    scrollbar-gutter: stable;
+    scrollbar-color: #7aa9dd #eef2f7;
+    scrollbar-width: thin;
+}
+
+.container::-webkit-scrollbar {
+    width: 10px;
+}
+
+.container::-webkit-scrollbar-track {
+    background: #eef2f7;
+    border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--primary-blue), #7aa9dd);
+    border-radius: 10px;
+    border: 2px solid #eef2f7;
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--primary-blue-hover), #4d8ed8);
+}
+
+
+
+
+
+
+
+/* ---------- Header ---------- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #222;
+}
+
+.header .subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-top: 4px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, .3);
+}
+
+.btn-outline {
+    background: #fff;
+    color: #333;
+    border: 1px solid #e2e6ee;
+}
+
+/* ---------- Grid & Cards ---------- */
+.grid {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr;
+    gap: 20px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+    border: 1px solid #eef1f6;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.card-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+}
+
+.card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #222;
+    flex: 1;
+}
+
+.badge {
+    background: #eef4ff;
+    color: #2563eb;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 20px;
+    padding: 4px 12px;
+}
+
+/* ---------- Info rows ---------- */
+.info-list .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.info-label {
+    font-size: 16px;
+    color: #777;
+}
+
+.info-value {
+    font-size: 18px;
+    font-weight: 600;
+    color: #222;
+}
+
+.info-value.blue {
+    color: #2563eb;
+}
+
+.info-value.muted {
+    color: #999;
+    font-weight: 400;
+}
+
+.divider {
+    border: none;
+    border-top: 1px dashed #e8ecf3;
+}
+
+/* ---------- Personal info card ---------- */
+.personal {
+    position: relative;
+}
+
+.personal::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 4px;
+    height: 60px;
+    background: #2563eb;
+    border-radius: 0 4px 4px 0;
+}
+
+.personal-header {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.personal-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding: 20px;
+}
+
+.avatar-wrap {
+    position: relative;
+}
+
+.avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #e5ecff;
+}
+
+.avatar-badge {
+    position: absolute;
+    bottom: -2px;
+    left: -6px;
+    width: 22px;
+    height: 22px;
+    background: #2563eb;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.personal-name .value {
+    display: flex;
+    font-size: 25px;
+    font-weight: 800;
+    justify-content: center;
+
+}
+
+.personal-name .label {
+    font-size: 10px;
+    color: #888;
+    margin-bottom: 2px;
+}
+
+.verified {
+    margin-top: 10px;
+    margin-right: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #eef4ff;
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 20px;
+    padding: 5px 14px;
+}
+
+.personal-rows {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    padding-top: 50px;
+    gap: 20px;
+}
+
+.p-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    gap: 30px;
+
+
+}
+
+
+
+
+/* ---------- Grid cells (bottom cards) ---------- */
+.cells {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.cell {
+    background: #f8fafd;
+    border: 1px solid #eef1f6;
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.cell .label {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 6px;
+}
+
+.cell .value {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.cell .value.blue {
+    color: #2563eb;
+}
+
+/* ---------- Financial ---------- */
+.fin-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+}
+
+.fin-row.total {
+    border-top: 1px dashed #e8ecf3;
+    margin-top: 6px;
+}
+
+.fin-amount {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.fin-amount.blue {
+    color: #2563eb;
+}
+
+.fin-amount.negative {
+    color: #dc2626;
+}
+
+.fin-note {
+    font-size: 11px;
+    color: #aaa;
+}
+
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+}

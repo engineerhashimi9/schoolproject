@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}پورتال و کارتابل اختصاصی اساتید | لیسه عالی اهل بیت (ص){% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/teacher.css' %}" />
+{% endblock style %}
+
+{% block mobile_brand %}پورتال اساتید | لیسه اهل بیت (ص){% endblock mobile_brand %}
+
+{% block sidebar %}
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header" style="border-bottom-color: rgba(59, 130, 246, 0.2);">
+    <div class="logo-wrapper">
+      <img
+        class="side-logo"
+        src="{% static 'accounts/logo.png' %}"
+        alt="لوگوی مکتب"
+      />
+    </div>
+    <div class="brand-text">
+      <h4>لیسه عالی خصوصی اهل بیت (ص)</h4>
+      <span style="color: #60a5fa; font-weight: 700;">کارتابل اختصاصی اساتید</span>
+    </div>
+    <button type="button" class="sidebar-close-btn" id="sidebar-close-btn" aria-label="بستن منو">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul>
+      <li class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        <a href="{% url 'teachers:dashboard' %}">
+          <i class="fa-solid fa-house-chimney"></i> کارتابل و داشبورد استاد
+        </a>
+      </li>
+      <li class="{% if request.resolver_match.url_name == 'attendance' %}active{% endif %}">
+        <a href="{% url 'teachers:attendance' %}">
+          <i class="fa-solid fa-calendar-check"></i> ثبت حاضری صنف
+        </a>
+      </li>
+      <li class="{% if request.resolver_match.url_name == 'assessment' %}active{% endif %}">
+        <a href="{% url 'teachers:assessment' %}">
+          <i class="fa-solid fa-star-half-stroke"></i> ارزیابی ماهوار شاگردان
+        </a>
+      </li>
+      <li class="{% if request.resolver_match.url_name == 'shaqqa' %}active{% endif %}">
+        <a href="{% url 'teachers:shaqqa' %}">
+          <i class="fa-solid fa-file-signature"></i> شقه نمرات امتحانات معارف
+        </a>
+      </li>
+      <li class="{% if request.resolver_match.url_name == 'my-timetable' %}active{% endif %}">
+        <a href="{% url 'teachers:my-timetable' %}">
+          <i class="fa-solid fa-calendar-days"></i> تقسیم اوقات تدریس من
+        </a>
+      </li>
+      <li class="{% if request.resolver_match.url_name == 'class-timetable' %}active{% endif %}">
+        <a href="{% url 'teachers:class-timetable' %}">
+          <i class="fa-solid fa-users-rectangle"></i> تقسیم اوقات صنف نگران
+        </a>
+      </li>
+      <li class="{% if request.resolver_match.url_name == 'students' %}active{% endif %}">
+        <a href="{% url 'teachers:students' %}">
+          <i class="fa-solid fa-user-graduate"></i> لیست شاگردان صنوف
+        </a>
+      </li>
+      <li class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+        <a href="{% url 'teachers:profile' %}">
+          <i class="fa-solid fa-id-card"></i> مشخصات و پروفایل من
+        </a>
+      </li>
+
+      {% if request.user.is_staff %}
+      <li style="margin-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 8px;">
+        <a href="{% url 'dashboard:admin-dashboard' %}" style="color: #93c5fd;">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> بازگشت به پنل مدیریت
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-card" style="background: rgba(30, 58, 138, 0.4); border: 1px solid rgba(59, 130, 246, 0.3);">
+      <div class="user-info">
+        <i class="fa-solid fa-chalkboard-user" style="color: #60a5fa;"></i>
+        <span>
+          {% if teacher %}
+            استاد {{ teacher.name }} {{ teacher.last_name }}
+          {% elif request.user.teacher_profile %}
+            استاد {{ request.user.teacher_profile.name }}
+          {% else %}
+            استاد محترم
+          {% endif %}
+        </span>
+      </div>
+      <span class="badge" style="background: #2563eb; color: #ffffff;">استاد</span>
+    </div>
+  </div>
+</aside>
+{% endblock sidebar %}

@@ -1,0 +1,349 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}مدیریت مضامین و نصاب تعلیمی معارف | لیسه عالی اهل بیت (ص){% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/subjects.css' %}" />
+{% endblock style %}
+
+{% block content %}
+<div class="content-body">
+
+  <!-- Header & Action Bar -->
+  <div class="greeting-area">
+    <div>
+      <h1><i class="fa-solid fa-book-open-reader text-primary" style="margin-left: 8px;"></i> مدیریت مضامین و نصاب تعلیمی</h1>
+      <span class="date">
+        <i class="fa-solid fa-graduation-cap"></i> نصاب رسمی وزارت معارف افغانستان | دوره‌های ابتدائیه، متوسطه و لیسه
+      </span>
+    </div>
+    <div class="action-buttons">
+      <a href="{% url 'dashboard:subject-class-matrix' %}" class="btn-outline">
+        <i class="fa-solid fa-table-cells-large"></i> تخصیص نصاب به صنوف
+      </a>
+      <a href="{% url 'dashboard:subject-create' %}" class="btn-primary">
+        <i class="fa-solid fa-plus-circle"></i> ثبت مضمون جدید
+      </a>
+    </div>
+  </div>
+
+  <!-- KPI Stats Row -->
+  <div class="stats-row">
+    <!-- Stat 1: Total Subjects -->
+    <div class="stat-card">
+      <div class="stat-icon blue">
+        <i class="fa-solid fa-book-bookmark"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">کل مضامین ثبت‌شده</span>
+        <span class="stat-number">{{ stats.total_subjects }}</span>
+      </div>
+      <div class="stat-footer">
+        <span>مجموع مضامین در بانک نصاب</span>
+      </div>
+    </div>
+
+    <!-- Stat 2: Active in Curriculum -->
+    <div class="stat-card">
+      <div class="stat-icon green">
+        <i class="fa-solid fa-check-double"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">مضامین فعال در تدریس</span>
+        <span class="stat-number">{{ stats.active_subjects }}</span>
+      </div>
+      <div class="stat-footer">
+        <span>شامل در شقه نمرات و تقسیم اوقات</span>
+      </div>
+    </div>
+
+    <!-- Stat 3: Total Weekly Hours -->
+    <div class="stat-card">
+      <div class="stat-icon yellow">
+        <i class="fa-solid fa-clock"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">مجموع کریدت / ساعات هفتگی</span>
+        <span class="stat-number">{{ stats.total_weekly_hours }} <small style="font-size: 13px; font-weight: normal;">ساعت</small></span>
+      </div>
+      <div class="stat-footer">
+        <span>حجم آموزشی در برنامه درسی</span>
+      </div>
+    </div>
+
+    <!-- Stat 4: Total Classes Covered -->
+    <div class="stat-card">
+      <div class="stat-icon red">
+        <i class="fa-solid fa-school"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-label">صنف‌های تحت پوشش</span>
+        <span class="stat-number">{{ stats.total_classes }}</span>
+      </div>
+      <div class="stat-footer">
+        <a href="{% url 'dashboard:class-list' %}" style="color: inherit; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+          <span>مشاهده صنوف مکتب</span>
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter & Search Toolbar -->
+  <div class="card" style="margin-bottom: 20px; padding: 16px 20px;">
+    <form method="GET" action="{% url 'dashboard:subject-list' %}" style="display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end;">
+      
+      <!-- Search Input -->
+      <div class="input-group" style="flex: 1; min-width: 220px;">
+        <label><i class="fa-solid fa-magnifying-glass"></i> جستجوی مضمون:</label>
+        <input
+          type="text"
+          name="search"
+          class="input-control"
+          placeholder="جستجو بر اساس نام، کد یا توضیحات..."
+          value="{{ search_query }}"
+        />
+      </div>
+
+      <!-- Category Filter -->
+      <div class="input-group" style="min-width: 180px;">
+        <label><i class="fa-solid fa-layer-group"></i> دسته‌بندی نصاب:</label>
+        <select name="category" class="input-control font-bold" onchange="this.form.submit()">
+          <option value="">-- همه دسته‌بندی‌ها --</option>
+          {% for cat_val, cat_lbl in categories %}
+            <option value="{{ cat_val }}" {% if selected_category == cat_val %}selected{% endif %}>
+              {{ cat_lbl }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Educational Level Filter -->
+      <div class="input-group" style="min-width: 170px;">
+        <label><i class="fa-solid fa-stairs"></i> دوره تحصیلی:</label>
+        <select name="level" class="input-control font-bold" onchange="this.form.submit()">
+          <option value="">-- همه دوره‌ها --</option>
+          {% for lvl_val, lvl_lbl in levels %}
+            <option value="{{ lvl_val }}" {% if selected_level == lvl_val %}selected{% endif %}>
+              {{ lvl_lbl }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Status Filter -->
+      <div class="input-group" style="min-width: 140px;">
+        <label><i class="fa-solid fa-toggle-on"></i> وضعیت:</label>
+        <select name="status" class="input-control font-bold" onchange="this.form.submit()">
+          <option value="">همه وضعیت‌ها</option>
+          <option value="active" {% if selected_status == 'active' %}selected{% endif %}>فقط فعال</option>
+          <option value="inactive" {% if selected_status == 'inactive' %}selected{% endif %}>فقط غیرفعال</option>
+        </select>
+      </div>
+
+      <!-- Buttons -->
+      <div style="display: flex; gap: 8px;">
+        <button type="submit" class="btn btn-primary" style="height: 40px; padding: 0 18px;">
+          <i class="fa-solid fa-filter"></i> فیلتر
+        </button>
+        {% if search_query or selected_category or selected_level or selected_status %}
+        <a href="{% url 'dashboard:subject-list' %}" class="btn btn-surface" style="height: 40px; padding: 0 14px; display: inline-flex; align-items: center;" title="پاک‌سازی فیلترها">
+          <i class="fa-solid fa-xmark"></i>
+        </a>
+        {% endif %}
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Subjects Table Card -->
+  <div class="card" style="overflow: hidden;">
+    <div class="card-header border-bottom" style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px;">
+      <h3 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">
+        <i class="fa-solid fa-list-check text-primary" style="margin-left: 8px;"></i>
+        جدول مضامین تعلیمی و استاندارد وزارت معارف
+        <span style="font-size: 13px; font-weight: normal; color: #64748b; margin-right: 8px;">
+          (نمایش {{ subjects|length }} مضمون)
+        </span>
+      </h3>
+      <div style="display: flex; gap: 8px;">
+        <a href="{% url 'dashboard:subject-class-matrix' %}" class="btn btn-surface" style="font-size: 12.5px;">
+          <i class="fa-solid fa-table-cells"></i> ماتریس صنوف
+        </a>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 900px;">
+        <thead>
+          <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; text-align: right; color: #475569;">
+            <th style="padding: 12px 14px; text-align: center; width: 50px;">#</th>
+            <th style="padding: 12px 14px;">نام و مشخصات مضمون</th>
+            <th style="padding: 12px 14px;">دسته‌بندی نصاب معارف</th>
+            <th style="padding: 12px 14px; text-align: center;">دوره تحصیلی</th>
+            <th style="padding: 12px 14px; text-align: center;">ساعت در هفته</th>
+            <th style="padding: 12px 14px; text-align: center;">نمره قبولی / کل</th>
+            <th style="padding: 12px 14px; text-align: center;">صنوف اختصاص‌یافته</th>
+            <th style="padding: 12px 14px; text-align: center;">وضعیت</th>
+            <th style="padding: 12px 14px; text-align: center; width: 140px;">عملیات</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in subjects %}
+          <tr style="border-bottom: 1px solid #f1f5f9; transition: background 0.15s ease;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+            <!-- Index -->
+            <td style="padding: 14px; text-align: center; font-weight: 700; color: #94a3b8;">
+              {{ forloop.counter }}
+            </td>
+
+            <!-- Name and Code -->
+            <td style="padding: 14px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 36px; height: 36px; border-radius: 8px; background: #e0f2fe; color: #0369a1; display: flex; align-items: center; justify-content: center; font-size: 15px;">
+                  <i class="fa-solid fa-book"></i>
+                </div>
+                <div>
+                  <a href="{% url 'dashboard:subject-detail' s.id %}" style="font-weight: 800; color: #1e293b; font-size: 14px; display: block;">
+                    {{ s.name }}
+                  </a>
+                  {% if s.code %}
+                    <span class="subject-code-pill">{{ s.code }}</span>
+                  {% endif %}
+                </div>
+              </div>
+            </td>
+
+            <!-- Category -->
+            <td style="padding: 14px;">
+              <span class="badge-category {{ s.category_badge_class }}">
+                {% if s.category == 'علوم دینی و اسلامی' %}
+                  <i class="fa-solid fa-kaaba"></i>
+                {% elif s.category == 'زبان و ادبیات' %}
+                  <i class="fa-solid fa-pen-nib"></i>
+                {% elif s.category == 'علوم ساینسی و طبیعی' %}
+                  <i class="fa-solid fa-atom"></i>
+                {% elif s.category == 'ریاضیات و هندسه' %}
+                  <i class="fa-solid fa-square-root-variable"></i>
+                {% elif s.category == 'علوم اجتماعی و بشری' %}
+                  <i class="fa-solid fa-earth-asia"></i>
+                {% elif s.category == 'فناوری، مهارت و هنر' %}
+                  <i class="fa-solid fa-laptop-code"></i>
+                {% elif s.category == 'تربیت بدنی و صحت' %}
+                  <i class="fa-solid fa-heart-pulse"></i>
+                {% else %}
+                  <i class="fa-solid fa-bookmark"></i>
+                {% endif %}
+                {{ s.category }}
+              </span>
+            </td>
+
+            <!-- Level -->
+            <td style="padding: 14px; text-align: center;">
+              {% if s.educational_level == 'ابتدائیه' %}
+                <span class="badge-level primary"><i class="fa-solid fa-child"></i> ابتدائیه (۱-۶)</span>
+              {% elif s.educational_level == 'متوسطه' %}
+                <span class="badge-level middle"><i class="fa-solid fa-user-graduate"></i> متوسطه (۷-۹)</span>
+              {% elif s.educational_level == 'لیسه' %}
+                <span class="badge-level high"><i class="fa-solid fa-school-flag"></i> لیسه (۱۰-۱۲)</span>
+              {% else %}
+                <span class="badge-level general">عمومی (تمام صنوف)</span>
+              {% endif %}
+            </td>
+
+            <!-- Weekly Hours -->
+            <td style="padding: 14px; text-align: center;">
+              <span style="font-weight: 800; color: #1e3a8a; font-size: 14px;">{{ s.weekly_hours }}</span>
+              <span style="color: #64748b; font-size: 11px;">ساعت/هفته</span>
+            </td>
+
+            <!-- Scores -->
+            <td style="padding: 14px; text-align: center;">
+              <span style="font-weight: 800; color: #059669;">{{ s.passing_score|floatformat:0 }}</span>
+              <span style="color: #94a3b8;">/</span>
+              <span style="font-weight: 700; color: #334155;">{{ s.total_score|floatformat:0 }}</span>
+            </td>
+
+            <!-- Assigned Classes Count -->
+            <td style="padding: 14px; text-align: center;">
+              {% with c_count=s.assigned_classes_count %}
+                {% if c_count > 0 %}
+                  <span style="background: #eff6ff; color: #1d4ed8; padding: 3px 10px; border-radius: 6px; font-weight: 700; font-size: 12px;">
+                    {{ c_count }} صنف
+                  </span>
+                {% else %}
+                  <span style="background: #f1f5f9; color: #94a3b8; padding: 3px 10px; border-radius: 6px; font-size: 11.5px;">
+                    تخصیص‌نیافته
+                  </span>
+                {% endif %}
+              {% endwith %}
+            </td>
+
+            <!-- Status -->
+            <td style="padding: 14px; text-align: center;">
+              {% if s.is_active %}
+                <span class="badge-status badge-active" style="font-size: 11.5px;">
+                  <i class="fa-solid fa-circle-check"></i> فعال
+                </span>
+              {% else %}
+                <span class="badge-status badge-inactive" style="font-size: 11.5px;">
+                  <i class="fa-solid fa-circle-xmark"></i> غیرفعال
+                </span>
+              {% endif %}
+            </td>
+
+            <!-- Actions -->
+            <td style="padding: 14px; text-align: center;">
+              <div style="display: inline-flex; align-items: center; gap: 6px;">
+                <!-- Detail View -->
+                <a href="{% url 'dashboard:subject-detail' s.id %}" class="btn-icon" title="مشاهده پروفایل و آمار مضمون" style="color: #0284c7; background: #e0f2fe; width: 30px; height: 30px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center;">
+                  <i class="fa-solid fa-eye" style="font-size: 12px;"></i>
+                </a>
+
+                <!-- Edit View -->
+                <a href="{% url 'dashboard:subject-edit' s.id %}" class="btn-icon" title="ویرایش مشخصات مضمون" style="color: #1e3a8a; background: #f1f5f9; width: 30px; height: 30px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center;">
+                  <i class="fa-solid fa-pen-to-square" style="font-size: 12px;"></i>
+                </a>
+
+                <!-- Toggle Status -->
+                <a href="{% url 'dashboard:subject-toggle-status' s.id %}" class="btn-icon" title="{% if s.is_active %}غیرفعال‌سازی در نصاب{% else %}فعال‌سازی مجدد{% endif %}" style="color: {% if s.is_active %}#d97706{% else %}#059669{% endif %}; background: #f8fafc; width: 30px; height: 30px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center;">
+                  <i class="fa-solid fa-power-off" style="font-size: 12px;"></i>
+                </a>
+
+                <!-- Delete Action using Custom Modal -->
+                <button
+                  type="button"
+                  class="btn-icon btn-trigger-confirm"
+                  style="color: #dc2626; background: #fee2e2; width: 30px; height: 30px; border-radius: 6px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;"
+                  data-confirm-url="{% url 'dashboard:subject-delete' s.id %}"
+                  data-confirm-title="تأیید حذف مضمون تعلیمی"
+                  data-confirm-name="{{ s.name }}"
+                  data-confirm-message="آیا از حذف مضمون «{{ s.name }}» از سیستم اطمینان دارید؟ در صورت داشتن نمرات امتحان یا ساعات درسی فعال، سیستم مانع حذف قطعی شده و وضعیت آن را مدیریت خواهد کرد."
+                  data-confirm-btn="بله، حذف شود"
+                  title="حذف مضمون"
+                >
+                  <i class="fa-solid fa-trash-can" style="font-size: 12px;"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="9" style="text-align: center; padding: 40px; color: #94a3b8;">
+              <i class="fa-solid fa-book-open" style="font-size: 36px; color: #cbd5e1; margin-bottom: 12px; display: block;"></i>
+              <strong style="font-size: 15px; color: #64748b; display: block;">هیچ مضمونی با مشخصات جستجویافته پیدا نشد.</strong>
+              <p style="margin: 6px 0 16px; font-size: 13px;">می‌توانید فیلترها را پاک نموده یا مضمون جدیدی تعریف کنید.</p>
+              <a href="{% url 'dashboard:subject-create' %}" class="btn btn-primary">
+                <i class="fa-solid fa-plus-circle"></i> تعریف مضمون جدید
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+{% endblock content %}

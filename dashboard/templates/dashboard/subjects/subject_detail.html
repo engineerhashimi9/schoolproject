@@ -1,0 +1,246 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}مشخصات و آمار مضمون {{ subject.name }} | لیسه عالی اهل بیت (ص){% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/subjects.css' %}" />
+<style>
+  .detail-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .detail-header {
+    background: linear-gradient(135deg, #0f172a, #1e3a8a);
+    color: #ffffff;
+    padding: 24px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+</style>
+{% endblock style %}
+
+{% block content %}
+<div class="content-body">
+
+  <!-- Back Link & Action Bar -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+    <a href="{% url 'dashboard:subject-list' %}" style="display: inline-flex; align-items: center; gap: 8px; color: #475569; font-size: 13.5px; font-weight: 700; text-decoration: none;">
+      <i class="fa-solid fa-arrow-right"></i> بازگشت به فهرست مضامین و نصاب تعلیمی
+    </a>
+    <div style="display: flex; gap: 10px;">
+      <a href="{% url 'dashboard:subject-edit' subject.id %}" class="btn btn-primary" style="font-size: 13px;">
+        <i class="fa-solid fa-pen-to-square"></i> ویرایش مشخصات
+      </a>
+      <a href="{% url 'dashboard:subject-toggle-status' subject.id %}" class="btn btn-surface" style="font-size: 13px; color: {% if subject.is_active %}#d97706{% else %}#059669{% endif %};">
+        <i class="fa-solid fa-power-off"></i> {% if subject.is_active %}غیرفعال‌سازی در نصاب{% else %}فعال‌سازی مضمون{% endif %}
+      </a>
+      <button
+        type="button"
+        class="btn btn-danger btn-trigger-confirm"
+        style="font-size: 13px;"
+        data-confirm-url="{% url 'dashboard:subject-delete' subject.id %}"
+        data-confirm-title="تأیید حذف مضمون تعلیمی"
+        data-confirm-name="{{ subject.name }}"
+        data-confirm-message="آیا از حذف مضمون «{{ subject.name }}» اطمینان دارید؟"
+        data-confirm-btn="بله، حذف شود"
+      >
+        <i class="fa-solid fa-trash-can"></i> حذف
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Profile Card -->
+  <div class="detail-card">
+    <div class="detail-header">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="width: 56px; height: 56px; border-radius: 12px; background: rgba(255, 255, 255, 0.15); display: flex; align-items: center; justify-content: center; font-size: 26px;">
+          <i class="fa-solid fa-book-open"></i>
+        </div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h1 style="font-size: 22px; font-weight: 800; margin: 0; color: #ffffff;">{{ subject.name }}</h1>
+            {% if subject.code %}
+              <span style="background: rgba(255, 255, 255, 0.2); color: #ffffff; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 800; font-family: monospace;">
+                {{ subject.code }}
+              </span>
+            {% endif %}
+            {% if subject.is_active %}
+              <span style="background: #10b981; color: #ffffff; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">
+                <i class="fa-solid fa-circle-check"></i> فعال در نصاب
+              </span>
+            {% else %}
+              <span style="background: #ef4444; color: #ffffff; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">
+                <i class="fa-solid fa-circle-xmark"></i> غیرفعال
+              </span>
+            {% endif %}
+          </div>
+          <p style="margin: 6px 0 0; font-size: 13.5px; color: #cbd5e1;">
+            دسته‌بندی: <strong>{{ subject.category }}</strong> | دوره تعلیمی: <strong>{{ subject.educational_level }}</strong> | ساعت تدریس: <strong>{{ subject.weekly_hours }} ساعت در هفته</strong>
+          </p>
+        </div>
+      </div>
+      <div>
+        <a href="{% url 'dashboard:subject-class-matrix' %}" class="btn btn-surface" style="color: #0f172a; font-size: 12.5px;">
+          <i class="fa-solid fa-table-cells"></i> ماتریس صنوف
+        </a>
+      </div>
+    </div>
+
+    <!-- Description & Learning Goals -->
+    <div style="padding: 20px 28px; background: #fafafa; border-bottom: 1px solid #e2e8f0;">
+      <strong style="font-size: 13.5px; color: #1e3a8a; display: block; margin-bottom: 4px;">
+        <i class="fa-solid fa-circle-info"></i> اهداف تعلیمی و سرفصل‌ها:
+      </strong>
+      <p style="margin: 0; font-size: 13px; color: #475569; line-height: 1.6;">
+        {{ subject.description|default:"توضیحاتی برای این مضمون ثبت نشده است." }}
+      </p>
+    </div>
+
+    <!-- Analytics KPI Cards -->
+    <div style="padding: 24px 28px;">
+      <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0 0 16px 0;">
+        <i class="fa-solid fa-chart-pie text-primary" style="margin-left: 8px;"></i>
+        شاخص‌های کلیدی و کارنامه آموزشی مضمون
+      </h3>
+
+      <div class="profile-meta-grid">
+        <div class="profile-meta-box">
+          <span class="num">{{ metrics.classes_count }}</span>
+          <span class="lbl">صنف‌های دارای این مضمون</span>
+        </div>
+        <div class="profile-meta-box">
+          <span class="num" style="color: #059669;">{{ metrics.teachers_count }}</span>
+          <span class="lbl">اساتید تدریس‌کننده</span>
+        </div>
+        <div class="profile-meta-box">
+          <span class="num" style="color: #2563eb;">{{ metrics.total_students }}</span>
+          <span class="lbl">شاگردان در حال آموزش</span>
+        </div>
+        <div class="profile-meta-box">
+          <span class="num" style="color: #d97706;">{{ metrics.avg_total_mark }} <small style="font-size: 13px;">از ۱۰۰</small></span>
+          <span class="lbl">میانگین نمرات امتحانات</span>
+        </div>
+        <div class="profile-meta-box">
+          <span class="num" style="color: #7c3aed;">{{ metrics.pass_rate }}٪</span>
+          <span class="lbl">فیصدی قبولی در امتحانات</span>
+        </div>
+        <div class="profile-meta-box">
+          <span class="num" style="color: #0891b2;">{{ metrics.timetable_slots_count }}</span>
+          <span class="lbl">ساعات در جدول تقسیم اوقات</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row: Assigned Classes & Teachers -->
+  <div class="dashboard-grid">
+    <!-- Col Left: Assigned Classes -->
+    <div class="col-left">
+      <div class="card" style="height: 100%;">
+        <div class="card-header border-bottom" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px;">
+          <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">
+            <i class="fa-solid fa-school text-primary" style="margin-left: 8px;"></i>
+            صنوف تدریس‌کننده ({{ metrics.classes_count }} صنف)
+          </h3>
+          <a href="{% url 'dashboard:subject-class-matrix' %}" class="view-all" style="font-size: 12px;">مدیریت تخصیص ❮</a>
+        </div>
+        <div style="padding: 16px 20px;">
+          {% if metrics.assigned_classes %}
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            {% for c in metrics.assigned_classes %}
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="color: #0f172a; font-size: 14px;">صنف {{ c.alpha_grade }} - شعبه {{ c.section }}</strong>
+                <span style="display: block; font-size: 12px; color: #64748b; margin-top: 2px;">
+                  استاد رهنما: {% if c.guidence %}{{ c.guidence.name }} {{ c.guidence.last_name }}{% else %}<span style="color: #f59e0b;">تعیین‌نشده</span>{% endif %}
+                </span>
+              </div>
+              <a href="{% url 'dashboard:class-detail' c.id %}" class="btn btn-surface" style="font-size: 12px; padding: 4px 10px;">
+                مشاهده صنف
+              </a>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p style="color: #94a3b8; text-align: center; padding: 20px;">این مضمون تاکنون به هیچ صنفی تخصیص داده نشده است.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Col Right: Assigned Teachers -->
+    <div class="col-right">
+      <div class="card" style="height: 100%;">
+        <div class="card-header border-bottom" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px;">
+          <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">
+            <i class="fa-solid fa-chalkboard-user text-primary" style="margin-left: 8px;"></i>
+            کادر تدریسی و اساتید مضمون ({{ metrics.teachers_count }} استاد)
+          </h3>
+          <a href="{% url 'dashboard:worker-list' %}" class="view-all" style="font-size: 12px;">کادر اساتید ❮</a>
+        </div>
+        <div style="padding: 16px 20px;">
+          {% if metrics.teachers %}
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            {% for t in metrics.teachers %}
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 36px; height: 36px; border-radius: 8px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 14px;">
+                  <i class="fa-solid fa-user-tie"></i>
+                </div>
+                <div>
+                  <strong style="color: #0f172a; font-size: 14px;">{{ t.name }} {{ t.last_name }}</strong>
+                  <span style="display: block; font-size: 12px; color: #64748b; margin-top: 2px;">
+                    رشته: {{ t.major|default:"نامشخص" }} | سند فراغت: {{ t.degree.name|default:"لیسانس" }}
+                  </span>
+                </div>
+              </div>
+              <a href="{% url 'dashboard:worker-detail' t.id %}" class="btn btn-surface" style="font-size: 12px; padding: 4px 10px;">
+                پرونده استاد
+              </a>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p style="color: #94a3b8; text-align: center; padding: 20px;">استادی برای تدریس این مضمون در تقسیم اوقات تعیین نشده است.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Safety & System Integrity Status -->
+  <div class="card" style="margin-top: 24px; padding: 18px 24px; background: #f8fafc; border: 1px dashed #cbd5e1;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <strong style="font-size: 14px; color: #0f172a; display: block;">
+          <i class="fa-solid fa-shield-halved text-primary" style="margin-left: 6px;"></i>
+          وضعیت یکپارچگی سیستمی مضمون در پایگاه داده مکتب
+        </strong>
+        <span style="font-size: 12.5px; color: #64748b;">
+          {% if validation.can_delete %}
+            <span style="color: #059669; font-weight: 700;">آماده حذف قطعی:</span> این مضمون هیچ سابقه فعال در شقه نمرات یا تقسیم اوقات ندارد و بدون ایجاد تعارض قابل حذف است.
+          {% else %}
+            <span style="color: #d97706; font-weight: 700;">وابستگی‌های فعال:</span> {{ validation.reason }}
+          {% endif %}
+        </span>
+      </div>
+      <div>
+        {% if validation.can_delete %}
+        <span class="badge-status badge-active" style="font-size: 12px;">مستقل و قابل حذف</span>
+        {% else %}
+        <span class="badge-status badge-warning" style="font-size: 12px;">دارای سوابق فعال</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock content %}

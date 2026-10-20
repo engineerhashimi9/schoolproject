@@ -1,222 +1,127 @@
+{% extends 'base.html' %}
 {% load static %}
-<!doctype html>
-<html lang="fa" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}پورتال مدیریت آموزشی | لیسه عالی اهل بیت (ص){% endblock title %}</title>
 
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}" />
+{% block title %}پورتال مدیریت آموزشی | لیسه عالی اهل بیت (ص){% endblock title %}
 
-    {% block style %} {% endblock style %}
-  </head>
-  <body>
-    <div class="app-container">
-      <!-- Mobile Drawer Overlay -->
-      <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
-      <!-- ================= SIDEBAR ================= -->
-      <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-          <div class="logo-wrapper">
-            <img
-              class="side-logo"
-              src="{% static 'accounts/logo.png' %}"
-              alt="لوگوی مکتب"
-            />
-          </div>
-          <div class="brand-text">
-            <h4>لیسه عالی خصوصی اهل بیت رسول‌الله (ص)</h4>
-            <span>سامانه جامع مدیریت و نظارت تعلیمی</span>
-          </div>
-          <button type="button" class="sidebar-close-btn" id="sidebar-close-btn" aria-label="بستن منو">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-
-        <nav class="sidebar-nav">
-          <ul>
-            <li class="{% if request.resolver_match.url_name == 'admin-dashboard' %}active{% endif %}">
-              <a href="{% url 'dashboard:admin-dashboard' %}">
-                <i class="fa-solid fa-table-columns"></i> داشبورد
-              </a>
-            </li>
-            <li class="{% if 'worker' in request.resolver_match.url_name %}active{% endif %}">
-              <a href="{% url 'dashboard:worker-list' %}">
-                <i class="fa-solid fa-users"></i> کارمندان و اساتید
-              </a>
-            </li>
-            <li class="{% if 'student' in request.resolver_match.url_name %}active{% endif %}">
-              <a href="{% url 'dashboard:student-list' %}">
-                <i class="fa-solid fa-user-graduate"></i> شاگردان (متعلمین)
-              </a>
-            </li>
-            <li class="{% if 'class' in request.resolver_match.url_name %}active{% endif %}">
-              <a href="{% url 'dashboard:class-list' %}">
-                <i class="fa-solid fa-chalkboard-user"></i> صنف‌ها
-              </a>
-            </li>
-            <li class="{% if 'attendence' in request.resolver_match.url_name %}active{% endif %}">
-              <a href="{% url 'dashboard:attendence-list' %}">
-                <i class="fa-solid fa-calendar-check"></i> حاضری و غیاب
-              </a>
-            </li>
-            <li class="{% if 'timetable' in request.resolver_match.url_name %}active{% endif %}">
-              <a href="{% url 'dashboard:timetable-class' %}">
-                <i class="fa-solid fa-calendar-week"></i> تقسیم اوقات درسی
-              </a>
-            </li>
-            <li class="{% if 'assesment' in request.resolver_match.url_name %}active{% endif %}">
-              <a href="{% url 'dashboard:assesment-list' %}">
-                <i class="fa-regular fa-file-lines"></i> ارزیابی‌های ماهوار
-              </a>
-            </li>
-            <li class="{% if request.resolver_match.url_name in 'exam-list exam-dashboard' %}active{% endif %}">
-              <a href="{% url 'dashboard:exam-dashboard' %}">
-                <i class="fa-solid fa-trophy"></i> مدیریت امتحانات
-              </a>
-            </li>
-            <li class="{% if 'shaqqa' in request.resolver_match.url_name %}active{% endif %}">
-              <a href="{% url 'dashboard:exam-shaqqa' %}">
-                <i class="fa-solid fa-file-signature"></i> ثبت شقه نمرات
-              </a>
-            </li>
-            <li class="{% if 'jadwal' in request.resolver_match.url_name %}active{% endif %}">
-              <a href="{% url 'dashboard:exam-jadwal-nataij' %}">
-                <i class="fa-solid fa-table-cells"></i> جدول نتایج صنف
-              </a>
-            </li>
-            <li class="{% if 'etlanama' in request.resolver_match.url_name %}active{% endif %}">
-              <a href="{% url 'dashboard:exam-etlanama' %}">
-                <i class="fa-solid fa-id-card"></i> اطلاع‌نامه شاگرد
-              </a>
-            </li>
-            <li class="{% if 'finance-list' in request.resolver_match.url_name or 'fee-' in request.resolver_match.url_name %}active{% endif %}">
-              <a href="{% url 'dashboard:finance-list' %}">
-                <i class="fa-solid fa-coins"></i> امور مالی و فیس
-              </a>
-            </li>
-            <li class="{% if 'finance-expenses' in request.resolver_match.url_name or 'expense-' in request.resolver_match.url_name %}active{% endif %}">
-              <a href="{% url 'dashboard:finance-expenses' %}">
-                <i class="fa-solid fa-money-bill-wave"></i> مصارف و هزینه‌ها
-              </a>
-            </li>
-            <li class="{% if 'finance-report' in request.resolver_match.url_name %}active{% endif %}">
-              <a href="{% url 'dashboard:finance-report' %}">
-                <i class="fa-solid fa-chart-pie"></i> بیلان مالی و گزارش
-              </a>
-            </li>
-            <li>
-              <a href="{% url 'dashboard:admin-dashboard' %}">
-                <i class="fa-solid fa-gear"></i> تنظیمات سیستم
-              </a>
-            </li>
-          </ul>
-        </nav>
-
-        <div class="sidebar-footer">
-          <div class="user-card">
-            <div class="user-info">
-              <i class="fa-solid fa-user-circle"></i>
-              <span>{% if request.user.name %}{{ request.user.name }} {{ request.user.last_name }}{% else %}مدیر سیستم{% endif %}</span>
-            </div>
-            <span class="badge">مدیریت</span>
-          </div>
-        </div>
-      </aside>
-     
-      <main class="base-container">
-        <header class="top-header">
-          <div class="header-right-side">
-            <button type="button" class="btn-hamburger" id="mobile-toggle-btn" aria-label="منوی ناوبری">
-              <i class="fa-solid fa-bars"></i>
-            </button>
-            <div class="mobile-brand-title">
-              لیسه اهل بیت (ع)
-            </div>
-          </div>
-          <div class="left-actions">
-            <div class="search-wrapper">
-              <i class="fa-solid fa-magnifying-glass"></i>
-              <input type="text" placeholder="جستجو در سوابق سیستم..." />
-            </div>
-            {% if jalali_date_str %}
-            <div class="academic-date-pill">
-              <i class="fa-regular fa-calendar-days"></i>
-              <span>امروز: {{ jalali_date_str }}</span>
-            </div>
-            {% endif %}
-            <a href="#" class="icon-btn" title="اعلان‌ها"><i class="fa-regular fa-bell"></i></a>
-            <a href="#" class="icon-btn" title="راهنما"><i class="fa-regular fa-circle-question"></i></a>
-          </div>
-          <a href="{% url 'accounts:logout' %}" class="btn-logout">
-            <span>خروج</span> <i class="fa-solid fa-arrow-right-from-bracket"></i>
-          </a>
-        </header>
-
-        {% if messages %}
-        <div class="messages-container">
-          {% for message in messages %}
-          <div class="alert alert-{{ message.tags|default:'info' }}">
-            <div class="alert-icon">
-              {% if message.tags == 'success' %}
-                <i class="fa-solid fa-circle-check"></i>
-              {% elif message.tags == 'error' or message.tags == 'danger' %}
-                <i class="fa-solid fa-circle-exclamation"></i>
-              {% elif message.tags == 'warning' %}
-                <i class="fa-solid fa-triangle-exclamation"></i>
-              {% else %}
-                <i class="fa-solid fa-circle-info"></i>
-              {% endif %}
-              <span>{{ message }}</span>
-            </div>
-            <button type="button" class="alert-close" onclick="this.closest('.alert').remove()">&times;</button>
-          </div>
-          {% endfor %}
-        </div>
-        {% endif %}
-
-        {% block content %} {% endblock content %}
-      </main>
+{% block sidebar %}
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-wrapper">
+      <img
+        class="side-logo"
+        src="{% static 'accounts/logo.png' %}"
+        alt="لوگوی مکتب"
+      />
     </div>
+    <div class="brand-text">
+      <h4>لیسه عالی خصوصی اهل بیت رسول‌الله (ص)</h4>
+      <span>سامانه جامع مدیریت و نظارت تعلیمی</span>
+    </div>
+    <button type="button" class="sidebar-close-btn" id="sidebar-close-btn" aria-label="بستن منو">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
 
-    <!-- Global Custom Confirmation Modal -->
-    <div class="confirm-modal-overlay" id="confirmModalOverlay" aria-hidden="true">
-      <div class="confirm-modal-card" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
-        <div class="confirm-modal-header">
-          <div class="confirm-modal-icon-badge" id="confirmModalIcon">
-            <i class="fa-solid fa-triangle-exclamation"></i>
-          </div>
-          <button type="button" class="confirm-modal-close-btn" id="confirmModalCloseBtn" aria-label="بستن">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-        <div class="confirm-modal-content">
-          <h3 class="confirm-modal-title" id="confirmModalTitle">تأیید غیرفعال‌سازی</h3>
-          <p class="confirm-modal-text" id="confirmModalMessage">آیا از انجام این عملیات اطمینان دارید؟</p>
-          <div class="confirm-modal-target-box" id="confirmModalTargetBox" style="display: none;">
-            <span class="confirm-modal-target-label">مورد انتخابی:</span>
-            <strong class="confirm-modal-target-name" id="confirmModalTargetName"></strong>
-          </div>
-          <div class="confirm-modal-subtext">
-            <i class="fa-solid fa-circle-info"></i>
-            <span>این عملیات وضعیت پرونده را به «غیرفعال» تغییر داده و در سوابق تعلیمی مکتب ثبت می‌گردد.</span>
-          </div>
-        </div>
-        <div class="confirm-modal-actions">
-          <button type="button" class="btn btn-surface" id="confirmModalCancelBtn">
-            <i class="fa-solid fa-xmark"></i> انصراف
-          </button>
-          <a href="#" class="btn btn-danger" id="confirmModalProceedBtn">
-            <i class="fa-solid fa-check"></i> بله، غیرفعال شود
-          </a>
-        </div>
+  <nav class="sidebar-nav">
+    <ul>
+      <li class="{% if request.resolver_match.url_name == 'admin-dashboard' %}active{% endif %}">
+        <a href="{% url 'dashboard:admin-dashboard' %}">
+          <i class="fa-solid fa-table-columns"></i> داشبورد مدیریت
+        </a>
+      </li>
+      <li class="{% if 'teachers:' in request.resolver_match.namespace %}active{% endif %}">
+        <a href="{% url 'teachers:dashboard' %}">
+          <i class="fa-solid fa-chalkboard-user"></i> پورتال اساتید
+        </a>
+      </li>
+      <li class="{% if 'worker' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'dashboard:worker-list' %}">
+          <i class="fa-solid fa-users"></i> کارمندان و اساتید
+        </a>
+      </li>
+      <li class="{% if 'student' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'dashboard:student-list' %}">
+          <i class="fa-solid fa-user-graduate"></i> شاگردان (متعلمین)
+        </a>
+      </li>
+      <li class="{% if 'class' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'dashboard:class-list' %}">
+          <i class="fa-solid fa-chalkboard"></i> صنف‌ها
+        </a>
+      </li>
+      <li class="{% if 'attendence' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'dashboard:attendence-list' %}">
+          <i class="fa-solid fa-calendar-check"></i> حاضری و غیاب
+        </a>
+      </li>
+      <li class="{% if 'timetable' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'dashboard:timetable-class' %}">
+          <i class="fa-solid fa-calendar-week"></i> تقسیم اوقات درسی
+        </a>
+      </li>
+      <li class="{% if 'subject' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'dashboard:subject-list' %}">
+          <i class="fa-solid fa-book-open-reader"></i> مضامین و نصاب تعلیمی
+        </a>
+      </li>
+      <li class="{% if 'assesment' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'dashboard:assesment-list' %}">
+          <i class="fa-regular fa-file-lines"></i> ارزیابی‌های ماهوار
+        </a>
+      </li>
+      <li class="{% if request.resolver_match.url_name in 'exam-list exam-dashboard' %}active{% endif %}">
+        <a href="{% url 'dashboard:exam-dashboard' %}">
+          <i class="fa-solid fa-trophy"></i> مدیریت امتحانات
+        </a>
+      </li>
+      <li class="{% if 'shaqqa' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'dashboard:exam-shaqqa' %}">
+          <i class="fa-solid fa-file-signature"></i> ثبت شقه نمرات
+        </a>
+      </li>
+      <li class="{% if 'jadwal' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'dashboard:exam-jadwal-nataij' %}">
+          <i class="fa-solid fa-table-cells"></i> جدول نتایج صنف
+        </a>
+      </li>
+      <li class="{% if 'etlanama' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'dashboard:exam-etlanama' %}">
+          <i class="fa-solid fa-id-card"></i> اطلاع‌نامه شاگرد
+        </a>
+      </li>
+      <li class="{% if 'finance-list' in request.resolver_match.url_name or 'fee-' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'dashboard:finance-list' %}">
+          <i class="fa-solid fa-coins"></i> امور مالی و فیس
+        </a>
+      </li>
+      <li class="{% if 'finance-expenses' in request.resolver_match.url_name or 'expense-' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'dashboard:finance-expenses' %}">
+          <i class="fa-solid fa-money-bill-wave"></i> مصارف و هزینه‌ها
+        </a>
+      </li>
+      <li class="{% if 'finance-report' in request.resolver_match.url_name %}active{% endif %}">
+        <a href="{% url 'dashboard:finance-report' %}">
+          <i class="fa-solid fa-chart-pie"></i> بیلان مالی و گزارش
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'dashboard:admin-dashboard' %}">
+          <i class="fa-solid fa-gear"></i> تنظیمات سیستم
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="user-info">
+        <i class="fa-solid fa-user-circle"></i>
+        <span>
+          {% if request.user.name %}{{ request.user.name }} {{ request.user.last_name }}{% else %}مدیریت مکتب{% endif %}
+        </span>
       </div>
+      <span class="badge">مدیر سیستم</span>
     </div>
-
-    <script src="{% static 'dashboard/js/main.js' %}"></script>
-    {% block js %} {% endblock js %}
-  </body>
-</html>
+  </div>
+</aside>
+{% endblock sidebar %}

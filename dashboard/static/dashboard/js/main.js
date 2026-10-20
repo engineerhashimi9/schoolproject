@@ -1,5 +1,5 @@
 /**
- * Antigravity Academic School Management System
+ * Academic School Management System
  * Global Responsive UI & Navigation Controller
  */
 

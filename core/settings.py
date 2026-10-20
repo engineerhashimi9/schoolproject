@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "accounts",
     "dashboard",
+    "teachers",
 ]
 
 # 1. Update MIDDLEWARE: Keep SecurityMiddleware first, followed immediately by WhiteNoise

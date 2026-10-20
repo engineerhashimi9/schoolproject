@@ -231,11 +231,7 @@
                 <span style="font-weight: 800; display: block;">{{ p.name }}</span>
                 <span style="font-size: 11px; color: #64748b; font-weight: 600; display: block;">{{ p.time }}</span>
               </th>
-              {% if p.num == 3 %}
-                <th class="recess-col" rowspan="{{ matrix.class_rows|length|add:'1' }}">
-                  <span class="recess-text">تفریح</span>
-                </th>
-              {% endif %}
+            
             {% endfor %}
           </tr>
         </thead>

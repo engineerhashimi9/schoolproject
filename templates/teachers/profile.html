@@ -1,0 +1,156 @@
+{% extends 'teachers/base_teacher.html' %}
+{% load static %}
+
+{% block title %}پروفایل و پرونده استادی | {{ teacher.name }} {{ teacher.last_name }}{% endblock title %}
+
+{% block content %}
+<div class="content-body">
+
+  <!-- Header Banner -->
+  <div class="teacher-hero-card">
+    <div class="teacher-hero-info">
+      <div class="teacher-avatar-circle">
+        {% if teacher.photo %}
+          <img src="{{ teacher.photo.url }}" alt="{{ teacher.name }}" />
+        {% else %}
+          <i class="fa-solid fa-user-tie"></i>
+        {% endif %}
+      </div>
+      <div>
+        <h1 class="teacher-details-title">
+          پرونده استادی: {{ teacher.name }} {{ teacher.last_name }}
+        </h1>
+        <div class="teacher-meta-row">
+          <span class="teacher-meta-item">
+            <i class="fa-solid fa-id-card"></i> کد استادی: {{ teacher.id }}
+          </span>
+          <span class="teacher-meta-item">
+            <i class="fa-solid fa-graduation-cap"></i> درجه تحصیلی: {{ teacher.degree|default:'لیسانس' }}
+          </span>
+          <span class="teacher-meta-item">
+            <i class="fa-solid fa-clock"></i> ساعات موظف هفتگی: {{ kpis.weekly_hours }} ساعت
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="teacher-hero-actions">
+      <a href="{% url 'teachers:dashboard' %}" class="btn-mini btn-mini-primary" style="background:#ffffff; color:#1e3a8a; padding: 8px 14px; font-size:13px;">
+        <i class="fa-solid fa-arrow-right"></i> بازگشت به کارتابل
+      </a>
+    </div>
+  </div>
+
+  <!-- Sub Navigation Bar -->
+  <div class="teacher-subnav">
+    <a href="{% url 'teachers:dashboard' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-house-chimney"></i> کارتابل استاد
+    </a>
+    <a href="{% url 'teachers:attendance' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-calendar-check"></i> ثبت حاضری صنف
+    </a>
+    <a href="{% url 'teachers:assessment' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-star-half-stroke"></i> ارزیابی ماهوار
+    </a>
+    <a href="{% url 'teachers:shaqqa' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-file-signature"></i> شقه نمرات امتحانات
+    </a>
+    <a href="{% url 'teachers:my-timetable' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-calendar-days"></i> تقسیم اوقات هفتگی
+    </a>
+    <a href="{% url 'teachers:class-timetable' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-users-rectangle"></i> تقسیم اوقات صنف نگران
+    </a>
+    <a href="{% url 'teachers:students' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-user-graduate"></i> لیست شاگردان
+    </a>
+    <a href="{% url 'teachers:profile' %}" class="teacher-nav-pill active">
+      <i class="fa-solid fa-id-card"></i> پروفایل من
+    </a>
+  </div>
+
+  <!-- Profile Details Grid -->
+  <div class="stats-row" style="margin-bottom: 24px;">
+    <div class="stat-card">
+      <div class="stat-icon blue"><i class="fa-solid fa-clock"></i></div>
+      <div class="stat-info">
+        <span class="stat-label">ساعات تدریس در هفته</span>
+        <span class="stat-number">{{ kpis.weekly_hours }} <small style="font-size:12px;">ساعت</small></span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green"><i class="fa-solid fa-chalkboard"></i></div>
+      <div class="stat-info">
+        <span class="stat-label">صنوف تحت تدریس</span>
+        <span class="stat-number">{{ kpis.teaching_classes_count }}</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon yellow"><i class="fa-solid fa-book-open"></i></div>
+      <div class="stat-info">
+        <span class="stat-label">عناوین مضامین</span>
+        <span class="stat-number">{{ kpis.teaching_subjects_count }}</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon red"><i class="fa-solid fa-users"></i></div>
+      <div class="stat-info">
+        <span class="stat-label">مجموع شاگردان</span>
+        <span class="stat-number">{{ kpis.total_students }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="teacher-table-card">
+    <div class="table-header-bar">
+      <div>
+        <h3 class="section-title">
+          <i class="fa-solid fa-id-card-clip text-primary"></i> اطلاعات هویتی و پرسونلی استاد
+        </h3>
+        <span class="section-subtitle">ثبت‌شده در دیتابیس کادر تعلیمی مکتب</span>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; padding: 12px 0;">
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
+        <span style="font-size: 12px; color: #64748b; font-weight: 700; display: block; margin-bottom: 4px;">نام و تخلص:</span>
+        <strong style="font-size: 15px; color: #0f172a;">{{ teacher.name }} {{ teacher.last_name }}</strong>
+      </div>
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
+        <span style="font-size: 12px; color: #64748b; font-weight: 700; display: block; margin-bottom: 4px;">نام پدر (ولد):</span>
+        <strong style="font-size: 15px; color: #0f172a;">{{ teacher.father_name|default:'-' }}</strong>
+      </div>
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
+        <span style="font-size: 12px; color: #64748b; font-weight: 700; display: block; margin-bottom: 4px;">شماره تماس / موبایل:</span>
+        <strong style="font-size: 15px; color: #0f172a;">{{ teacher.phone|default:'-' }}</strong>
+      </div>
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
+        <span style="font-size: 12px; color: #64748b; font-weight: 700; display: block; margin-bottom: 4px;">ایمیل حساب کاربری:</span>
+        <strong style="font-size: 15px; color: #1e40af;">
+          {% if teacher.user %}{{ teacher.user.email }}{% else %}ندارد{% endif %}
+        </strong>
+      </div>
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
+        <span style="font-size: 12px; color: #64748b; font-weight: 700; display: block; margin-bottom: 4px;">رشته تحصیلی / مسلک:</span>
+        <strong style="font-size: 15px; color: #0f172a;">{{ teacher.subject_specialty|default:'تعلیم و تربیه' }}</strong>
+      </div>
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px;">
+        <span style="font-size: 12px; color: #64748b; font-weight: 700; display: block; margin-bottom: 4px;">مسوولیت نگران صنف:</span>
+        <strong style="font-size: 15px; color: #166534;">
+          {% if kpis.guidance_class %}
+            صنف {{ kpis.guidance_class.alpha_grade }} - {{ kpis.guidance_class.section }}
+          {% else %}
+            مسوولیت نگران صنف ندارد
+          {% endif %}
+        </strong>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock content %}

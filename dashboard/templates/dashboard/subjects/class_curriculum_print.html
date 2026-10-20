@@ -1,0 +1,276 @@
+{% load static %}
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>جدول رسمی نصاب تعلیمی صنف {{ cls.alpha_grade }} - لیسه عالی اهل بیت (ص)</title>
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}" />
+    <style>
+      @page {
+        size: A4 portrait;
+        margin: 12mm 14mm;
+      }
+      body {
+        background: #ffffff;
+        color: #0f172a;
+        font-family: 'Vazirmatn', sans-serif;
+        padding: 0;
+        margin: 0;
+      }
+      .print-container {
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #ffffff;
+      }
+      .print-header {
+        border-bottom: 2.5px double #0f172a;
+        padding-bottom: 14px;
+        margin-bottom: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .header-title-box {
+        text-align: center;
+        flex: 1;
+      }
+      .header-title-box h3 {
+        margin: 0;
+        font-size: 14px;
+        color: #475569;
+        font-weight: 700;
+      }
+      .header-title-box h1 {
+        margin: 4px 0;
+        font-size: 18px;
+        font-weight: 800;
+        color: #0f172a;
+      }
+      .header-title-box h2 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 800;
+        color: #1e3a8a;
+      }
+      .meta-box {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin-bottom: 18px;
+        font-size: 13px;
+      }
+      .meta-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .meta-lbl {
+        color: #64748b;
+        font-size: 11.5px;
+      }
+      .meta-val {
+        font-weight: 800;
+        color: #0f172a;
+      }
+      .curriculum-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12.5px;
+        margin-bottom: 20px;
+      }
+      .curriculum-table th, .curriculum-table td {
+        border: 1px solid #94a3b8;
+        padding: 7px 10px;
+        text-align: right;
+      }
+      .curriculum-table th {
+        background: #f1f5f9;
+        font-weight: 800;
+        color: #0f172a;
+        text-align: center;
+      }
+      .curriculum-table tr:nth-child(even) td {
+        background: #fafafa;
+      }
+      .signatures-row {
+        margin-top: 36px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        text-align: center;
+        gap: 20px;
+        page-break-inside: avoid;
+      }
+      .sig-box {
+        border-top: 1px dashed #94a3b8;
+        padding-top: 10px;
+      }
+      .sig-title {
+        font-weight: 800;
+        font-size: 13px;
+        color: #0f172a;
+      }
+      .sig-line {
+        font-size: 11.5px;
+        color: #64748b;
+        margin-top: 3px;
+      }
+      .no-print {
+        background: #0f172a;
+        color: #ffffff;
+        padding: 12px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+        body {
+          padding: 0;
+        }
+        .print-container {
+          padding: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Non-print Action Bar -->
+    <div class="no-print">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <i class="fa-solid fa-print"></i>
+        <strong>پیش‌نمایش چاپ رسمی نصاب درسی صنف (اندازه A4)</strong>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button onclick="window.print()" class="btn btn-primary" style="background: #2563eb; border: none; padding: 8px 20px; cursor: pointer; color: white; border-radius: 6px; font-weight: bold;">
+          <i class="fa-solid fa-print"></i> چاپ سند (Print)
+        </button>
+        <button onclick="window.close()" class="btn btn-surface" style="background: #334155; border: none; padding: 8px 16px; cursor: pointer; color: white; border-radius: 6px;">
+          بستن
+        </button>
+      </div>
+    </div>
+
+    <!-- Print Canvas -->
+    <div class="print-container">
+
+      <!-- Official Header -->
+      <div class="print-header">
+        <div style="width: 80px; text-align: center;">
+          <img src="{% static 'accounts/logo.png' %}" alt="نشان مکتب" style="max-height: 70px; max-width: 70px;" />
+        </div>
+        <div class="header-title-box">
+          <h3>امارت اسلامی افغانستان - وزارت معارف</h3>
+          <h1>لیسه عالی خصوصی اهل بیت رسول‌الله (ص)</h1>
+          <h2>جدول رسمی نصاب تعلیمی و مفردات درسی (سال تعلیمی {{ year.year }})</h2>
+        </div>
+        <div style="width: 80px; text-align: left; font-size: 11px; color: #64748b; line-height: 1.5;">
+          <span>تاریخ صدور:</span><br />
+          <strong>{{ today_str }}</strong><br />
+          <span>کابل - افغانستان</span>
+        </div>
+      </div>
+
+      <!-- Class Meta -->
+      <div class="meta-box">
+        <div class="meta-item">
+          <span class="meta-lbl">صنف و شعبه:</span>
+          <span class="meta-val">صنف {{ cls.alpha_grade }} - شعبه {{ cls.section }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-lbl">دوره آموزشی:</span>
+          <span class="meta-val">{{ educational_stage }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-lbl">استاد رهنما (نگران صنف):</span>
+          <span class="meta-val">{% if cls.guidence %}{{ cls.guidence.name }} {{ cls.guidence.last_name }}{% else %}تعیین‌نشده{% endif %}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-lbl">ظرفیت صنف:</span>
+          <span class="meta-val">{{ cls.capacity }} شاگرد</span>
+        </div>
+      </div>
+
+      <!-- Curriculum Table -->
+      <table class="curriculum-table">
+        <thead>
+          <tr>
+            <th style="width: 35px;">شماره</th>
+            <th>نام مضمون رسمی</th>
+            <th style="width: 70px;">کد مضمون</th>
+            <th>دسته‌بندی نصاب معارف</th>
+            <th style="width: 75px;">ساعت/هفته</th>
+            <th style="width: 85px;">معیار نمره</th>
+            <th>استاد تدریس‌کننده</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in subject_rows %}
+          <tr>
+            <td style="text-align: center; font-weight: bold;">{{ forloop.counter }}</td>
+            <td style="font-weight: bold;">{{ r.subject.name }}</td>
+            <td style="text-align: center; font-family: monospace;">{{ r.subject.code|default:"-" }}</td>
+            <td>{{ r.subject.category }}</td>
+            <td style="text-align: center; font-weight: bold;">{{ r.weekly_hours }} ساعت</td>
+            <td style="text-align: center;">{{ r.subject.passing_score|floatformat:0 }} از {{ r.subject.total_score|floatformat:0 }}</td>
+            <td>
+              {% if r.teacher %}
+                {{ r.teacher.name }} {{ r.teacher.last_name }}
+              {% else %}
+                <span style="color: #94a3b8;">کادر تعلیمی مکتب</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+          <!-- Total Summary Row -->
+          <tr style="background: #f1f5f9; font-weight: 800;">
+            <td colspan="4" style="text-align: left; padding-left: 20px;">
+              مجموع کل ساعات تدریس و مضامین مصوب در هفته:
+            </td>
+            <td style="text-align: center; color: #1e3a8a;">
+              {{ total_hours }} ساعت
+            </td>
+            <td colspan="2" style="text-align: center;">
+              {{ total_subjects }} مضمون رسمی
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- MoE Compliance Note -->
+      <div style="font-size: 11.5px; color: #475569; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; margin-bottom: 24px; line-height: 1.6;">
+        <strong>ملاحظه اداری:</strong> این نصاب تعلیمی بر اساس لوایح و مفردات درسی وزارت معارف افغانستان تنظیم گردیده است. حداقل نمره قبولی در هر مضمون ۴۰ نمره (۱۶ چهارونیم ماهه + ۲۴ سالانه) بوده و ساعات فوق در پلان هفتگی تقسیم اوقات منظور گردیده است.
+      </div>
+
+      <!-- Signatures -->
+      <div class="signatures-row">
+        <div class="sig-box">
+          <span class="sig-title">امضای نگران صنف</span>
+          <span class="sig-line">{% if cls.guidence %}{{ cls.guidence.name }} {{ cls.guidence.last_name }}{% else %}استاد رهنما{% endif %}</span>
+        </div>
+        <div class="sig-box">
+          <span class="sig-title">امضای سرمعلم تدریسی</span>
+          <span class="sig-line">مدیریت تدریسی لیسه</span>
+        </div>
+        <div class="sig-box">
+          <span class="sig-title">مهر و امضای مدیر لیسه</span>
+          <span class="sig-line">اداره لیسه عالی اهل بیت (ص)</span>
+        </div>
+      </div>
+
+    </div>
+
+  </body>
+</html>

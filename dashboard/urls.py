@@ -64,5 +64,22 @@ urlpatterns = [
     path("timetable/slot/<int:id>/delete/", views.timetable_slot_delete, name="timetable-slot-delete"),
     path("timetable/class/<int:class_id>/print/", views.timetable_class_print, name="timetable-class-print"),
     path("timetable/teacher/<int:teacher_id>/print/", views.timetable_teacher_print, name="timetable-teacher-print"),
+    # Subject & Afghan Curriculum Management URLs (مدیریت مضامین و نصاب تعلیمی)
+    path("subjects/", views.subject_list_view, name="subject-list"),
+    path("subjects/create/", views.subject_create_view, name="subject-create"),
+    path("subjects/<int:id>/", views.subject_detail_view, name="subject-detail"),
+    path("subjects/<int:id>/edit/", views.subject_edit_view, name="subject-edit"),
+    path("subjects/<int:id>/delete/", views.subject_delete_view, name="subject-delete"),
+    path("subjects/<int:id>/toggle-status/", views.subject_toggle_status_view, name="subject-toggle-status"),
+    path("subjects/class-matrix/", views.subject_class_matrix_view, name="subject-class-matrix"),
+    path("subjects/class/<int:class_id>/print/", views.subject_class_print_view, name="subject-class-print"),
+    # Teacher Dashboard & Management URLs (پورتال و مدیریت اختصاصی اساتید)
+    path("teacher/", views.teacher_portal_view, name="teacher-portal"),
+    path("teacher/attendance/", views.teacher_attendance_view, name="teacher-attendance"),
+    path("teacher/assessment/", views.teacher_assessment_view, name="teacher-assessment"),
+    path("teacher/shaqqa/", views.teacher_shaqqa_view, name="teacher-shaqqa"),
+    path("teacher/timetable/my/", views.teacher_my_timetable_view, name="teacher-my-timetable"),
+    path("teacher/timetable/class/", views.teacher_class_timetable_view, name="teacher-class-timetable"),
+    path("teacher/students/", views.teacher_students_view, name="teacher-students"),
 ]
 

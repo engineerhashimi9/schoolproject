@@ -9,7 +9,26 @@ admin.site.register(Province)
 admin.site.register(District)
 admin.site.register(Student)
 admin.site.register(Teacher)
-admin.site.register(Subject)
+
+
+@admin.register(Subject)
+class SubjectAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name",
+        "code",
+        "category",
+        "educational_level",
+        "weekly_hours",
+        "passing_score",
+        "total_score",
+        "is_active",
+    )
+    list_filter = ("category", "educational_level", "is_active")
+    search_fields = ("name", "code", "description")
+    filter_horizontal = ("classes",)
+
+
 admin.site.register(Month)
 admin.site.register(ExamType)
 admin.site.register(AcademiceYear)
@@ -26,5 +45,3 @@ admin.site.register(ExamMark)
 admin.site.register(ExamAttendance)
 admin.site.register(Expense)
 admin.site.register(TimeTable)
-
-

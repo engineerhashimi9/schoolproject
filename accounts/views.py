@@ -1,13 +1,14 @@
-from django.shortcuts import render
-from django.contrib.auth import authenticate,login
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.urls import reverse
-from django.shortcuts import redirect
-from django.contrib.auth import get_user_model
-from django.contrib.auth import logout
-useradmin=get_user_model()
-# Create your views here.
+
+useradmin = get_user_model()
+
+
 def login_view(request):
     if request.user.is_authenticated:
+        if hasattr(request.user, "teacher_profile") and request.user.teacher_profile and not request.user.is_staff:
+            return redirect(reverse("teachers:dashboard"))
         return redirect(reverse("dashboard:admin-dashboard"))
 
     error = ""
@@ -17,11 +18,15 @@ def login_view(request):
         user = authenticate(email=email, password=password)
         if user is not None:
             login(request, user=user)
+            # Auto-detect role: Teacher vs Admin
+            if hasattr(user, "teacher_profile") and user.teacher_profile and not user.is_staff:
+                return redirect(reverse("teachers:dashboard"))
             return redirect(reverse("dashboard:admin-dashboard"))
         else:
             error = "ایمیل یا رمز عبور اشتباه است!"
 
     return render(request, "accounts/login.html", {"error": error})
+
 
 def custom_logout(request):
     logout(request)

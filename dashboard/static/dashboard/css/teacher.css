@@ -1,0 +1,801 @@
+/* ==========================================================================
+   Teacher Portal & Management Module (پورتال و مدیریت اختصاصی اساتید)
+   Designed strictly for Afghan School Curriculum & Ministry of Education
+   ========================================================================== */
+
+/* Teacher Hero Header */
+.teacher-hero-card {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #3b82f6 100%);
+  color: #ffffff;
+  border-radius: 16px;
+  padding: 24px 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.teacher-hero-card::after {
+  content: "";
+  position: absolute;
+  top: -40px;
+  left: -40px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.teacher-hero-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  z-index: 1;
+}
+
+.teacher-avatar-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 3px solid rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #ffffff;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.teacher-avatar-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.teacher-details-title {
+  margin: 0 0 6px 0;
+  font-size: 22px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.teacher-guidance-badge {
+  font-size: 12px;
+  font-weight: 600;
+  background: #f59e0b;
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.teacher-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 13.5px;
+  opacity: 0.92;
+}
+
+.teacher-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.teacher-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  z-index: 1;
+}
+
+/* Teacher Switcher (for Admins) */
+.teacher-switcher-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  padding: 6px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.teacher-switcher-form label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e0f2fe;
+  white-space: nowrap;
+}
+
+.teacher-switcher-form select {
+  background: #ffffff;
+  color: #0f172a;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  outline: none;
+  min-width: 170px;
+}
+
+/* Teacher Module Sub-Navigation Bar */
+.teacher-subnav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 8px 12px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  scrollbar-width: thin;
+}
+
+.teacher-subnav::-webkit-scrollbar {
+  height: 4px;
+}
+.teacher-subnav::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.teacher-nav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #475569;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.teacher-nav-pill:hover {
+  background: #f1f5f9;
+  color: #1e3a8a;
+}
+
+.teacher-nav-pill.active {
+  background: #1e3a8a;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(30, 58, 138, 0.2);
+}
+
+.teacher-nav-pill i {
+  font-size: 14px;
+}
+
+/* Today Schedule Cards */
+.today-schedule-container {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 22px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-subtitle {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.periods-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.period-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.period-card.has-class {
+  background: #ffffff;
+  border-color: #bfdbfe;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.05);
+}
+
+.period-card.has-class::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 4px;
+  background: #2563eb;
+}
+
+.period-card.is-recess {
+  background: #fef3c7;
+  border-color: #fde68a;
+  text-align: center;
+}
+
+.period-card.is-holiday {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  grid-column: 1 / -1;
+  padding: 24px;
+  text-align: center;
+}
+
+.period-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.period-badge {
+  font-size: 11px;
+  font-weight: 700;
+  background: #e2e8f0;
+  color: #334155;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.period-time {
+  font-size: 11.5px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.period-subject-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1e3a8a;
+  margin-bottom: 4px;
+}
+
+.period-class-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 3px 9px;
+  border-radius: 6px;
+}
+
+/* Assigned Classes Grid */
+.assigned-classes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.assigned-class-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.assigned-class-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+}
+
+.assigned-class-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.assigned-class-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+.assigned-class-meta {
+  font-size: 12.5px;
+  color: #64748b;
+  display: flex;
+  gap: 10px;
+}
+
+.subject-pills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.subject-mini-pill {
+  font-size: 11.5px;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.assigned-class-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 12px;
+}
+
+.btn-mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 8px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-mini-primary {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+.btn-mini-primary:hover {
+  background: #1d4ed8;
+  color: #ffffff;
+}
+
+.btn-mini-success {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+.btn-mini-success:hover {
+  background: #15803d;
+  color: #ffffff;
+}
+
+.btn-mini-amber {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+.btn-mini-amber:hover {
+  background: #b45309;
+  color: #ffffff;
+}
+
+/* Ministry Guidelines Card */
+.moe-guidelines-box {
+  background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+  border: 1px solid #bfdbfe;
+  border-right: 5px solid #2563eb;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.moe-guidelines-box h4 {
+  margin: 0 0 8px 0;
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #1e3a8a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.moe-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  font-size: 12.5px;
+  color: #334155;
+}
+
+.moe-rule-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.moe-rule-tag {
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-size: 11px;
+}
+.moe-tag-midterm { background: #dbeafe; color: #1e40af; }
+.moe-tag-final { background: #dcfce7; color: #166534; }
+.moe-tag-total { background: #fef3c7; color: #92400e; }
+.moe-tag-pass { background: #ede9fe; color: #5b21b6; }
+
+/* Filter & Selection Bar */
+.teacher-filter-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-group label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.filter-group select,
+.filter-group input {
+  padding: 9px 12px;
+  font-size: 13.5px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #0f172a;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Data Table Responsive Container */
+.teacher-table-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  margin-bottom: 24px;
+}
+
+.table-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.teacher-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  text-align: right;
+}
+
+.teacher-data-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 800;
+  padding: 12px 14px;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.teacher-data-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.teacher-data-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* Student Info Cell */
+.student-table-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.student-table-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  font-size: 16px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.student-table-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.student-cell-name {
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.3;
+}
+
+.student-cell-sub {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* Inputs in Tables */
+.table-input {
+  width: 80px;
+  padding: 6px 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-align: center;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.table-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  background: #eff6ff;
+}
+
+.table-input.input-danger {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+/* Badges for Results */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-badge.passed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status-badge.conditional {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.status-badge.failed {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-badge.mahroom {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+/* Timetable Matrix Grid (Weekly) */
+.weekly-timetable-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.weekly-timetable-table th,
+.weekly-timetable-table td {
+  border: 1px solid #e2e8f0;
+  padding: 10px;
+  text-align: center;
+}
+
+.weekly-timetable-table th {
+  background: #1e3a8a;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 13.5px;
+}
+
+.timetable-day-header {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  font-weight: 800;
+  width: 110px;
+  border-left: 2px solid #cbd5e1 !important;
+}
+
+.timetable-cell-content {
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.timetable-cell-subject {
+  font-weight: 800;
+  font-size: 13.5px;
+  color: #1e3a8a;
+}
+
+.timetable-cell-class {
+  font-size: 12px;
+  font-weight: 700;
+  background: #dbeafe;
+  color: #1d4ed8;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.timetable-cell-teacher {
+  font-size: 11.5px;
+  color: #64748b;
+}
+
+.timetable-cell-empty {
+  color: #cbd5e1;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.timetable-recess-col {
+  background: #fffbeb !important;
+  color: #b45309 !important;
+  font-weight: 800;
+  font-size: 12px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  width: 36px;
+  padding: 8px 4px !important;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .teacher-hero-card {
+    padding: 18px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .teacher-hero-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .teacher-switcher-form {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .teacher-switcher-form select {
+    flex-grow: 1;
+  }
+  .periods-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Print Styling */
+@media print {
+  .sidebar,
+  .top-header,
+  .teacher-subnav,
+  .teacher-hero-actions,
+  .action-buttons,
+  .btn-primary,
+  .btn-outline,
+  .teacher-filter-card,
+  .pagination,
+  .btn-logout,
+  .search-wrapper,
+  #mobile-toggle-btn {
+    display: none !important;
+  }
+  .base-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+  .teacher-hero-card {
+    background: none !important;
+    color: #000000 !important;
+    border: 1px solid #000000 !important;
+    box-shadow: none !important;
+    margin-bottom: 12px !important;
+  }
+  .weekly-timetable-table th {
+    background: #e2e8f0 !important;
+    color: #000000 !important;
+  }
+}

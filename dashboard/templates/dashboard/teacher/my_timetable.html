@@ -1,0 +1,175 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}تقسیم اوقات تدریس هفتگی استاد {{ teacher.name }} {{ teacher.last_name }}{% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/teacher.css' %}" />
+{% endblock style %}
+
+{% block content %}
+<div class="content-body">
+
+  <!-- Header Banner -->
+  <div class="teacher-hero-card">
+    <div class="teacher-hero-info">
+      <div class="teacher-avatar-circle">
+        <i class="fa-solid fa-calendar-days"></i>
+      </div>
+      <div>
+        <h1 class="teacher-details-title">
+          تقسیم اوقات تدریس هفتگی استاد
+        </h1>
+        <div class="teacher-meta-row">
+          <span class="teacher-meta-item">
+            <i class="fa-solid fa-user-tie"></i> استاد: {{ teacher.name }} {{ teacher.last_name }}
+          </span>
+          <span class="teacher-meta-item">
+            <i class="fa-solid fa-clock"></i> ساعات تدریس: <strong>{{ matrix.total_hours }} ساعت در هفته</strong>
+          </span>
+          <span class="teacher-meta-item">
+            <i class="fa-solid fa-calendar-alt"></i> سال تعلیمی {{ academic_year.year }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Navigation / Admin Switcher / Print -->
+    <div class="teacher-hero-actions">
+      {% if request.user.is_staff and all_teachers %}
+      <form method="GET" class="teacher-switcher-form">
+        <label for="admin-t-select"><i class="fa-solid fa-user-shield"></i> تعویض استاد:</label>
+        <select id="admin-t-select" name="teacher_id" onchange="this.form.submit()">
+          {% for t in all_teachers %}
+            <option value="{{ t.id }}" {% if t.id == teacher.id %}selected{% endif %}>{{ t.name }} {{ t.last_name }}</option>
+          {% endfor %}
+        </select>
+      </form>
+      {% endif %}
+      <button type="button" onclick="window.print()" class="btn-mini btn-mini-primary" style="background:#ffffff; color:#1e3a8a; padding: 8px 16px; font-size:13.5px;">
+        <i class="fa-solid fa-print"></i> چاپ تقسیم اوقات
+      </button>
+      <a href="{% url 'dashboard:teacher-portal' %}" class="btn-mini btn-mini-primary" style="background:rgba(255,255,255,0.2); color:#ffffff; padding: 8px 14px; font-size:13px;">
+        <i class="fa-solid fa-arrow-right"></i> بازگشت
+      </a>
+    </div>
+  </div>
+
+  <!-- Sub Navigation Bar -->
+  <div class="teacher-subnav">
+    <a href="{% url 'dashboard:teacher-portal' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-house-chimney"></i> کارتابل استاد
+    </a>
+    <a href="{% url 'dashboard:teacher-attendance' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-calendar-check"></i> ثبت حاضری صنف
+    </a>
+    <a href="{% url 'dashboard:teacher-assessment' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-star-half-stroke"></i> ارزیابی ماهوار
+    </a>
+    <a href="{% url 'dashboard:teacher-shaqqa' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-file-signature"></i> شقه نمرات امتحانات
+    </a>
+    <a href="{% url 'dashboard:teacher-my-timetable' %}" class="teacher-nav-pill active">
+      <i class="fa-solid fa-calendar-days"></i> تقسیم اوقات هفتگی
+    </a>
+    <a href="{% url 'dashboard:teacher-class-timetable' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-users-rectangle"></i> تقسیم اوقات صنف نگران
+    </a>
+    <a href="{% url 'dashboard:teacher-students' %}" class="teacher-nav-pill">
+      <i class="fa-solid fa-user-graduate"></i> لیست شاگردان
+    </a>
+  </div>
+
+  <!-- Timetable Table Card -->
+  <div class="teacher-table-card">
+    <div class="table-header-bar">
+      <div>
+        <h3 class="section-title">
+          <i class="fa-solid fa-table text-primary"></i> جدول توزیع ساعات درسی استاد {{ teacher.name }} {{ teacher.last_name }}
+        </h3>
+        <span class="section-subtitle">
+          هفته آموزشی ۶ روزه (شنبه تا پنج‌شنبه) مطابق سیستم مکاتب افغانستان - روز جمعه تعطیل عمومی است.
+        </span>
+      </div>
+      <div style="font-size: 13px; font-weight: 700; color: #1e40af; background: #eff6ff; padding: 6px 14px; border-radius: 8px;">
+        <i class="fa-solid fa-hourglass-half"></i> مجموع کل کریدت‌های درسی: {{ matrix.total_hours }} ساعت
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="weekly-timetable-table">
+        <thead>
+          <tr>
+            <th class="timetable-day-header">روز هفته</th>
+            {% for p in periods %}
+              {% if forloop.counter == 4 %}
+                <th class="timetable-recess-col">زنگ تفریح</th>
+              {% endif %}
+              <th>
+                ساعت {{ p.num }}<br>
+                <small style="font-size: 11px; font-weight: normal; opacity: 0.85;">{{ p.time_slot }}</small>
+              </th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for day in matrix.days %}
+            <tr>
+              <td class="timetable-day-header">
+                <i class="fa-regular fa-calendar-check" style="color: #2563eb; margin-left: 5px;"></i>
+                {{ day.day_name }}
+              </td>
+              {% for slot in day.periods %}
+                {% if forloop.counter == 4 %}
+                  <td class="timetable-recess-col" rowspan="1">تفریح عمومی</td>
+                {% endif %}
+                <td>
+                  {% if slot %}
+                    <div class="timetable-cell-content">
+                      <span class="timetable-cell-subject">
+                        <i class="fa-solid fa-book-bookmark"></i> {{ slot.subject.name }}
+                      </span>
+                      <span class="timetable-cell-class">
+                        صنف {{ slot.classs.alpha_grade }} - {{ slot.classs.section }}
+                      </span>
+                      {% if slot.classs.room_number %}
+                        <span class="timetable-cell-teacher">
+                          <i class="fa-solid fa-door-open"></i> اطاق {{ slot.classs.room_number }}
+                        </span>
+                      {% endif %}
+                    </div>
+                  {% else %}
+                    <div class="timetable-cell-content">
+                      <span class="timetable-cell-empty">ساعت آزاد</span>
+                    </div>
+                  {% endif %}
+                </td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Official Signature Footers for Print -->
+    <div style="margin-top: 30px; display: flex; justify-content: space-around; text-align: center; font-size: 13px; color: #334155;">
+      <div>
+        <p style="margin: 0; font-weight: 700;">امضای استاد</p>
+        <div style="height: 45px;"></div>
+        <p style="margin: 0; color: #64748b;">استاد {{ teacher.name }} {{ teacher.last_name }}</p>
+      </div>
+      <div>
+        <p style="margin: 0; font-weight: 700;">امضای سرمعلم تدریسی</p>
+        <div style="height: 45px;"></div>
+        <p style="margin: 0; color: #64748b;">معاونت تدریسی لیسه</p>
+      </div>
+      <div>
+        <p style="margin: 0; font-weight: 700;">ملاحظه و تأیید آمریت مکتب</p>
+        <div style="height: 45px;"></div>
+        <p style="margin: 0; color: #64748b;">مدیر / آمر لیسه عالی اهل بیت (ص)</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock content %}

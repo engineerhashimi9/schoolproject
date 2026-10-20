@@ -1,0 +1,320 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}ماتریس تخصیص نصاب تعلیمی به صنوف | لیسه عالی اهل بیت (ص){% endblock title %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'dashboard/css/subjects.css' %}" />
+<style>
+  .matrix-hero {
+    background: linear-gradient(135deg, #0f172a, #1e3a8a);
+    color: #ffffff;
+    border-radius: 16px;
+    padding: 24px 30px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .moe-standard-box {
+    background: #ecfdf5;
+    border: 1.5px solid #a7f3d0;
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+</style>
+{% endblock style %}
+
+{% block content %}
+<div class="content-body">
+
+  <!-- Breadcrumb & Top Bar -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
+    <div>
+      <a href="{% url 'dashboard:subject-list' %}" style="display: inline-flex; align-items: center; gap: 8px; color: #475569; font-size: 13px; font-weight: 700; text-decoration: none;">
+        <i class="fa-solid fa-arrow-right"></i> فهرست عمومی مضامین
+      </a>
+      <h1 style="font-size: 20px; font-weight: 800; color: #0f172a; margin: 6px 0 0;">
+        <i class="fa-solid fa-table-cells text-primary" style="margin-left: 8px;"></i>
+        ماتریس تخصیص مضامین و نصاب تعلیمی به صنوف
+      </h1>
+    </div>
+    <div style="display: flex; gap: 10px;">
+      {% if selected_class %}
+      <a href="{% url 'dashboard:subject-class-print' selected_class.id %}" target="_blank" class="btn btn-outline" style="font-size: 13px;">
+        <i class="fa-solid fa-print"></i> چاپ نصاب درسی صنف (A4)
+      </a>
+      {% endif %}
+      <a href="{% url 'dashboard:subject-create' %}" class="btn btn-primary" style="font-size: 13px;">
+        <i class="fa-solid fa-plus-circle"></i> تعریف مضمون جدید
+      </a>
+    </div>
+  </div>
+
+  <!-- Class Selector Toolbar -->
+  <div class="card" style="margin-bottom: 24px; padding: 18px 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+      <div style="display: flex; align-items: center; gap: 12px; width: 100%; max-width: 440px;">
+        <label style="font-weight: 800; font-size: 14px; white-space: nowrap; color: #1e3a8a;">
+          <i class="fa-solid fa-school"></i> انتخاب صنف مورد نظر:
+        </label>
+        <form method="GET" action="{% url 'dashboard:subject-class-matrix' %}" style="width: 100%;">
+          <select name="class_id" class="input-control font-bold" onchange="this.form.submit()">
+            {% for c in classes %}
+              <option value="{{ c.id }}" {% if selected_class and selected_class.id == c.id %}selected{% endif %}>
+                صنف {{ c.alpha_grade }} - شعبه {{ c.section }} (پایه {{ c.grade }})
+              </option>
+            {% endfor %}
+          </select>
+        </form>
+      </div>
+
+      <!-- Quick Class Meta -->
+      {% if selected_class %}
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="text-align: right;">
+          <span style="font-size: 12px; color: #64748b; display: block;">دوره تعلیمی:</span>
+          {% if educational_stage == 'ابتدائیه' %}
+            <span class="badge-level primary"><i class="fa-solid fa-child"></i> دوره ابتدائیه (صنوف ۱ تا ۶)</span>
+          {% elif educational_stage == 'متوسطه' %}
+            <span class="badge-level middle"><i class="fa-solid fa-user-graduate"></i> دوره متوسطه (صنوف ۷ تا ۹)</span>
+          {% else %}
+            <span class="badge-level high"><i class="fa-solid fa-school-flag"></i> دوره لیسه (صنوف ۱۰ تا ۱۲)</span>
+          {% endif %}
+        </div>
+        <div style="text-align: right; border-right: 1px solid #e2e8f0; padding-right: 16px;">
+          <span style="font-size: 12px; color: #64748b; display: block;">استاد رهنما:</span>
+          <strong style="color: #0f172a; font-size: 13.5px;">
+            {% if selected_class.guidence %}{{ selected_class.guidence.name }} {{ selected_class.guidence.last_name }}{% else %}<span style="color: #f59e0b;">تعیین‌نشده</span>{% endif %}
+          </strong>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if selected_class %}
+  <!-- Hero Summary Box -->
+  <div class="matrix-hero">
+    <div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <h2 style="margin: 0; font-size: 20px; font-weight: 800; color: #ffffff;">
+          نصاب تعلیمی صنف: {{ selected_class.alpha_grade }} - شعبه {{ selected_class.section }}
+        </h2>
+        <span style="background: rgba(255, 255, 255, 0.2); color: #ffffff; padding: 2px 10px; border-radius: 6px; font-size: 12px; font-weight: 700;">
+          ظرفیت: {{ selected_class.capacity }} شاگرد
+        </span>
+      </div>
+      <p style="margin: 8px 0 0; font-size: 13px; color: #cbd5e1;">
+        مضامین انتخاب‌شده در جدول ذیل مستقیماً در شقه نمرات، کارنامه، اطلاع‌نامه نمرات و ساعات تقسیم اوقات این صنف منعکس می‌شوند.
+      </p>
+    </div>
+
+    <div style="display: flex; gap: 24px; text-align: center;">
+      <div style="background: rgba(255, 255, 255, 0.12); padding: 12px 20px; border-radius: 10px;">
+        <span style="font-size: 22px; font-weight: 800; display: block;" id="assigned-count-badge">
+          {{ current_assigned_ids|length }}
+        </span>
+        <span style="font-size: 11.5px; color: #e2e8f0;">مضمون اختصاص‌یافته</span>
+      </div>
+      <div style="background: rgba(255, 255, 255, 0.12); padding: 12px 20px; border-radius: 10px;">
+        <span style="font-size: 22px; font-weight: 800; display: block;">
+          {{ current_weekly_hours }}
+        </span>
+        <span style="font-size: 11.5px; color: #e2e8f0;">ساعت تدریس در هفته</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- One-Click Afghan MoE Standard Curriculum Application Box -->
+  <div class="moe-standard-box">
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <div style="width: 48px; height: 48px; border-radius: 12px; background: #10b981; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">
+        <i class="fa-solid fa-certificate"></i>
+      </div>
+      <div>
+        <h3 style="font-size: 16px; font-weight: 800; color: #065f46; margin: 0;">
+          اِعمال نصاب معیاری وزارت معارف افغانستان با یک کلیک
+        </h3>
+        <p style="margin: 4px 0 0; font-size: 13px; color: #047857;">
+          پکیج استاندارد وزارت معارف شامل تمام مضامین رسمی دوره <strong>{{ educational_stage }}</strong> (قرآن، دینیات، دری، پشتو، ریاضی، ساینس...) را فوراً بر این صنف منطبق می‌سازد.
+        </p>
+      </div>
+    </div>
+
+    <!-- Apply Standard Form -->
+    <form method="POST" action="{% url 'dashboard:subject-class-matrix' %}" style="display: flex; gap: 10px; align-items: center;">
+      {% csrf_token %}
+      <input type="hidden" name="action_type" value="apply_standard" />
+      <input type="hidden" name="class_id" value="{{ selected_class.id }}" />
+      
+      <select name="curriculum_stage" class="input-control font-bold" style="width: 160px; height: 42px;">
+        <option value="ابتدائیه" {% if educational_stage == 'ابتدائیه' %}selected{% endif %}>دوره ابتدائیه (۱-۶)</option>
+        <option value="متوسطه" {% if educational_stage == 'متوسطه' %}selected{% endif %}>دوره متوسطه (۷-۹)</option>
+        <option value="لیسه" {% if educational_stage == 'لیسه' %}selected{% endif %}>دوره لیسه (۱۰-۱۲)</option>
+      </select>
+
+      <button type="submit" class="btn btn-primary" style="background: #059669; border-color: #059669; height: 42px; padding: 0 20px; font-weight: 800; white-space: nowrap;">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> اِعمال نصاب رسمی
+      </button>
+    </form>
+  </div>
+
+  <!-- Custom Subject Assignment Matrix Form -->
+  <form method="POST" id="custom-matrix-form" action="{% url 'dashboard:subject-class-matrix' %}">
+    {% csrf_token %}
+    <input type="hidden" name="action_type" value="save_custom" />
+    <input type="hidden" name="class_id" value="{{ selected_class.id }}" />
+
+    <!-- Control Bar -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <h3 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">
+          <i class="fa-solid fa-list-check text-primary" style="margin-left: 8px;"></i>
+          انتخاب و سفارشی‌سازی مضامین درسی صنف
+        </h3>
+        <span style="font-size: 12.5px; color: #64748b;">مضامین مورد نیاز را علامت بزنید و در پایان روی دکمه ذخیره کلیک فرمایید.</span>
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <button type="button" class="btn btn-surface" style="font-size: 12px;" onclick="toggleAllMatrix(true)">
+          <i class="fa-solid fa-check-square"></i> انتخاب همه
+        </button>
+        <button type="button" class="btn btn-surface" style="font-size: 12px;" onclick="toggleAllMatrix(false)">
+          <i class="fa-solid fa-square"></i> لغو انتخاب همه
+        </button>
+        <button type="submit" class="btn btn-primary" style="padding: 8px 24px; font-weight: 800; font-size: 13.5px;">
+          <i class="fa-solid fa-floppy-disk"></i> ذخیره تخصیص مضامین
+        </button>
+      </div>
+    </div>
+
+    <!-- Category Groups Loop -->
+    {% for category_name, category_subjects in subjects_by_category.items %}
+    <div class="curriculum-category-group">
+      <div class="curriculum-category-header">
+        <div class="curriculum-category-title">
+          {% if category_name == 'علوم دینی و اسلامی' %}
+            <i class="fa-solid fa-kaaba" style="color: #059669;"></i>
+          {% elif category_name == 'زبان و ادبیات' %}
+            <i class="fa-solid fa-pen-nib" style="color: #2563eb;"></i>
+          {% elif category_name == 'علوم ساینسی و طبیعی' %}
+            <i class="fa-solid fa-atom" style="color: #0891b2;"></i>
+          {% elif category_name == 'ریاضیات و هندسه' %}
+            <i class="fa-solid fa-square-root-variable" style="color: #d97706;"></i>
+          {% elif category_name == 'علوم اجتماعی و بشری' %}
+            <i class="fa-solid fa-earth-asia" style="color: #7c3aed;"></i>
+          {% elif category_name == 'فناوری، مهارت و هنر' %}
+            <i class="fa-solid fa-laptop-code" style="color: #0d9488;"></i>
+          {% elif category_name == 'تربیت بدنی و صحت' %}
+            <i class="fa-solid fa-heart-pulse" style="color: #e11d48;"></i>
+          {% else %}
+            <i class="fa-solid fa-bookmark" style="color: #64748b;"></i>
+          {% endif %}
+          <span style="color: #1e293b;">{{ category_name }}</span>
+          <span style="font-size: 12px; font-weight: normal; color: #64748b;">({{ category_subjects|length }} مضمون)</span>
+        </div>
+
+        <button type="button" class="btn btn-surface" style="font-size: 11px; padding: 2px 8px;" onclick="toggleCategory('{{ forloop.counter }}', true)">
+          انتخاب این دسته
+        </button>
+      </div>
+
+      <!-- Grid of Subjects in this Category -->
+      <div class="subjects-matrix-grid" id="cat-group-{{ forloop.counter }}">
+        {% for subj in category_subjects %}
+        <label class="matrix-card-item {% if subj.id in current_assigned_ids %}selected{% endif %}" id="matrix-card-{{ subj.id }}">
+          <input
+            type="checkbox"
+            name="subject_ids"
+            value="{{ subj.id }}"
+            class="matrix-checkbox"
+            onchange="updateMatrixCard('{{ subj.id }}')"
+            {% if subj.id in current_assigned_ids %}checked{% endif %}
+          />
+          <div class="matrix-info">
+            <span class="matrix-title">{{ subj.name }}</span>
+            <div class="matrix-meta">
+              {% if subj.code %}
+                <span class="subject-code-pill" style="font-size: 10.5px; padding: 1px 5px;">{{ subj.code }}</span>
+              {% endif %}
+              <span><i class="fa-solid fa-clock"></i> {{ subj.weekly_hours }} ساعت</span>
+              <span><i class="fa-solid fa-bullseye"></i> قبولی {{ subj.passing_score|floatformat:0 }}</span>
+            </div>
+          </div>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+
+    <!-- Bottom Save Bar -->
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; margin-top: 20px;">
+      <a href="{% url 'dashboard:subject-list' %}" class="btn btn-surface">
+        <i class="fa-solid fa-arrow-right"></i> بازگشت
+      </a>
+      <button type="submit" class="btn btn-primary" style="padding: 12px 32px; font-weight: 800; font-size: 14px;">
+        <i class="fa-solid fa-floppy-disk"></i> ثبت تغییرات نصاب صنف {{ selected_class.alpha_grade }}
+      </button>
+    </div>
+
+  </form>
+  {% endif %}
+
+</div>
+
+<script>
+  function updateMatrixCard(id) {
+    const card = document.getElementById('matrix-card-' + id);
+    const chk = card.querySelector('.matrix-checkbox');
+    if (chk.checked) {
+      card.classList.add('selected');
+    } else {
+      card.classList.remove('selected');
+    }
+    updateMatrixCounter();
+  }
+
+  function updateMatrixCounter() {
+    const count = document.querySelectorAll('.matrix-checkbox:checked').length;
+    const badge = document.getElementById('assigned-count-badge');
+    if (badge) badge.innerText = count;
+  }
+
+  function toggleAllMatrix(checked) {
+    document.querySelectorAll('.matrix-checkbox').forEach(chk => {
+      chk.checked = checked;
+      const card = chk.closest('.matrix-card-item');
+      if (checked) {
+        card.classList.add('selected');
+      } else {
+        card.classList.remove('selected');
+      }
+    });
+    updateMatrixCounter();
+  }
+
+  function toggleCategory(catIdx, checked) {
+    const group = document.getElementById('cat-group-' + catIdx);
+    if (!group) return;
+    group.querySelectorAll('.matrix-checkbox').forEach(chk => {
+      chk.checked = checked;
+      const card = chk.closest('.matrix-card-item');
+      if (checked) {
+        card.classList.add('selected');
+      } else {
+        card.classList.remove('selected');
+      }
+    });
+    updateMatrixCounter();
+  }
+</script>
+{% endblock content %}
