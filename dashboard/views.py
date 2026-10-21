@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from django.db.models import Q, Sum, Avg, Count,F
+from django.db.models import Q, Sum, Avg, Count, F
 from decimal import Decimal
 import jdatetime
 import datetime
@@ -121,7 +121,8 @@ def dashboard_view(request):
 
     # Financial & Timetable KPIs
     fee_collected = Fee.objects.aggregate(total=Sum("paied"))["total"] or 0
-    expenses_total = Expense.objects.aggregate(total=Sum("amount"))["total"] or 0
+    expenses_total = Expense.objects.aggregate(
+        total=Sum("amount"))["total"] or 0
     net_balance = fee_collected - expenses_total
     timetable_count = TimeTable.objects.count()
     shaqqa_count = ExamMark.objects.count()
@@ -199,14 +200,15 @@ def student_edite(request, id):
             student.gfname = form.cleaned_data["gfname"]
             student.birth_date = form.cleaned_data["birth_date"]
             student.nationality = form.cleaned_data["nationality"]
-            
+
             fjob_str = form.cleaned_data.get("father_job")
             if fjob_str:
                 fjob, _ = Job.objects.get_or_create(name=fjob_str.strip())
                 student.father_job = fjob
 
             student.phone = form.cleaned_data["phone"]
-            student.mother_language_id = int(form.cleaned_data["mother_language"])
+            student.mother_language_id = int(
+                form.cleaned_data["mother_language"])
             student.status_id = int(form.cleaned_data["status"])
             student.registered_date = form.cleaned_data["registered_date"]
 
@@ -215,8 +217,10 @@ def student_edite(request, id):
             student.now_zone = int(form.cleaned_data["now_zone"])
             student.now_village = form.cleaned_data["now_village"]
 
-            student.original_province_id = int(form.cleaned_data["original_province"])
-            student.original_district_id = int(form.cleaned_data["original_district"])
+            student.original_province_id = int(
+                form.cleaned_data["original_province"])
+            student.original_district_id = int(
+                form.cleaned_data["original_district"])
             student.original_zone = int(form.cleaned_data["original_zone"])
             student.original_village = form.cleaned_data["original_village"]
             student.save()
@@ -226,7 +230,8 @@ def student_edite(request, id):
                 academice_year = int(form.cleaned_data["academice_year"])
                 academice_year_obj = AcademiceYear.objects.filter(
                     year=academice_year).first() or AcademiceYear.objects.first()
-                class_obj = Classes.objects.filter(grade=int(grade), section=section).first()
+                class_obj = Classes.objects.filter(
+                    grade=int(grade), section=section).first()
                 if class_obj and academice_year_obj:
                     student_class = StudentClass.objects.filter(
                         student=student, academice_year=academice_year_obj).first()
@@ -236,7 +241,8 @@ def student_edite(request, id):
                     else:
                         StudentClass.objects.create(
                             student=student, classs=class_obj, academice_year=academice_year_obj)
-            messages.success(request, f"پرونده دانش‌آموز «{student.name}» با موفقیت به‌روزرسانی شد.")
+            messages.success(
+                request, f"پرونده دانش‌آموز «{student.name}» با موفقیت به‌روزرسانی شد.")
             return redirect(reverse("dashboard:student-detail", kwargs={"pk": student.id}))
         else:
             return render(request, "dashboard/students/student_edite.html", {"student": student, "classes": classes, "errors": form.errors})
@@ -274,7 +280,7 @@ def student_create(request):
             original_zone = int(form.cleaned_data["original_zone"])
             original_village = form.cleaned_data["original_village"]
             academice_year = int(form.cleaned_data["academice_year"])
-            
+
             new_student = Student.objects.create(
                 school_id=school_id,
                 card_id=card_id,
@@ -304,7 +310,8 @@ def student_create(request):
             if class_obj and academice_year_obj:
                 StudentClass.objects.create(
                     student=new_student, classs=class_obj, academice_year=academice_year_obj)
-            messages.success(request, f"دانش‌آموز «{new_student.name}» با موفقیت در سامانه پذیرش و ثبت‌نام شد.")
+            messages.success(
+                request, f"دانش‌آموز «{new_student.name}» با موفقیت در سامانه پذیرش و ثبت‌نام شد.")
             return redirect(reverse("dashboard:student-list"))
         else:
             return render(request, "dashboard/students/student_edite.html", {"classes": classes, "errors": form.errors})
@@ -408,7 +415,8 @@ def teacher_edite(request, id):
 
             degree_name = form.cleaned_data.get("degree")
             if degree_name:
-                degree, _ = Degree.objects.get_or_create(name=degree_name.strip())
+                degree, _ = Degree.objects.get_or_create(
+                    name=degree_name.strip())
                 teacher.degree = degree
 
             job_name = form.cleaned_data.get("job")
@@ -510,9 +518,11 @@ def class_create(request):
         form = ClassForm(request.POST)
         if form.is_valid():
             academice_year = int(form.cleaned_data["academice_year"])
-            academice_year_obj = AcademiceYear.objects.filter(year=academice_year).first()
+            academice_year_obj = AcademiceYear.objects.filter(
+                year=academice_year).first()
             if not academice_year_obj:
-                academice_year_obj = AcademiceYear.objects.get_or_create(year=academice_year)[0]
+                academice_year_obj = AcademiceYear.objects.get_or_create(year=academice_year)[
+                    0]
             grade, alpha_grade = form.cleaned_data["grade"].split("-")
             section = form.cleaned_data["section"]
             capacity = form.cleaned_data["capacity"]
@@ -521,10 +531,11 @@ def class_create(request):
             start_time_minute = form.cleaned_data["start_time_minute"]
             end_time_hour = form.cleaned_data["end_time_hour"]
             end_time_minute = form.cleaned_data["end_time_minute"]
-            
+
             guidence_teacher = None
             if guidence_id and str(guidence_id).isdigit():
-                guidence_teacher = Teacher.objects.filter(id=int(guidence_id)).first()
+                guidence_teacher = Teacher.objects.filter(
+                    id=int(guidence_id)).first()
 
             new_cls = Classes.objects.create(
                 academice_year=academice_year_obj,
@@ -540,7 +551,8 @@ def class_create(request):
                 request, f"صنف جدید ({new_cls.alpha_grade} شعبه {new_cls.section}) با موفقیت ایجاد شد.")
             return redirect(reverse("dashboard:class-list"))
         else:
-            messages.error(request, "لطفاً خطاهای فرم ثبت صنف را تصحیح نمایید.")
+            messages.error(
+                request, "لطفاً خطاهای فرم ثبت صنف را تصحیح نمایید.")
             return render(request, "dashboard/classes/class_edite.html", {"teachers": teachers, "academic_years": academic_years, "errors": form.errors})
     return render(request, "dashboard/classes/class_edite.html", {"teachers": teachers, "academic_years": academic_years})
 
@@ -555,9 +567,11 @@ def class_edite(request, id):
         form = ClassForm(request.POST)
         if form.is_valid():
             academice_year = int(form.cleaned_data["academice_year"])
-            academice_year_obj = AcademiceYear.objects.filter(year=academice_year).first()
+            academice_year_obj = AcademiceYear.objects.filter(
+                year=academice_year).first()
             if not academice_year_obj:
-                academice_year_obj = AcademiceYear.objects.get_or_create(year=academice_year)[0]
+                academice_year_obj = AcademiceYear.objects.get_or_create(year=academice_year)[
+                    0]
             grade, alpha_grade = form.cleaned_data["grade"].split("-")
             section = form.cleaned_data["section"]
             capacity = form.cleaned_data["capacity"]
@@ -566,13 +580,13 @@ def class_edite(request, id):
             start_time_minute = form.cleaned_data["start_time_minute"]
             end_time_hour = form.cleaned_data["end_time_hour"]
             end_time_minute = form.cleaned_data["end_time_minute"]
-            
+
             class_obj.academice_year = academice_year_obj
             class_obj.grade = int(grade)
             class_obj.alpha_grade = alpha_grade
             class_obj.section = section
             class_obj.capacity = capacity
-            
+
             if guidence_id and str(guidence_id).isdigit():
                 class_obj.guidence_id = int(guidence_id)
             else:
@@ -585,7 +599,8 @@ def class_edite(request, id):
                 request, f"مشخصات صنف {class_obj.alpha_grade} شعبه {class_obj.section} با موفقیت به‌روزرسانی شد.")
             return redirect(reverse("dashboard:class-list"))
         else:
-            messages.error(request, "لطفاً خطاهای فرم ویرایش صنف را تصحیح نمایید.")
+            messages.error(
+                request, "لطفاً خطاهای فرم ویرایش صنف را تصحیح نمایید.")
             return render(request, "dashboard/classes/class_edite.html", {"teachers": teachers, "class": class_obj, "academic_years": academic_years, "errors": form.errors})
 
     return render(request, "dashboard/classes/class_edite.html", {"teachers": teachers, "class": class_obj, "academic_years": academic_years})
@@ -1241,12 +1256,8 @@ def assesment_delete(request, id):
 
 @is_admin
 def exam_dashboard_view(request):
-    """
-    Main Exam & Grading Management Dashboard (داشبورد مدیریت امتحانات و نتایج)
-    """
     academic_years = AcademiceYear.objects.all().order_by("-year")
     classes = Classes.objects.all().order_by("grade", "section")
-
     selected_year_id = request.GET.get("year_id")
     selected_year = (
         AcademiceYear.objects.filter(id=int(selected_year_id)).first()
@@ -1290,38 +1301,40 @@ class ExamListView(LoginRequiredMixin, ListView):
 
 @is_admin
 def shaqqa_entry_view(request):
-    """
-    Digital Shaqqa / Bulk Score Entry (ثبت شقه نمرات)
-    Midterm (Max 40) + Final (Max 60) + Conditional (Max 100).
-    """
     academic_years = AcademiceYear.objects.all().order_by("-year")
     classes = Classes.objects.all().order_by("grade", "section")
 
-    selected_year_id = request.GET.get("year_id") or request.POST.get("year_id")
+    selected_year_id = request.GET.get(
+        "year_id") or request.POST.get("year_id")
     selected_year = (
         AcademiceYear.objects.filter(id=int(selected_year_id)).first()
         if selected_year_id and str(selected_year_id).isdigit()
         else (AcademiceYear.objects.filter(year=1403).first() or academic_years.first())
     )
 
-    selected_class_id = request.GET.get("class_id") or request.POST.get("class_id")
+    selected_class_id = request.GET.get(
+        "class_id") or request.POST.get("class_id")
     selected_class = (
         Classes.objects.filter(id=int(selected_class_id)).first()
         if selected_class_id and str(selected_class_id).isdigit()
         else (Classes.objects.filter(grade=10, section="الف").first() or classes.first())
     )
 
-    available_subjects = get_class_subjects(selected_class) if selected_class else list(Subject.objects.all())
+    available_subjects = get_class_subjects(
+        selected_class) if selected_class else list(Subject.objects.all())
 
-    selected_subject_id = request.GET.get("subject_id") or request.POST.get("subject_id")
+    selected_subject_id = request.GET.get(
+        "subject_id") or request.POST.get("subject_id")
     if selected_subject_id and str(selected_subject_id).isdigit():
-        selected_subject = Subject.objects.filter(id=int(selected_subject_id)).first()
+        selected_subject = Subject.objects.filter(
+            id=int(selected_subject_id)).first()
     else:
         selected_subject = available_subjects[0] if available_subjects else None
 
     # Enrolled students
     student_enrollments = (
-        StudentClass.objects.filter(classs=selected_class, academice_year=selected_year)
+        StudentClass.objects.filter(
+            classs=selected_class, academice_year=selected_year)
         .select_related("student")
         .order_by("student__school_id", "student__name")
         if selected_class and selected_year
@@ -1349,12 +1362,14 @@ def shaqqa_entry_view(request):
                 notes = request.POST.get(notes_key, "").strip()
 
                 try:
-                    midterm_val = min(40.0, max(0.0, float(raw_midterm))) if raw_midterm != "" else 0.0
+                    midterm_val = min(40.0, max(0.0, float(
+                        raw_midterm))) if raw_midterm != "" else 0.0
                 except ValueError:
                     midterm_val = 0.0
 
                 try:
-                    final_val = min(60.0, max(0.0, float(raw_final))) if raw_final != "" else 0.0
+                    final_val = min(60.0, max(0.0, float(raw_final))
+                                    ) if raw_final != "" else 0.0
                 except ValueError:
                     final_val = 0.0
 
@@ -1429,10 +1444,6 @@ def shaqqa_entry_view(request):
 
 @is_admin
 def jadwal_nataij_view(request):
-    """
-    Master Result Sheet (جدول نتایج صنف)
-    Comprehensive spreadsheet view of all students, their scores across all subjects, grand total, percentage, grade, and rank.
-    """
     academic_years = AcademiceYear.objects.all().order_by("-year")
     classes = Classes.objects.all().order_by("grade", "section")
 
@@ -1467,11 +1478,6 @@ def jadwal_nataij_view(request):
 
 @is_admin
 def etlanama_view(request, student_id=None):
-    """
-    Official Afghan Printable Report Card (اطلاعنامه نمرات شاگرد)
-    Conforms to Afghanistan Ministry of Education template layout with A4 print styling.
-    Supports single student or batch printing for the entire class.
-    """
     academic_years = AcademiceYear.objects.all().order_by("-year")
     classes = Classes.objects.all().order_by("grade", "section")
 
@@ -1494,7 +1500,8 @@ def etlanama_view(request, student_id=None):
     target_student_id = student_id or request.GET.get("student_id")
     selected_student = None
     if target_student_id and str(target_student_id).isdigit():
-        selected_student = Student.objects.filter(id=int(target_student_id)).first()
+        selected_student = Student.objects.filter(
+            id=int(target_student_id)).first()
 
     class_results = None
     report_cards = []
@@ -1512,7 +1519,8 @@ def etlanama_view(request, student_id=None):
             report_cards = [class_results["students_results"][0]]
             selected_student = report_cards[0]["student"]
 
-    all_students_in_class = [r["student"] for r in class_results["students_results"]] if class_results else []
+    all_students_in_class = [
+        r["student"] for r in class_results["students_results"]] if class_results else []
 
     context = {
         "academic_years": academic_years,
@@ -1531,20 +1539,19 @@ def etlanama_view(request, student_id=None):
 
 @is_admin
 def exam_attendance_view(request):
-    """
-    Exam Attendance Registry (ضوابط حاضری امتحانات)
-    """
     academic_years = AcademiceYear.objects.all().order_by("-year")
     classes = Classes.objects.all().order_by("grade", "section")
 
-    selected_year_id = request.GET.get("year_id") or request.POST.get("year_id")
+    selected_year_id = request.GET.get(
+        "year_id") or request.POST.get("year_id")
     selected_year = (
         AcademiceYear.objects.filter(id=int(selected_year_id)).first()
         if selected_year_id and str(selected_year_id).isdigit()
         else (AcademiceYear.objects.filter(year=1403).first() or academic_years.first())
     )
 
-    selected_class_id = request.GET.get("class_id") or request.POST.get("class_id")
+    selected_class_id = request.GET.get(
+        "class_id") or request.POST.get("class_id")
     selected_class = (
         Classes.objects.filter(id=int(selected_class_id)).first()
         if selected_class_id and str(selected_class_id).isdigit()
@@ -1552,7 +1559,8 @@ def exam_attendance_view(request):
     )
 
     enrollments = (
-        StudentClass.objects.filter(classs=selected_class, academice_year=selected_year)
+        StudentClass.objects.filter(
+            classs=selected_class, academice_year=selected_year)
         .select_related("student")
         .order_by("student__school_id", "student__name")
         if selected_class and selected_year
@@ -1635,13 +1643,11 @@ def exam_attendance_view(request):
 
 @is_admin
 def exam_subjects_view(request):
-    """
-    Manage curriculum subjects assigned to each class.
-    """
     classes = Classes.objects.all().order_by("grade", "section")
     all_subjects = Subject.objects.all().order_by("name")
 
-    selected_class_id = request.GET.get("class_id") or request.POST.get("class_id")
+    selected_class_id = request.GET.get(
+        "class_id") or request.POST.get("class_id")
     selected_class = (
         Classes.objects.filter(id=int(selected_class_id)).first()
         if selected_class_id and str(selected_class_id).isdigit()
@@ -1661,10 +1667,12 @@ def exam_subjects_view(request):
             subj_name = request.POST.get("new_subject_name", "").strip()
             if subj_name:
                 Subject.objects.get_or_create(name=subj_name)
-                messages.success(request, f"مضمون جدید «{subj_name}» با موفقیت در سیستم ثبت گردید.")
+                messages.success(
+                    request, f"مضمون جدید «{subj_name}» با موفقیت در سیستم ثبت گردید.")
             return redirect(reverse("dashboard:exam-subjects"))
 
-    current_assigned_ids = set(selected_class.subjects.values_list("id", flat=True)) if selected_class else set()
+    current_assigned_ids = set(selected_class.subjects.values_list(
+        "id", flat=True)) if selected_class else set()
 
     context = {
         "classes": classes,
@@ -1703,7 +1711,7 @@ class FinanceListView(ListView):
             qs = qs.filter(class_section_id=int(class_id))
         if month_id and str(month_id).isdigit():
             qs = qs.filter(month_id=int(month_id))
-            
+
         if year_id and year_id != "all":
             if str(year_id).isdigit():
                 qs = qs.filter(academice_year_id=int(year_id))
@@ -1736,7 +1744,7 @@ class FinanceListView(ListView):
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         fees_list = list(context["fees"])
-        
+
         # Calculate dynamic KPIs
         context["kpis"] = calculate_finance_kpis(fees_list)
 
@@ -1744,7 +1752,7 @@ class FinanceListView(ListView):
         context["classes"] = Classes.objects.all().order_by("grade", "section")
         context["months"] = Month.objects.all().order_by("id")
         context["years"] = AcademiceYear.objects.all().order_by("-year")
-        
+
         # Determine current selected year
         current_year_id = self.request.GET.get("year_id")
         if current_year_id is None:
@@ -1752,7 +1760,7 @@ class FinanceListView(ListView):
             if y1403:
                 current_year_id = str(y1403.id)
         context["selected_year_id"] = current_year_id
-        
+
         context["search"] = self.request.GET.get("search", "")
         context["selected_class_id"] = self.request.GET.get("class_id", "")
         context["selected_month_id"] = self.request.GET.get("month_id", "")
@@ -1786,9 +1794,6 @@ class FinanceListView(ListView):
 
 @is_admin
 def fee_create(request):
-    """
-    Handle creation of new fee / tuition payment record.
-    """
     if request.method == "POST":
         student_id = request.POST.get("student_id")
         class_id = request.POST.get("class_id")
@@ -1797,7 +1802,8 @@ def fee_create(request):
         amount = request.POST.get("amount") or 0
         paied = request.POST.get("paied") or 0
         payment_date_str = request.POST.get("payment_date")
-        payment_method = request.POST.get("payment_method") or "نقدی (صندوق مکتب)"
+        payment_method = request.POST.get(
+            "payment_method") or "نقدی (صندوق مکتب)"
         fee_category = request.POST.get("fee_category") or "شهریه ماهوار"
         receipt_number = request.POST.get("receipt_number")
         notes = request.POST.get("notes") or ""
@@ -1810,7 +1816,8 @@ def fee_create(request):
             # Detect class if not specified
             class_section = None
             if class_id and str(class_id).isdigit():
-                class_section = Classes.objects.filter(id=int(class_id)).first()
+                class_section = Classes.objects.filter(
+                    id=int(class_id)).first()
             if not class_section:
                 sc = (StudentClass.objects.filter(student=student, academice_year=year).first()
                       or StudentClass.objects.filter(student=student).first())
@@ -1820,7 +1827,8 @@ def fee_create(request):
             # Parse payment date
             if payment_date_str:
                 try:
-                    p_date = datetime.datetime.strptime(payment_date_str, "%Y-%m-%d").date()
+                    p_date = datetime.datetime.strptime(
+                        payment_date_str, "%Y-%m-%d").date()
                 except Exception:
                     p_date = datetime.date.today()
             else:
@@ -1842,7 +1850,8 @@ def fee_create(request):
                 receipt_number=receipt_number.strip(),
                 notes=notes.strip(),
             )
-            messages.success(request, f"قبض پرداختی با موفقیت صادر شد. شماره رسید: {fee.receipt_number}")
+            messages.success(
+                request, f"قبض پرداختی با موفقیت صادر شد. شماره رسید: {fee.receipt_number}")
 
             if request.POST.get("action") == "save_and_print":
                 return redirect(reverse("dashboard:fee-receipt", kwargs={"id": fee.id}) + "?print=1")
@@ -1863,11 +1872,10 @@ def fee_create(request):
 
 @is_admin
 def fee_edite(request, id):
-    """
-    Edit an existing tuition payment record.
-    """
+
     fee = get_object_or_404(
-        Fee.objects.select_related("student", "class_section", "month", "academice_year"),
+        Fee.objects.select_related(
+            "student", "class_section", "month", "academice_year"),
         id=id
     )
 
@@ -1878,9 +1886,11 @@ def fee_edite(request, id):
         amount = request.POST.get("amount") or 0
         paied = request.POST.get("paied") or 0
         payment_date_str = request.POST.get("payment_date")
-        payment_method = request.POST.get("payment_method") or fee.payment_method
+        payment_method = request.POST.get(
+            "payment_method") or fee.payment_method
         fee_category = request.POST.get("fee_category") or fee.fee_category
-        receipt_number = request.POST.get("receipt_number") or fee.receipt_number
+        receipt_number = request.POST.get(
+            "receipt_number") or fee.receipt_number
         notes = request.POST.get("notes") or ""
 
         try:
@@ -1896,7 +1906,8 @@ def fee_edite(request, id):
 
             if payment_date_str:
                 try:
-                    fee.payment_date = datetime.datetime.strptime(payment_date_str, "%Y-%m-%d").date()
+                    fee.payment_date = datetime.datetime.strptime(
+                        payment_date_str, "%Y-%m-%d").date()
                 except Exception:
                     pass
 
@@ -1905,7 +1916,8 @@ def fee_edite(request, id):
             fee.receipt_number = receipt_number.strip()
             fee.notes = notes.strip()
             fee.save()
-            messages.success(request, f"قبض شماره {fee.receipt_number or fee.id} با موفقیت ویرایش گردید.")
+            messages.success(
+                request, f"قبض شماره {fee.receipt_number or fee.id} با موفقیت ویرایش گردید.")
             return redirect(reverse("dashboard:finance-list"))
         except Exception as e:
             messages.error(request, f"خطا در ویرایش قبض: {str(e)}")
@@ -1923,31 +1935,29 @@ def fee_edite(request, id):
 
 @is_admin
 def fee_delete(request, id):
-    """
-    Delete a tuition payment record.
-    """
+
     fee = get_object_or_404(Fee, id=id)
     receipt_num = fee.receipt_number or str(fee.id)
     student_name = fee.student.name if fee.student else ""
     fee.delete()
-    messages.success(request, f"قبض شماره {receipt_num} متعلق به شاگرد «{student_name}» با موفقیت حذف گردید.")
+    messages.success(
+        request, f"قبض شماره {receipt_num} متعلق به شاگرد «{student_name}» با موفقیت حذف گردید.")
     return redirect(reverse("dashboard:finance-list"))
 
 
 @is_admin
 def fee_receipt_view(request, id):
-    """
-    Official Printable Payment Receipt (قبض و سند رسمی پرداخت شهریه) in Dari.
-    Ready for half-A4 or A5 printing with Dari words amount.
-    """
+
     fee = get_object_or_404(
-        Fee.objects.select_related("student", "class_section", "month", "academice_year"),
+        Fee.objects.select_related(
+            "student", "class_section", "month", "academice_year"),
         id=id
     )
     paied_words = number_to_dari_words(fee.paied or 0)
     amount_words = number_to_dari_words(fee.amount or 0)
     remaining = fee.remaining
-    remaining_words = number_to_dari_words(remaining) if remaining > 0 else "صفر افغانی"
+    remaining_words = number_to_dari_words(
+        remaining) if remaining > 0 else "صفر افغانی"
     auto_print = request.GET.get("print") == "1"
 
     context = {
@@ -1964,9 +1974,7 @@ def fee_receipt_view(request, id):
 
 @is_admin
 def expenses_view(request):
-    """
-    School Expenditures & Costs Management (مدیریت مصارف، معاشات و هزینه‌های مکتب).
-    """
+
     if request.method == "POST":
         category = request.POST.get("category") or "متفرقه"
         title = request.POST.get("title") or "هزینه مکتب"
@@ -1982,14 +1990,17 @@ def expenses_view(request):
         try:
             if payment_date_str:
                 try:
-                    p_date = datetime.datetime.strptime(payment_date_str, "%Y-%m-%d").date()
+                    p_date = datetime.datetime.strptime(
+                        payment_date_str, "%Y-%m-%d").date()
                 except Exception:
                     p_date = datetime.date.today()
             else:
                 p_date = datetime.date.today()
 
-            year = AcademiceYear.objects.filter(id=year_id).first() if year_id else AcademiceYear.objects.first()
-            month = Month.objects.filter(id=month_id).first() if month_id else None
+            year = AcademiceYear.objects.filter(id=year_id).first(
+            ) if year_id else AcademiceYear.objects.first()
+            month = Month.objects.filter(
+                id=month_id).first() if month_id else None
 
             if not receipt_number:
                 receipt_number = f"EXP-{year.year if year else '1403'}-{Expense.objects.count() + 501}"
@@ -2006,14 +2017,16 @@ def expenses_view(request):
                 month=month,
                 notes=notes.strip(),
             )
-            messages.success(request, f"سند هزینه «{expense.title}» با شماره {expense.receipt_number} با موفقیت ثبت شد.")
+            messages.success(
+                request, f"سند هزینه «{expense.title}» با شماره {expense.receipt_number} با موفقیت ثبت شد.")
             return redirect(reverse("dashboard:finance-expenses"))
         except Exception as e:
             messages.error(request, f"خطا در ثبت هزینه: {str(e)}")
             return redirect(reverse("dashboard:finance-expenses"))
 
     # GET filter
-    qs = Expense.objects.select_related("academice_year", "month").order_by("-payment_date", "-id")
+    qs = Expense.objects.select_related(
+        "academice_year", "month").order_by("-payment_date", "-id")
     year_id = request.GET.get("year_id")
     month_id = request.GET.get("month_id")
     category = request.GET.get("category")
@@ -2043,9 +2056,12 @@ def expenses_view(request):
 
     expenses_list = list(qs)
     total_expenses = sum(e.amount or 0 for e in expenses_list)
-    salaries_total = sum(e.amount or 0 for e in expenses_list if "معاش" in (e.category or ""))
-    rent_utilities_total = sum(e.amount or 0 for e in expenses_list if ("کرایه" in (e.category or "") or "برق" in (e.category or "")))
-    supplies_total = sum(e.amount or 0 for e in expenses_list if ("قرطاسیه" in (e.category or "") or "ترمیم" in (e.category or "")))
+    salaries_total = sum(
+        e.amount or 0 for e in expenses_list if "معاش" in (e.category or ""))
+    rent_utilities_total = sum(e.amount or 0 for e in expenses_list if (
+        "کرایه" in (e.category or "") or "برق" in (e.category or "")))
+    supplies_total = sum(e.amount or 0 for e in expenses_list if (
+        "قرطاسیه" in (e.category or "") or "ترمیم" in (e.category or "")))
 
     expense_categories = [
         "معاشات استادان و پرسونل",
@@ -2079,29 +2095,25 @@ def expenses_view(request):
 
 @is_admin
 def expense_delete(request, id):
-    """
-    Delete an expense record.
-    """
     expense = get_object_or_404(Expense, id=id)
     title = expense.title
     receipt_num = expense.receipt_number or str(expense.id)
     expense.delete()
-    messages.success(request, f"سند هزینه «{title}» ({receipt_num}) با موفقیت حذف گردید.")
+    messages.success(
+        request, f"سند هزینه «{title}» ({receipt_num}) با موفقیت حذف گردید.")
     return redirect(reverse("dashboard:finance-expenses"))
 
 
 @is_admin
 def finance_report_view(request):
-    """
-    Master Financial Balance Sheet & Profit/Loss Statement (بیلان مالی عواید و مصارف مکتب).
-    """
     year_id = request.GET.get("year_id")
     years = AcademiceYear.objects.all().order_by("-year")
 
     if year_id and str(year_id).isdigit():
         selected_year = AcademiceYear.objects.filter(id=int(year_id)).first()
     else:
-        selected_year = AcademiceYear.objects.filter(year=1403).first() or years.first()
+        selected_year = AcademiceYear.objects.filter(
+            year=1403).first() or years.first()
 
     report = calculate_financial_report(selected_year)
 
@@ -2124,9 +2136,6 @@ def finance_report_view(request):
 
 @is_admin
 def timetable_class_view(request):
-    """
-    Weekly Timetable view for a specific Class (تقسیم اوقات درسی صنف).
-    """
     years = AcademiceYear.objects.all().order_by("-year")
     classes = Classes.objects.all().order_by("grade", "section")
 
@@ -2136,12 +2145,12 @@ def timetable_class_view(request):
     if year_id and str(year_id).isdigit():
         selected_year = AcademiceYear.objects.filter(id=int(year_id)).first()
     else:
-        selected_year = AcademiceYear.objects.filter(year=1403).first() or years.first()
+        selected_year = AcademiceYear.objects.filter(
+            year=1403).first() or years.first()
 
     if class_id and str(class_id).isdigit():
         selected_class = Classes.objects.filter(id=int(class_id)).first()
     else:
-        # Default to Class 10-A (دهم الف) or first class
         selected_class = (
             Classes.objects.filter(alpha_grade="دهم", section="الف").first()
             or classes.first()
@@ -2150,7 +2159,8 @@ def timetable_class_view(request):
     matrix_data = {}
     class_subjects = []
     if selected_class and selected_year:
-        matrix_data = get_class_timetable_matrix(selected_class.id, selected_year.id)
+        matrix_data = get_class_timetable_matrix(
+            selected_class.id, selected_year.id)
         class_subjects = list(selected_class.subjects.all().order_by("name"))
         if not class_subjects:
             class_subjects = list(Subject.objects.all().order_by("name"))
@@ -2189,7 +2199,8 @@ def timetable_teacher_view(request):
     if year_id and str(year_id).isdigit():
         selected_year = AcademiceYear.objects.filter(id=int(year_id)).first()
     else:
-        selected_year = AcademiceYear.objects.filter(year=1403).first() or years.first()
+        selected_year = AcademiceYear.objects.filter(
+            year=1403).first() or years.first()
 
     if teacher_id and str(teacher_id).isdigit():
         selected_teacher = Teacher.objects.filter(id=int(teacher_id)).first()
@@ -2198,7 +2209,8 @@ def timetable_teacher_view(request):
 
     matrix_data = {}
     if selected_teacher and selected_year:
-        matrix_data = get_teacher_timetable_matrix(selected_teacher.id, selected_year.id)
+        matrix_data = get_teacher_timetable_matrix(
+            selected_teacher.id, selected_year.id)
 
     context = {
         "selected_teacher": selected_teacher,
@@ -2235,7 +2247,8 @@ def timetable_master_view(request):
     if year_id and str(year_id).isdigit():
         selected_year = AcademiceYear.objects.filter(id=int(year_id)).first()
     else:
-        selected_year = AcademiceYear.objects.filter(year=1403).first() or years.first()
+        selected_year = AcademiceYear.objects.filter(
+            year=1403).first() or years.first()
 
     matrix_data = get_master_timetable_matrix(selected_year.id, day_num)
 
@@ -2275,7 +2288,8 @@ def timetable_slot_save(request):
             day_of_week = int(day_of_week)
             period = int(period)
             year_id = int(year_id)
-            exclude_id = int(slot_id) if slot_id and str(slot_id).isdigit() else None
+            exclude_id = int(slot_id) if slot_id and str(
+                slot_id).isdigit() else None
 
             # Validate conflicts
             is_valid, conflict_msg = validate_timetable_slot(
@@ -2306,7 +2320,8 @@ def timetable_slot_save(request):
                     slot.room_number = room_number.strip()
                     slot.notes = notes.strip()
                     slot.save()
-                    messages.success(request, f"ساعت درسی {slot.day_name} ({slot.period_name}) با موفقیت به‌روزرسانی شد.")
+                    messages.success(
+                        request, f"ساعت درسی {slot.day_name} ({slot.period_name}) با موفقیت به‌روزرسانی شد.")
                 else:
                     slot, created = TimeTable.objects.update_or_create(
                         classs=cls_obj,
@@ -2320,7 +2335,8 @@ def timetable_slot_save(request):
                             "notes": notes.strip(),
                         }
                     )
-                    messages.success(request, f"ساعت درسی برای روز {slot.day_name} ({slot.period_name}) با موفقیت ثبت شد.")
+                    messages.success(
+                        request, f"ساعت درسی برای روز {slot.day_name} ({slot.period_name}) با موفقیت ثبت شد.")
 
         except Exception as e:
             messages.error(request, f"خطا در ثبت ساعت درسی: {str(e)}")
@@ -2346,7 +2362,8 @@ def timetable_slot_delete(request, id):
     redirect_to = request.GET.get("redirect_to", "class")
 
     slot.delete()
-    messages.success(request, f"ساعت درسی {day_name} ({period_name}) با موفقیت حذف گردید.")
+    messages.success(
+        request, f"ساعت درسی {day_name} ({period_name}) با موفقیت حذف گردید.")
 
     if redirect_to == "teacher":
         return redirect(f"{reverse('dashboard:timetable-teacher')}?teacher_id={teacher_id}&year_id={year_id}")
@@ -2358,12 +2375,15 @@ def timetable_class_print(request, class_id):
     """
     Official Afghan Wall Timetable for Classroom (تقسیم اوقات دیواری صنف) - A4 Landscape Print.
     """
-    cls = get_object_or_404(Classes.objects.select_related("guidence", "academice_year"), id=class_id)
+    cls = get_object_or_404(Classes.objects.select_related(
+        "guidence", "academice_year"), id=class_id)
     year_id = request.GET.get("year_id")
     if year_id and str(year_id).isdigit():
-        year = AcademiceYear.objects.filter(id=int(year_id)).first() or cls.academice_year
+        year = AcademiceYear.objects.filter(
+            id=int(year_id)).first() or cls.academice_year
     else:
-        year = cls.academice_year or AcademiceYear.objects.filter(year=1403).first() or AcademiceYear.objects.first()
+        year = cls.academice_year or AcademiceYear.objects.filter(
+            year=1403).first() or AcademiceYear.objects.first()
 
     matrix_data = get_class_timetable_matrix(cls.id, year.id)
 
@@ -2389,7 +2409,8 @@ def timetable_teacher_print(request, teacher_id):
     if year_id and str(year_id).isdigit():
         year = AcademiceYear.objects.filter(id=int(year_id)).first()
     else:
-        year = AcademiceYear.objects.filter(year=1403).first() or AcademiceYear.objects.first()
+        year = AcademiceYear.objects.filter(
+            year=1403).first() or AcademiceYear.objects.first()
 
     matrix_data = get_teacher_timetable_matrix(teacher.id, year.id)
 
@@ -2404,8 +2425,6 @@ def timetable_teacher_print(request, teacher_id):
     }
     return render(request, "dashboard/timetable/teacher_timetable_print.html", context)
 
-
-    
 
 # -----------------------------------------------------------------------------
 #####
@@ -2480,7 +2499,8 @@ def subject_create_view(request):
             )
             return redirect(reverse("dashboard:subject-list"))
         else:
-            messages.error(request, "لطفاً خطاهای فرم ثبت مضمون را بررسی و اصلاح فرمایید.")
+            messages.error(
+                request, "لطفاً خطاهای فرم ثبت مضمون را بررسی و اصلاح فرمایید.")
     else:
         form = SubjectForm()
 
@@ -2512,7 +2532,8 @@ def subject_edit_view(request, id):
             )
             return redirect(reverse("dashboard:subject-list"))
         else:
-            messages.error(request, "لطفاً خطاهای فرم ویرایش مضمون را بررسی فرمایید.")
+            messages.error(
+                request, "لطفاً خطاهای فرم ویرایش مضمون را بررسی فرمایید.")
     else:
         form = SubjectForm(instance=subject)
 
@@ -2576,7 +2597,8 @@ def subject_delete_view(request, id):
 
     subj_name = subject.name
     subject.delete()
-    messages.success(request, f"مضمون «{subj_name}» با موفقیت از سیستم حذف گردید.")
+    messages.success(
+        request, f"مضمون «{subj_name}» با موفقیت از سیستم حذف گردید.")
     return redirect(reverse("dashboard:subject-list"))
 
 
@@ -2589,7 +2611,8 @@ def subject_class_matrix_view(request):
     classes = Classes.objects.all().order_by("grade", "section")
     all_subjects = Subject.objects.all().order_by("category", "name")
 
-    selected_class_id = request.GET.get("class_id") or request.POST.get("class_id")
+    selected_class_id = request.GET.get(
+        "class_id") or request.POST.get("class_id")
     selected_class = (
         Classes.objects.filter(id=int(selected_class_id)).first()
         if selected_class_id and str(selected_class_id).isdigit()
@@ -2600,7 +2623,8 @@ def subject_class_matrix_view(request):
         action_type = request.POST.get("action_type")
 
         if action_type == "apply_standard":
-            stage = request.POST.get("curriculum_stage") or get_class_educational_stage(selected_class)
+            stage = request.POST.get(
+                "curriculum_stage") or get_class_educational_stage(selected_class)
             result = apply_afghan_curriculum_to_class(selected_class, stage)
             messages.success(
                 request,
@@ -2617,9 +2641,12 @@ def subject_class_matrix_view(request):
             )
             return redirect(f"{reverse('dashboard:subject-class-matrix')}?class_id={selected_class.id}")
 
-    current_assigned_ids = set(selected_class.subjects.values_list("id", flat=True)) if selected_class else set()
-    current_weekly_hours = sum(s.weekly_hours for s in selected_class.subjects.all()) if selected_class else 0
-    educational_stage = get_class_educational_stage(selected_class) if selected_class else "لیسه"
+    current_assigned_ids = set(selected_class.subjects.values_list(
+        "id", flat=True)) if selected_class else set()
+    current_weekly_hours = sum(
+        s.weekly_hours for s in selected_class.subjects.all()) if selected_class else 0
+    educational_stage = get_class_educational_stage(
+        selected_class) if selected_class else "لیسه"
 
     # Group subjects by category for organized display
     subjects_by_category = {}
@@ -2652,7 +2679,8 @@ def subject_class_print_view(request, class_id):
     if year_id and str(year_id).isdigit():
         year = AcademiceYear.objects.filter(id=int(year_id)).first()
     else:
-        year = AcademiceYear.objects.filter(year=1403).first() or AcademiceYear.objects.first()
+        year = AcademiceYear.objects.filter(
+            year=1403).first() or AcademiceYear.objects.first()
 
     subjects = list(cls.subjects.all().order_by("category", "name"))
     total_hours = sum(s.weekly_hours for s in subjects)
@@ -2662,7 +2690,8 @@ def subject_class_print_view(request, class_id):
     for s in subjects:
         tt_slot = TimeTable.objects.filter(classs=cls, subject=s).first()
         ts_rec = TeacherSubject.objects.filter(classs=cls, subject=s).first()
-        teacher = tt_slot.teacher if tt_slot else (ts_rec.teacher if ts_rec else None)
+        teacher = tt_slot.teacher if tt_slot else (
+            ts_rec.teacher if ts_rec else None)
         subject_rows.append({
             "subject": s,
             "teacher": teacher,
@@ -2711,18 +2740,21 @@ def teacher_portal_view(request):
     """
     teacher = get_current_teacher_profile(request)
     if not teacher:
-        messages.warning(request, "حساب استادی فعالی یافت نشد. لطفاً ابتدا یک استاد را انتخاب نمایید.")
+        messages.warning(
+            request, "حساب استادی فعالی یافت نشد. لطفاً ابتدا یک استاد را انتخاب نمایید.")
         return redirect(reverse("dashboard:admin-dashboard"))
 
     years = AcademiceYear.objects.all().order_by("-year")
-    academic_year = AcademiceYear.objects.filter(year=1403).first() or years.first()
+    academic_year = AcademiceYear.objects.filter(
+        year=1403).first() or years.first()
 
     kpis = get_teacher_kpis(teacher, academic_year)
     today_schedule = get_teacher_today_schedule(teacher, academic_year.id)
     assigned_classes = get_teacher_assigned_classes(teacher)
     assigned_subjects = get_teacher_assigned_subjects(teacher)
 
-    all_teachers = Teacher.objects.filter(status_id=1).order_by("name") if request.user.is_staff else []
+    all_teachers = Teacher.objects.filter(status_id=1).order_by(
+        "name") if request.user.is_staff else []
 
     context = {
         "teacher": teacher,
@@ -2749,20 +2781,26 @@ def teacher_attendance_view(request):
     assigned_classes = get_teacher_assigned_classes(teacher)
     guidance_class = Classes.objects.filter(guidence=teacher).first()
 
-    selected_class_id = request.GET.get("class_id") or request.POST.get("class_id")
+    selected_class_id = request.GET.get(
+        "class_id") or request.POST.get("class_id")
     if selected_class_id and str(selected_class_id).isdigit():
-        selected_class = Classes.objects.filter(id=int(selected_class_id)).first()
+        selected_class = Classes.objects.filter(
+            id=int(selected_class_id)).first()
     else:
-        selected_class = guidance_class or (assigned_classes[0] if assigned_classes else None)
+        selected_class = guidance_class or (
+            assigned_classes[0] if assigned_classes else None)
 
     months = Month.objects.all().order_by("id")
-    selected_month_id = request.GET.get("month_id") or request.POST.get("month_id")
+    selected_month_id = request.GET.get(
+        "month_id") or request.POST.get("month_id")
     if selected_month_id and str(selected_month_id).isdigit():
-        selected_month = Month.objects.filter(id=int(selected_month_id)).first()
+        selected_month = Month.objects.filter(
+            id=int(selected_month_id)).first()
     else:
         selected_month = months.first()
 
-    academic_year = AcademiceYear.objects.filter(year=1403).first() or AcademiceYear.objects.first()
+    academic_year = AcademiceYear.objects.filter(
+        year=1403).first() or AcademiceYear.objects.first()
 
     default_all_days = 24
 
@@ -2823,7 +2861,8 @@ def teacher_attendance_view(request):
     student_rows = []
     if selected_class and selected_month:
         enrollments = (
-            StudentClass.objects.filter(classs=selected_class, academice_year=academic_year)
+            StudentClass.objects.filter(
+                classs=selected_class, academice_year=academic_year)
             .select_related("student")
             .order_by("student__name")
         )
@@ -2848,7 +2887,8 @@ def teacher_attendance_view(request):
                 "percent": att.get_present_percentage() if att else 100,
             })
 
-    all_teachers = Teacher.objects.filter(status_id=1).order_by("name") if request.user.is_staff else []
+    all_teachers = Teacher.objects.filter(status_id=1).order_by(
+        "name") if request.user.is_staff else []
 
     context = {
         "teacher": teacher,
@@ -2877,27 +2917,34 @@ def teacher_assessment_view(request):
 
     assigned_classes = get_teacher_assigned_classes(teacher)
 
-    selected_class_id = request.GET.get("class_id") or request.POST.get("class_id")
+    selected_class_id = request.GET.get(
+        "class_id") or request.POST.get("class_id")
     if selected_class_id and str(selected_class_id).isdigit():
-        selected_class = Classes.objects.filter(id=int(selected_class_id)).first()
+        selected_class = Classes.objects.filter(
+            id=int(selected_class_id)).first()
     else:
         selected_class = assigned_classes[0] if assigned_classes else None
 
     assigned_subjects = get_teacher_assigned_subjects(teacher, selected_class)
-    selected_subject_id = request.GET.get("subject_id") or request.POST.get("subject_id")
+    selected_subject_id = request.GET.get(
+        "subject_id") or request.POST.get("subject_id")
     if selected_subject_id and str(selected_subject_id).isdigit():
-        selected_subject = Subject.objects.filter(id=int(selected_subject_id)).first()
+        selected_subject = Subject.objects.filter(
+            id=int(selected_subject_id)).first()
     else:
         selected_subject = assigned_subjects[0] if assigned_subjects else None
 
     months = Month.objects.all().order_by("id")
-    selected_month_id = request.GET.get("month_id") or request.POST.get("month_id")
+    selected_month_id = request.GET.get(
+        "month_id") or request.POST.get("month_id")
     if selected_month_id and str(selected_month_id).isdigit():
-        selected_month = Month.objects.filter(id=int(selected_month_id)).first()
+        selected_month = Month.objects.filter(
+            id=int(selected_month_id)).first()
     else:
         selected_month = months.first()
 
-    academic_year = AcademiceYear.objects.filter(year=1403).first() or AcademiceYear.objects.first()
+    academic_year = AcademiceYear.objects.filter(
+        year=1403).first() or AcademiceYear.objects.first()
 
     default_max_score = 100
 
@@ -2948,7 +2995,8 @@ def teacher_assessment_view(request):
     student_rows = []
     if selected_class and selected_subject and selected_month:
         enrollments = (
-            StudentClass.objects.filter(classs=selected_class, academice_year=academic_year)
+            StudentClass.objects.filter(
+                classs=selected_class, academice_year=academic_year)
             .select_related("student")
             .order_by("student__name")
         )
@@ -2972,7 +3020,8 @@ def teacher_assessment_view(request):
                 "percent": ass.getPercentage() if ass else 0,
             })
 
-    all_teachers = Teacher.objects.filter(status_id=1).order_by("name") if request.user.is_staff else []
+    all_teachers = Teacher.objects.filter(status_id=1).order_by(
+        "name") if request.user.is_staff else []
 
     context = {
         "teacher": teacher,
@@ -3002,20 +3051,25 @@ def teacher_shaqqa_view(request):
 
     assigned_classes = get_teacher_assigned_classes(teacher)
 
-    selected_class_id = request.GET.get("class_id") or request.POST.get("class_id")
+    selected_class_id = request.GET.get(
+        "class_id") or request.POST.get("class_id")
     if selected_class_id and str(selected_class_id).isdigit():
-        selected_class = Classes.objects.filter(id=int(selected_class_id)).first()
+        selected_class = Classes.objects.filter(
+            id=int(selected_class_id)).first()
     else:
         selected_class = assigned_classes[0] if assigned_classes else None
 
     assigned_subjects = get_teacher_assigned_subjects(teacher, selected_class)
-    selected_subject_id = request.GET.get("subject_id") or request.POST.get("subject_id")
+    selected_subject_id = request.GET.get(
+        "subject_id") or request.POST.get("subject_id")
     if selected_subject_id and str(selected_subject_id).isdigit():
-        selected_subject = Subject.objects.filter(id=int(selected_subject_id)).first()
+        selected_subject = Subject.objects.filter(
+            id=int(selected_subject_id)).first()
     else:
         selected_subject = assigned_subjects[0] if assigned_subjects else None
 
-    academic_year = AcademiceYear.objects.filter(year=1403).first() or AcademiceYear.objects.first()
+    academic_year = AcademiceYear.objects.filter(
+        year=1403).first() or AcademiceYear.objects.first()
 
     if request.method == "POST" and selected_class and selected_subject:
         saved_count = save_teacher_shaqqa_matrix(
@@ -3029,9 +3083,11 @@ def teacher_shaqqa_view(request):
 
     matrix_data = None
     if selected_class and selected_subject:
-        matrix_data = get_teacher_shaqqa_matrix(teacher, selected_class, selected_subject, academic_year)
+        matrix_data = get_teacher_shaqqa_matrix(
+            teacher, selected_class, selected_subject, academic_year)
 
-    all_teachers = Teacher.objects.filter(status_id=1).order_by("name") if request.user.is_staff else []
+    all_teachers = Teacher.objects.filter(status_id=1).order_by(
+        "name") if request.user.is_staff else []
 
     context = {
         "teacher": teacher,
@@ -3056,10 +3112,12 @@ def teacher_my_timetable_view(request):
     if not teacher:
         return redirect(reverse("dashboard:teacher-portal"))
 
-    academic_year = AcademiceYear.objects.filter(year=1403).first() or AcademiceYear.objects.first()
+    academic_year = AcademiceYear.objects.filter(
+        year=1403).first() or AcademiceYear.objects.first()
     matrix_data = get_teacher_timetable_matrix(teacher.id, academic_year.id)
 
-    all_teachers = Teacher.objects.filter(status_id=1).order_by("name") if request.user.is_staff else []
+    all_teachers = Teacher.objects.filter(status_id=1).order_by(
+        "name") if request.user.is_staff else []
 
     context = {
         "teacher": teacher,
@@ -3088,17 +3146,22 @@ def teacher_class_timetable_view(request):
 
     selected_class_id = request.GET.get("class_id")
     if selected_class_id and str(selected_class_id).isdigit():
-        selected_class = Classes.objects.filter(id=int(selected_class_id)).first()
+        selected_class = Classes.objects.filter(
+            id=int(selected_class_id)).first()
     else:
-        selected_class = guidance_class or (assigned_classes[0] if assigned_classes else None)
+        selected_class = guidance_class or (
+            assigned_classes[0] if assigned_classes else None)
 
-    academic_year = AcademiceYear.objects.filter(year=1403).first() or AcademiceYear.objects.first()
+    academic_year = AcademiceYear.objects.filter(
+        year=1403).first() or AcademiceYear.objects.first()
 
     matrix_data = None
     if selected_class:
-        matrix_data = get_class_timetable_matrix(selected_class.id, academic_year.id)
+        matrix_data = get_class_timetable_matrix(
+            selected_class.id, academic_year.id)
 
-    all_teachers = Teacher.objects.filter(status_id=1).order_by("name") if request.user.is_staff else []
+    all_teachers = Teacher.objects.filter(status_id=1).order_by(
+        "name") if request.user.is_staff else []
 
     context = {
         "teacher": teacher,
@@ -3130,13 +3193,16 @@ def teacher_students_view(request):
     search_query = request.GET.get("search", "").strip()
 
     if selected_class_id and str(selected_class_id).isdigit():
-        selected_class = Classes.objects.filter(id=int(selected_class_id)).first()
+        selected_class = Classes.objects.filter(
+            id=int(selected_class_id)).first()
     else:
         selected_class = None
 
-    academic_year = AcademiceYear.objects.filter(year=1403).first() or AcademiceYear.objects.first()
+    academic_year = AcademiceYear.objects.filter(
+        year=1403).first() or AcademiceYear.objects.first()
 
-    enrollments_qs = StudentClass.objects.filter(academice_year=academic_year).select_related("student", "classs")
+    enrollments_qs = StudentClass.objects.filter(
+        academice_year=academic_year).select_related("student", "classs")
 
     if selected_class:
         enrollments_qs = enrollments_qs.filter(classs=selected_class)
@@ -3150,9 +3216,11 @@ def teacher_students_view(request):
             Q(student__school_id__icontains=search_query)
         )
 
-    students = [sc.student for sc in enrollments_qs.order_by("classs__grade", "classs__section", "student__name")]
+    students = [sc.student for sc in enrollments_qs.order_by(
+        "classs__grade", "classs__section", "student__name")]
 
-    all_teachers = Teacher.objects.filter(status_id=1).order_by("name") if request.user.is_staff else []
+    all_teachers = Teacher.objects.filter(status_id=1).order_by(
+        "name") if request.user.is_staff else []
 
     context = {
         "teacher": teacher,

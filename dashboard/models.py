@@ -119,14 +119,6 @@ class Teacher(models.Model):
 
 
 class Subject(models.Model):
-    """
-    Academic Curriculum Subject (مضمون درسی نصاب تعلیمی معارف افغانستان)
-    Flexible to accommodate Afghan Ministry of Education requirements:
-    - Primary (ابتدائیه): Grades 1-6
-    - Middle (متوسطه): Grades 7-9
-    - High School / Lycée (لیسه): Grades 10-12
-    - Standard categories: علوم دینی، زبان و ادبیات، ساینس، ریاضیات، علوم اجتماعی، فناوری، تربیت بدنی
-    """
     CATEGORY_CHOICES = [
         ("علوم دینی و اسلامی", "علوم دینی و اسلامی"),
         ("زبان و ادبیات", "زبان و ادبیات"),
@@ -246,18 +238,16 @@ class Classes(models.Model):
     section = models.CharField(max_length=50)
     guidence = models.ForeignKey(
         Teacher, on_delete=models.DO_NOTHING, null=True, blank=True)
-    # representative = models.ForeignKey(Student, on_delete=models.DO_NOTHING)
     academice_year = models.ForeignKey(
         AcademiceYear, on_delete=models.DO_NOTHING)
-    # registered = models.IntegerField(default=0)
     capacity = models.IntegerField(default=30)
     start_time = models.TimeField(
-        auto_now=False, auto_now_add=False, default="08:00")  # type: ignore
+        auto_now=False, auto_now_add=False, default="08:00")  
     end_time = models.TimeField(
-        auto_now=False, auto_now_add=False, default="16:00")  # type: ignore
-    turn = models.CharField(max_length=50, default="صبح")  # type: ignore
+        auto_now=False, auto_now_add=False, default="16:00")
+    turn = models.CharField(max_length=50, default="صبح")  
     status = models.ForeignKey(
-        Status, on_delete=models.DO_NOTHING, default=1)  # type: ignore
+        Status, on_delete=models.DO_NOTHING, default=1)  
 
     def __str__(self) -> str:
         return f"{self.grade}-{self.section}"
@@ -366,7 +356,6 @@ class Assessment(models.Model):
         return int((self.score / self.max_score) * 100)
 
     def get_rank(self):
-        # Get all assessments for the same subject, class, month, and academic year
         assessments = Assessment.objects.filter(
             subject=self.subject,
             classs=self.classs,
@@ -439,14 +428,7 @@ class ExamResult(models.Model):
     
     
 class ExamMark(models.Model):
-    """
-    Official Afghan Ministry of Education Exam Mark Sheet (شقه نمرات امتحانات)
-    - Midterm (امتحان چهارونیم ماهه): Max 40, Passing threshold 16
-    - Final (امتحان سالانه): Max 60, Passing threshold 24
-    - Total Subject Score: Midterm + Final = Max 100, Passing threshold 40
-    - Conditional Exam (امتحان مشروطی): For failed subjects (1-3 subjects)
-    - Status flags: is_mahroom (محروم), is_mazrati (معذرتی)
-    """
+    # shoqqa
     id = models.AutoField(primary_key=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="exam_marks")
     classs = models.ForeignKey(Classes, on_delete=models.CASCADE, related_name="exam_marks")
@@ -514,10 +496,6 @@ Shaqqa = ExamMark
 
 
 class ExamAttendance(models.Model):
-    """
-    Exam Attendance Registry (ضوابط حاضری امتحانات)
-    Tracks present, absent, sick, and excused/leave days for Midterm and Annual periods.
-    """
     id = models.AutoField(primary_key=True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="exam_attendances")
     classs = models.ForeignKey(Classes, on_delete=models.CASCADE, related_name="exam_attendances")
@@ -615,10 +593,6 @@ class Fee(models.Model):
 
 
 class Expense(models.Model):
-    """
-    School Expenditures & Costs (دفتر مصارف و هزینه‌های مکتب)
-    Tracks salaries, rent, utilities, stationery, maintenance, etc.
-    """
     id = models.AutoField(primary_key=True)
     category = models.CharField(max_length=100, default="متفرقه")
     title = models.CharField(max_length=200)
@@ -640,13 +614,6 @@ class Expense(models.Model):
 
 
 class TimeTable(models.Model):
-    """
-    Weekly School Timetable & Schedule (تقسیم اوقات رسمی دروس صنوف و اساتید)
-    Strictly follows Afghanistan Ministry of Education:
-    - 6 Days: شنبه، یک‌شنبه، دوشنبه، سه‌شنبه، چهارشنبه، پنج‌شنبه (جمعه رخصتی)
-    - 6 Periods per day: ساعت اول تا ساعت ششم به همراه زنگ تفریح
-    - Unique constraints to prevent teacher double-booking & class double-booking.
-    """
     DAY_CHOICES = [
         (1, "شنبه"),
         (2, "یک‌شنبه"),
