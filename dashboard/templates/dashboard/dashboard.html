@@ -277,34 +277,7 @@
     </div>
   </div>
 
-  <!-- Bottom Row: Classes Overview -->
-  <div class="calendar-row">
-    <div class="card">
-      <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-        <h3><i class="fa-solid fa-chalkboard text-info" style="margin-left: 8px;"></i> مروری بر صنف‌ها و ظرفیت آموزشی</h3>
-        <a href="{% url 'dashboard:class-list' %}" class="view-all">مدیریت صنف‌ها ❮</a>
-      </div>
-      <div style="padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px;">
-        {% for c in recent_classes %}
-        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <strong style="font-size: 15px; color: #0f172a;">صنف {{ c.grade }} - شعبۀ {{ c.section }}</strong>
-            <span style="background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold;">
-              {{ c.turn }}
-            </span>
-          </div>
-          <div style="font-size: 13px; color: #64748b; margin-bottom: 8px;">
-            استاد رهنما: {% if c.guidence %}{{ c.guidence.name }} {{ c.guidence.last_name }}{% else %}<span style="color: #f59e0b;">تعیین‌نشده</span>{% endif %}
-          </div>
-          <div style="display: flex; justify-content: space-between; font-size: 12px; color: #475569; margin-top: 10px; border-top: 1px dashed #e2e8f0; paddingTop: 8px;">
-            <span>ظرفیت: {{ c.capacity }} نفر</span>
-            <a href="{% url 'dashboard:class-detail' c.id %}" style="color: #2563eb; font-weight: bold;">جزئیات ❮</a>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-  </div>
+
 </div>
 
 {% endblock content %}

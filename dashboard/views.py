@@ -1290,7 +1290,7 @@ def exam_dashboard_view(request):
 
 
 class ExamListView(LoginRequiredMixin, ListView):
-    """Backwards compatibility view for existing exam-list references"""
+
     model = ExamMark
     template_name = "dashboard/exam/exam_dashboard.html"
     context_object_name = "exams"
@@ -2185,9 +2185,7 @@ def timetable_class_view(request):
 
 @is_admin
 def timetable_teacher_view(request):
-    """
-    Weekly Timetable view for a specific Teacher (تقسیم اوقات کاری استاد).
-    """
+
     years = AcademiceYear.objects.all().order_by("-year")
     teachers = Teacher.objects.filter(status__id=1).order_by("name")
     classes = Classes.objects.all().order_by("grade", "section")
@@ -2230,9 +2228,7 @@ def timetable_teacher_view(request):
 
 @is_admin
 def timetable_master_view(request):
-    """
-    Master School Schedule Matrix across all classes (جدول عمومی تقسیم اوقات مکتب).
-    """
+
     years = AcademiceYear.objects.all().order_by("-year")
     year_id = request.GET.get("year_id")
     day_num = request.GET.get("day", 1)
@@ -2266,9 +2262,7 @@ def timetable_master_view(request):
 
 @is_admin
 def timetable_slot_save(request):
-    """
-    Save or update a timetable slot with conflict checking.
-    """
+
     if request.method == "POST":
         class_id = request.POST.get("class_id")
         teacher_id = request.POST.get("teacher_id")
@@ -2372,9 +2366,7 @@ def timetable_slot_delete(request, id):
 
 @is_admin
 def timetable_class_print(request, class_id):
-    """
-    Official Afghan Wall Timetable for Classroom (تقسیم اوقات دیواری صنف) - A4 Landscape Print.
-    """
+
     cls = get_object_or_404(Classes.objects.select_related(
         "guidence", "academice_year"), id=class_id)
     year_id = request.GET.get("year_id")
@@ -2401,9 +2393,6 @@ def timetable_class_print(request, class_id):
 
 @is_admin
 def timetable_teacher_print(request, teacher_id):
-    """
-    Official Teacher Timetable Schedule Card (کارت تقسیم اوقات کاری استاد) - A4 Print.
-    """
     teacher = get_object_or_404(Teacher, id=teacher_id)
     year_id = request.GET.get("year_id")
     if year_id and str(year_id).isdigit():
@@ -2436,9 +2425,6 @@ def timetable_teacher_print(request, teacher_id):
 
 @is_admin
 def subject_list_view(request):
-    """
-    Academic Curriculum & Subject Directory (فهرست مضامین و مدیریت نصاب تعلیمی معارف).
-    """
     qs = Subject.objects.prefetch_related("classes").all()
 
     search_query = request.GET.get("search", "").strip()
@@ -2485,9 +2471,7 @@ def subject_list_view(request):
 
 @is_admin
 def subject_create_view(request):
-    """
-    Create a new curriculum subject (تعریف مضمون رسمی جدید در نصاب تعلیمی).
-    """
+
     classes = Classes.objects.all().order_by("grade", "section")
     if request.method == "POST":
         form = SubjectForm(request.POST)
@@ -2516,9 +2500,6 @@ def subject_create_view(request):
 
 @is_admin
 def subject_edit_view(request, id):
-    """
-    Edit curriculum subject details (ویرایش و اصلاح مشخصات مضمون تعلیمی).
-    """
     subject = get_object_or_404(Subject, id=id)
     classes = Classes.objects.all().order_by("grade", "section")
 
@@ -2550,9 +2531,7 @@ def subject_edit_view(request, id):
 
 @is_admin
 def subject_detail_view(request, id):
-    """
-    Detailed Profile of an Academic Subject (مشخصات و آمار تحلیلی مضمون).
-    """
+
     subject = get_object_or_404(Subject, id=id)
     metrics = get_subject_detail_metrics(subject)
     validation = validate_subject_deletion(subject)
@@ -2568,9 +2547,7 @@ def subject_detail_view(request, id):
 
 @is_admin
 def subject_toggle_status_view(request, id):
-    """
-    Toggle Active / Inactive status of a subject (فعال / غیرفعال‌سازی در نصاب).
-    """
+
     subject = get_object_or_404(Subject, id=id)
     subject.is_active = not subject.is_active
     subject.save()
@@ -2585,9 +2562,7 @@ def subject_toggle_status_view(request, id):
 
 @is_admin
 def subject_delete_view(request, id):
-    """
-    Safe Deletion of a Subject with Integrity Protection (حذف ایمن مضمون).
-    """
+
     subject = get_object_or_404(Subject, id=id)
     validation = validate_subject_deletion(subject)
 
@@ -2604,10 +2579,7 @@ def subject_delete_view(request, id):
 
 @is_admin
 def subject_class_matrix_view(request):
-    """
-    Class Curriculum Assignment Matrix & Bulk Afghan MoE Standards Application
-    (ماتریس تخصیص مضامین به صنوف و اِعمال نصاب معیاری وزارت معارف).
-    """
+
     classes = Classes.objects.all().order_by("grade", "section")
     all_subjects = Subject.objects.all().order_by("category", "name")
 
@@ -2671,9 +2643,7 @@ def subject_class_matrix_view(request):
 
 @is_admin
 def subject_class_print_view(request, class_id):
-    """
-    Official Class Curriculum & Syllabus Sheet (مفردات و جدول مضامین رسمی صنف) - A4 Print Layout.
-    """
+
     cls = get_object_or_404(Classes, id=class_id)
     year_id = request.GET.get("year_id")
     if year_id and str(year_id).isdigit():
@@ -2720,9 +2690,7 @@ def subject_class_print_view(request, class_id):
 # ---------------------------------------------------------------------------
 
 def is_teacher_or_admin(func):
-    """
-    Security decorator allowing access to Teachers and Administrators.
-    """
+
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated:
             return redirect(reverse("accounts:login"))
@@ -2735,9 +2703,7 @@ def is_teacher_or_admin(func):
 
 @is_teacher_or_admin
 def teacher_portal_view(request):
-    """
-    Main Teacher Dashboard (داشبورد و پورتال اختصاصی استاد).
-    """
+
     teacher = get_current_teacher_profile(request)
     if not teacher:
         messages.warning(
@@ -2771,9 +2737,7 @@ def teacher_portal_view(request):
 
 @is_teacher_or_admin
 def teacher_attendance_view(request):
-    """
-    Class Attendance Management for Teachers (ثبت و مدیریت حاضری صنف توسط استاد).
-    """
+
     teacher = get_current_teacher_profile(request)
     if not teacher:
         return redirect(reverse("dashboard:teacher-portal"))
@@ -2908,9 +2872,7 @@ def teacher_attendance_view(request):
 
 @is_teacher_or_admin
 def teacher_assessment_view(request):
-    """
-    Monthly Assessment Entry for Teacher's Subjects (ثبت ارزیابی‌های ماهوار مضامین استاد).
-    """
+
     teacher = get_current_teacher_profile(request)
     if not teacher:
         return redirect(reverse("dashboard:teacher-portal"))
@@ -3041,10 +3003,7 @@ def teacher_assessment_view(request):
 
 @is_teacher_or_admin
 def teacher_shaqqa_view(request):
-    """
-    Digital Shaqqa & Exam Marks Entry for Teacher's Subjects
-    (ورود نمرات شقه امتحانات چهارونیم ماهه و سالانه مطابق طرزالعمل معارف).
-    """
+
     teacher = get_current_teacher_profile(request)
     if not teacher:
         return redirect(reverse("dashboard:teacher-portal"))
@@ -3105,9 +3064,7 @@ def teacher_shaqqa_view(request):
 
 @is_teacher_or_admin
 def teacher_my_timetable_view(request):
-    """
-    Teacher's Personal Weekly Timetable (تقسیم اوقات تدریس هفتگی استاد).
-    """
+
     teacher = get_current_teacher_profile(request)
     if not teacher:
         return redirect(reverse("dashboard:teacher-portal"))
@@ -3134,9 +3091,7 @@ def teacher_my_timetable_view(request):
 
 @is_teacher_or_admin
 def teacher_class_timetable_view(request):
-    """
-    Weekly Timetable of Teacher's Guided Class (تقسیم اوقات صنف تحت نگران استاد).
-    """
+
     teacher = get_current_teacher_profile(request)
     if not teacher:
         return redirect(reverse("dashboard:teacher-portal"))
@@ -3181,9 +3136,7 @@ def teacher_class_timetable_view(request):
 
 @is_teacher_or_admin
 def teacher_students_view(request):
-    """
-    Student Roster for Teacher's Classes (لیست شاگردان صنوف استاد).
-    """
+
     teacher = get_current_teacher_profile(request)
     if not teacher:
         return redirect(reverse("dashboard:teacher-portal"))

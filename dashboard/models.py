@@ -116,6 +116,12 @@ class Teacher(models.Model):
 
     def __str__(self):
         return f"{self.name} {self.last_name}"
+    @property
+    def full_name(self):
+        return f"{self.name} {self.fname} {self.last_name}"
+    @property
+    def total_salary(self):
+        return self.salary - self.tax
 
 
 class Subject(models.Model):
