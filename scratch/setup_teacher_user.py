@@ -32,12 +32,9 @@ teacher_user, created = User.objects.get_or_create(
         "is_verified": True,
     }
 )
-if created:
-    teacher_user.set_password("teacherpassword123")
-    teacher_user.save()
-    print("Created teacher user: teacher@school.af / teacherpassword123")
-else:
-    print("User teacher@school.af already exists")
+teacher_user.set_password("teacherpassword123")
+teacher_user.save()
+print("Set password for teacher@school.af: teacherpassword123")
 
 teacher_zabih.user = teacher_user
 teacher_zabih.save()

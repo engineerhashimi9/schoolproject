@@ -67,6 +67,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "core.context_processors.global_academic_context",
             ],
         },
     },
@@ -84,6 +85,17 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'django_school',         # The name of the database you created
+#         'USER': 'hashimi',       # Your MySQL username (e.g., 'root')
+#         'PASSWORD': 'aliali123',     # Your MySQL password
+#         'HOST': '127.0.0.1',             # Set to 'localhost' or your server IP
+#         'PORT': '3306',                  # Default MySQL port
+#     }
+# }
+
 
 
 # Password validation

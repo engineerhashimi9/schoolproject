@@ -149,7 +149,7 @@ class Migration(migrations.Migration):
                 ("gfname", models.CharField(max_length=50)),
                 ("card_id", models.CharField(max_length=50)),
                 ("birth_date", models.DateField()),
-                ("nationality", models.CharField()),
+                ("nationality", models.CharField(max_length=50)),
                 ("orignial_zone", models.IntegerField()),
                 ("original_village", models.CharField(max_length=50)),
                 ("now_zone", models.IntegerField()),

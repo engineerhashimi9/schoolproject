@@ -75,13 +75,7 @@ urlpatterns = [
     path("subjects/<int:id>/toggle-status/", views.subject_toggle_status_view, name="subject-toggle-status"),
     path("subjects/class-matrix/", views.subject_class_matrix_view, name="subject-class-matrix"),
     path("subjects/class/<int:class_id>/print/", views.subject_class_print_view, name="subject-class-print"),
-    #------- Teacher Dashboard & Management URLs 
-    path("teacher/", views.teacher_portal_view, name="teacher-portal"),
-    path("teacher/attendance/", views.teacher_attendance_view, name="teacher-attendance"),
-    path("teacher/assessment/", views.teacher_assessment_view, name="teacher-assessment"),
-    path("teacher/shaqqa/", views.teacher_shaqqa_view, name="teacher-shaqqa"),
-    path("teacher/timetable/my/", views.teacher_my_timetable_view, name="teacher-my-timetable"),
-    path("teacher/timetable/class/", views.teacher_class_timetable_view, name="teacher-class-timetable"),
-    path("teacher/students/", views.teacher_students_view, name="teacher-students"),
+    # Legacy Teacher Portal Redirect (delegates to dedicated teachers app)
+    path("teacher/", views.legacy_teacher_redirect, name="teacher-portal"),
 ]
 

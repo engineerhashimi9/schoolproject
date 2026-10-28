@@ -36,17 +36,7 @@ from .services import (
 )
 
 
-def get_current_jalali_date_str():
-    try:
-        now = jdatetime.datetime.now()
-        month_names = [
-            "حمل", "ثور", "جوزا", "سرطان", "اسد", "سنبله",
-            "میزان", "عقرب", "قوس", "جدی", "دلو", "حوت"
-        ]
-        month_name = month_names[now.month - 1]
-        return f"{now.day} {month_name} {now.year}"
-    except Exception:
-        return ""
+from core.utils import get_current_jalali_date_str
 
 
 def teacher_access_required(func):

@@ -97,6 +97,7 @@ a {
     flex-shrink: 0;
     padding: 24px 0;
     border-left: 1px solid #1e293b;
+    border-radius: 10px;
 }
 
 .sidebar-nav::-webkit-scrollbar {
